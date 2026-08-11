@@ -1,0 +1,87 @@
+.navbar {
+    width: 100%;
+    border-bottom: 1px solid #e5e5e5;
+    background: #fff;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-decoration: none;
+    color: #111;
+}
+
+.links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.links a {
+    text-decoration: none;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.menuButton {
+    display: none;
+    background: none;
+    border: none;
+}
+
+.menuIcon {
+    width: 24px;
+    height: 2px;
+    background: #333;
+    display: block;
+    position: relative;
+}
+
+.menuIcon::before,
+.menuIcon::after {
+    content: "";
+    width: 24px;
+    height: 2px;
+    background: #333;
+    position: absolute;
+    left: 0;
+}
+
+.menuIcon::before {
+    top: -6px;
+}
+
+.menuIcon::after {
+    top: 6px;
+}
+
+.mobileMenu {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .links {
+        display: none;
+    }
+
+    .menuButton {
+        display: block;
+    }
+
+    .mobileMenu {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem 1.5rem;
+        gap: 1rem;
+        background: #fff;
+        border-bottom: 1px solid #e5e5e5;
+    }
+}
