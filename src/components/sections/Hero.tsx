@@ -12,8 +12,8 @@ export default function Hero() {
                     </h1>
 
                     <p className={styles.subtitle}>
-                        Computing Science student and systems developer passionate about
-                        compiler design, backend engineering, and building clean, scalable software.
+                        Computer Science graduate passionate about
+                        software engineering, software development, and building clean, scalable software.
                     </p>
 
                     <div className={styles.buttons}>
@@ -29,7 +29,7 @@ export default function Hero() {
                 {/* Optional image */}
                 <div className={styles.imageWrapper}>
                     <img
-                        src="/images/profile.jpg"
+                        src="/images/placeholder.png"
                         alt="Profile"
                         className={styles.image}
                     />

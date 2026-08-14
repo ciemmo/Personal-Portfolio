@@ -5,6 +5,7 @@ export const skills = [
     "TypeScript",
     "Python",
     "C#",
+    "Java",
     "C++",
     "SQL",
     "React",

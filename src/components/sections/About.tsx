@@ -9,14 +9,14 @@ export default function About() {
                 <h2 className={styles.heading}>About Me</h2>
 
                 <p className={styles.text}>
-                    I’m a passionate developer who enjoys building clean, functional, and
-                    user‑focused digital experiences. My work spans frontend development,
+                    I’m a recent Computer Science graduate of Sam Houston State University and a passionate developer who enjoys building clean, functional, and
+                    user‑focused applications. My work spans frontend development,
                     backend systems, and full‑stack applications — with a strong interest
                     in creating tools that solve real problems.
                 </p>
 
                 <p className={styles.text}>
-                    I’m currently focused on mastering the MERN stack, improving my
+                    I’m currently focused on mastering different technologies, like React and Node.js, improving my
                     full‑stack workflow, and building projects that showcase both
                     technical depth and thoughtful design.
                 </p>
