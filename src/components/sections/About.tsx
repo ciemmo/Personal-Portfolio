@@ -1,25 +1,33 @@
-"use client";
-
 import styles from "./About.module.css";
 
 export default function About() {
     return (
-        <section className={styles.aboutSection}>
+        <section className={styles.about}>
             <div className={styles.container}>
-                <h2 className={styles.heading}>About Me</h2>
+                <div className={styles.text}>
+                    <h2 className={styles.title}>About Me</h2>
+                    <p className={styles.subtitle}>Computer Science Graduate & Software Engineer</p>
 
-                <p className={styles.text}>
-                    I’m a recent Computer Science graduate of Sam Houston State University and a passionate developer who enjoys building clean, functional, and
-                    user‑focused applications. My work spans frontend development,
-                    backend systems, and full‑stack applications — with a strong interest
-                    in creating tools that solve real problems.
-                </p>
+                    <p className={styles.paragraph}>
+                        I'm Emmanuel, a passionate software engineer who loves building clean,
+                        scalable, and user‑focused applications. I enjoy solving complex problems
+                        and turning ideas into real, functional software.
+                    </p>
 
-                <p className={styles.text}>
-                    I’m currently focused on mastering different technologies, like React and Node.js, improving my
-                    full‑stack workflow, and building projects that showcase both
-                    technical depth and thoughtful design.
-                </p>
+                    <p className={styles.paragraph}>
+                        My interests include full‑stack development, system design, and creating
+                        intuitive user experiences. I’m always learning, always improving, and
+                        always excited to take on new challenges.
+                    </p>
+                </div>
+
+                <div className={styles.imageWrapper}>
+                    <img
+                        src="/images/profile.jpg"
+                        alt="Profile"
+                        className={styles.image}
+                    />
+                </div>
             </div>
         </section>
     );

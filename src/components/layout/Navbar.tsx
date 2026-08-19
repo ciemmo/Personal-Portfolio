@@ -1,29 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
-    const [isOpen, setIsOpen] = useState(false);
+    const [open, setOpen] = useState(false);
 
     return (
         <nav className={styles.navbar}>
-            {/* Desktop Links */}
-            <div className={styles.links}>
-                <Link href="/">Home</Link>
-                <Link href="/projects">Projects</Link>
-                <Link href="/about">About</Link>
-                <Link href="/contact">Contact</Link>
+            <div className={styles.container}>
+                <Link href="/" className={styles.logo}>
+                    Emmanuel
+                </Link>
+
+                <div className={styles.links}>
+                    <Link href="/" className={styles.link}>Home</Link>
+                    <Link href="/projects" className={styles.link}>Projects</Link>
+                    <Link href="/contact" className={styles.link}>Contact</Link>
+                </div>
+
+                <div
+                    className={styles.mobileToggle}
+                    onClick={() => setOpen(!open)}
+                >
+                    ☰
+                </div>
             </div>
 
-            {/* Mobile Links */}
-            {isOpen && (
-                <div className={styles.mobileLinks}>
-                    <Link href="/" onClick={() => setIsOpen(false)}>Home</Link>
-                    <Link href="/projects" onClick={() => setIsOpen(false)}>Projects</Link>
-                    <Link href="/about" onClick={() => setIsOpen(false)}>About</Link>
-                    <Link href="/contact" onClick={() => setIsOpen(false)}>Contact</Link>
+            {open && (
+                <div className={styles.mobileMenu}>
+                    <Link href="/" className={styles.mobileLink}>Home</Link>
+                    <Link href="/projects" className={styles.mobileLink}>Projects</Link>
+                    <Link href="/contact" className={styles.mobileLink}>Contact</Link>
                 </div>
             )}
         </nav>

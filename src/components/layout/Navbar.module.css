@@ -1,87 +1,79 @@
 .navbar {
     width: 100%;
-    border-bottom: 1px solid #e5e5e5;
-    background: #fff;
+    padding: var(--space-sm) 0;
+    background: var(--color-bg);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .container {
-    max-width: 1100px;
+    width: min(1200px, 90%);
     margin: 0 auto;
-    padding: 1rem 1.5rem;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
 }
 
 .logo {
-    font-weight: 700;
     font-size: 1.25rem;
-    text-decoration: none;
-    color: #111;
+    font-weight: bold;
+    color: var(--color-primary);
 }
 
 .links {
     display: flex;
-    gap: 1.5rem;
+    gap: var(--space-md);
 }
 
-.links a {
-    text-decoration: none;
-    color: #333;
-    font-size: 0.95rem;
+.link {
+    font-size: 1rem;
+    color: var(--color-text);
+    transition: 0.2s;
 }
 
-.menuButton {
+.link:hover {
+    color: var(--color-primary);
+}
+
+/* Mobile */
+.mobileToggle {
     display: none;
-    background: none;
-    border: none;
-}
-
-.menuIcon {
-    width: 24px;
-    height: 2px;
-    background: #333;
-    display: block;
-    position: relative;
-}
-
-.menuIcon::before,
-.menuIcon::after {
-    content: "";
-    width: 24px;
-    height: 2px;
-    background: #333;
-    position: absolute;
-    left: 0;
-}
-
-.menuIcon::before {
-    top: -6px;
-}
-
-.menuIcon::after {
-    top: 6px;
+    font-size: 1.5rem;
+    cursor: pointer;
 }
 
 .mobileMenu {
     display: none;
 }
 
+/* Mobile breakpoint */
 @media (max-width: 768px) {
     .links {
         display: none;
     }
 
-    .menuButton {
+    .mobileToggle {
         display: block;
     }
 
     .mobileMenu {
         display: flex;
         flex-direction: column;
-        padding: 1rem 1.5rem;
-        gap: 1rem;
-        background: #fff;
-        border-bottom: 1px solid #e5e5e5;
+        gap: var(--space-sm);
+        background: var(--color-bg);
+        padding: var(--space-md);
+        box-shadow: var(--shadow-md);
+        margin-top: var(--space-sm);
+    }
+
+    .mobileLink {
+        font-size: 1.1rem;
+        color: var(--color-text);
+    }
+
+    .mobileLink:hover {
+        color: var(--color-primary);
     }
 }

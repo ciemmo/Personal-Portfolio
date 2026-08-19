@@ -1,21 +1,38 @@
-"use client";
-
 import styles from "./Skills.module.css";
-import { skills } from "@/data/skills";
+
+const skills = [
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "TypeScript",
+    "Python",
+    "C#",
+    "Java",
+    "C++",
+    "SQL",
+    "MySQL",
+    "React",
+    "Next.js",
+    "Node.js",
+    "MongoDB",
+    "Git",
+    "REST APIs",
+];
 
 export default function Skills() {
     return (
-        <section className={styles.skillsSection}>
+        <section className={styles.skills}>
             <div className={styles.container}>
-                <h2 className={styles.heading}>Skills</h2>
+                <h2 className={styles.title}>Skills</h2>
+                <p className={styles.subtitle}>Technologies I work with</p>
 
-                <ul className={styles.skillsList}>
+                <div className={styles.grid}>
                     {skills.map((skill) => (
-                        <li key={skill} className={styles.skillItem}>
-                            {skill}
-                        </li>
+                        <div key={skill} className={styles.card}>
+                            <p className={styles.skillName}>{skill}</p>
+                        </div>
                     ))}
-                </ul>
+                </div>
             </div>
         </section>
     );

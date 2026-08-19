@@ -1,0 +1,14 @@
+.section {
+    padding: var(--space-lg) 0;
+}
+
+.sectionTitle {
+    font-size: var(--font-title);
+    margin-bottom: var(--space-md);
+}
+
+.sectionSubtitle {
+    font-size: var(--font-subtitle);
+    color: var(--color-secondary);
+    margin-bottom: var(--space-md);
+}

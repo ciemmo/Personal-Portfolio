@@ -1,7 +1,87 @@
-.projectsSection {}
+.projects {
+    padding: var(--space-lg) 0;
+    background: var(--color-bg);
+}
 
-.container {}
+.container {
+    width: min(1200px, 90%);
+    margin: 0 auto;
+}
 
-.heading {}
+.title {
+    font-size: var(--font-title);
+    margin-bottom: var(--space-sm);
+    color: var(--color-text);
+}
 
-.grid {}
+.subtitle {
+    font-size: var(--font-subtitle);
+    color: var(--color-secondary);
+    margin-bottom: var(--space-md);
+}
+
+/* Grid Layout */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-md);
+}
+
+/* Project Card */
+.card {
+    background: white;
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Project Title */
+.cardTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+    color: var(--color-text);
+}
+
+/* Project Description */
+.cardDescription {
+    font-size: 0.95rem;
+    color: var(--color-secondary);
+    margin-bottom: var(--space-md);
+}
+
+/* View Button */
+.button {
+    background: var(--color-primary);
+    color: white;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    text-align: center;
+    transition: 0.2s;
+    margin-top: auto;
+}
+
+.button:hover {
+    background: var(--color-accent);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .title {
+        text-align: center;
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        text-align: center;
+    }
+}
