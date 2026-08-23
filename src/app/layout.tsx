@@ -1,6 +1,8 @@
 import "@/styles/globals.css";
 import "@/styles/variables.css";
 import "@/styles/layout.css";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
 
 export const metadata = {
     title: "Portfolio Website",
@@ -13,15 +15,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <head>
                 <meta charSet="UTF-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                <title>{metadata.title}</title>
                 <meta name="description" content={metadata.description} />
-                <meta property="og:url" content="https://emmanuel-ogungbure.dev"></meta>
-                <meta property="og:type" content="website"></meta>
-                <meta property="og:title" content={metadata.title}></meta>
-                <meta property="og:description" content={metadata.description}></meta>
+                <link rel="icon" href="/favicon.ico" />
+                <title>{metadata.title}</title>
             </head>
             <body>
+                <Navbar />
                 {children}
+                <Footer />
             </body>
         </html>
     );

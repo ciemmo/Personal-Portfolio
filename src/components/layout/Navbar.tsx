@@ -3,6 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import styles from "./Navbar.module.css";
+import { useEffect } from "react";
+
+useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark") {
+        document.documentElement.classList.add("dark");
+    }
+}, []);
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);
@@ -26,6 +34,17 @@ export default function Navbar() {
                 >
                     ☰
                 </div>
+
+                <button
+                    className={styles.themeToggle}
+                    onClick={() => {
+                        const html = document.documentElement;
+                        const isDark = html.classList.toggle("dark");
+                        localStorage.setItem("theme", isDark ? "dark" : "light");
+                    }}
+                >
+                    {document.documentElement.classList.contains("dark") ? "☀️" : "🌙"}
+                </button>
             </div>
 
             {open && (

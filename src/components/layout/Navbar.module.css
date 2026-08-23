@@ -37,6 +37,19 @@
     color: var(--color-primary);
 }
 
+.themeToggle {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-left: var(--space-sm);
+    transition: 0.2s;
+}
+
+.themeToggle:hover {
+    transform: scale(1.1);
+}
+
 /* Mobile */
 .mobileToggle {
     display: none;
