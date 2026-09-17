@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import styles from "./Footer.module.css";
 import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";

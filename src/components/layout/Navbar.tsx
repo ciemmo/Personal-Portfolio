@@ -1,19 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./Navbar.module.css";
-import { useEffect } from "react";
-
-useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved === "dark") {
-        document.documentElement.classList.add("dark");
-    }
-}, []);
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);
+    const [isDark, setIsDark] = useState(false);
+    const [hydrated, setHydrated] = useState(false); // ⭐ prevents hydration mismatch
+
+    useEffect(() => {
+        setHydrated(true); // ⭐ ensures theme icon only renders client-side
+
+        const saved = localStorage.getItem("theme");
+        const dark = saved === "dark";
+
+        setIsDark(dark);
+
+        if (dark) {
+            document.documentElement.classList.add("dark");
+        } else {
+            document.documentElement.classList.remove("dark");
+        }
+    }, []);
+
+    const toggleTheme = () => {
+        const html = document.documentElement;
+        const newDark = !isDark;
+
+        setIsDark(newDark);
+
+        html.classList.toggle("dark", newDark);
+        localStorage.setItem("theme", newDark ? "dark" : "light");
+    };
 
     return (
         <nav className={styles.navbar}>
@@ -37,13 +56,10 @@ export default function Navbar() {
 
                 <button
                     className={styles.themeToggle}
-                    onClick={() => {
-                        const html = document.documentElement;
-                        const isDark = html.classList.toggle("dark");
-                        localStorage.setItem("theme", isDark ? "dark" : "light");
-                    }}
+                    onClick={toggleTheme}
                 >
-                    {document.documentElement.classList.contains("dark") ? "☀️" : "🌙"}
+                    {/* ⭐ Only render icon after hydration */}
+                    {hydrated && (isDark ? "☀️" : "🌙")}
                 </button>
             </div>
 
