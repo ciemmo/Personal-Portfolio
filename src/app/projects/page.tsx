@@ -26,6 +26,7 @@ export default async function ProjectsPage() {
             </h1>
 
             <div
+                className="projects-grid"
                 style={{
                     display: "grid",
                     gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",

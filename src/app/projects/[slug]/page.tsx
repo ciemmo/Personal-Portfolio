@@ -118,7 +118,7 @@ export default async function ProjectDetailPage(context: any) {
                         display: "inline-block",
                         padding: "var(--space-sm) var(--space-md)",
                         background: "var(--color-primary)",
-                        color: "white",
+                        color: "var(--color-bg)",
                         borderRadius: "var(--radius-md)",
                         textDecoration: "none",
                         fontWeight: 500,

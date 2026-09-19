@@ -1,0 +1,25 @@
+/* Base hidden state */
+.fade-in,
+.slide-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* When visible */
+.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Optional stagger effect */
+.stagger>* {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.stagger>*.animate {
+    opacity: 1;
+    transform: translateY(0);
+}

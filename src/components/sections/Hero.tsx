@@ -1,8 +1,13 @@
+"use client"
+
 import React from "react";
 import styles from "./Hero.module.css";
 import Link from "next/link";
+import useScrollAnimation from "@/hooks/useScrollAnimation";
 
 export default function Hero() {
+    useScrollAnimation();
+
     return (
         <section className={styles.hero}>
             <div className={styles.container}>
@@ -12,8 +17,8 @@ export default function Hero() {
                     </h1>
 
                     <p className={styles.subtitle}>
-                        Computer Science graduate passionate about
-                        software engineering, software development, and building clean, scalable software.
+                        Computer Science graduate passionate about building clean, scalable software
+                        and creating meaningful digital experiences.
                     </p>
 
                     <div className={styles.buttons}>
@@ -26,7 +31,6 @@ export default function Hero() {
                     </div>
                 </div>
 
-                {/* Optional image */}
                 <div className={styles.imageWrapper}>
                     <img
                         src="/images/placeholder.png"

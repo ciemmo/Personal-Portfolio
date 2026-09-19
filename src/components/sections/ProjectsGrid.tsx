@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "./ProjectsGrid.module.css";
+import useScrollAnimation from "@/hooks/useScrollAnimation";
 
 export default function ProjectsGrid() {
+    useScrollAnimation();
     const [projects, setProjects] = useState([]);
 
     useEffect(() => {

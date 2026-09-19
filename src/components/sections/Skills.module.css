@@ -1,49 +1,52 @@
 .skills {
-    padding: var(--space-lg) 0;
+    padding: var(--space-xl) 0;
     background: var(--color-bg);
 }
 
 .container {
     width: min(1200px, 90%);
     margin: 0 auto;
+    text-align: center;
 }
 
 .title {
-    font-size: var(--font-title);
+    font-size: 2rem;
     margin-bottom: var(--space-sm);
     color: var(--color-text);
 }
 
 .subtitle {
-    font-size: var(--font-subtitle);
-    color: var(--color-secondary);
-    margin-bottom: var(--space-md);
+    font-size: 1.2rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--space-lg);
 }
 
-/* Skills Grid */
+/* Grid */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: var(--space-md);
+    margin-top: var(--space-md);
 }
 
-/* Skill Card */
+/* Skill Card Backdrop */
 .card {
-    background: white;
+    background: var(--color-bg-secondary);
+
+    /* subtle backdrop */
     padding: var(--space-md);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
-    text-align: center;
-    transition: 0.2s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-3px);
     box-shadow: var(--shadow-md);
 }
 
 .skillName {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--color-text);
 }
@@ -51,11 +54,10 @@
 /* Mobile */
 @media (max-width: 768px) {
     .title {
-        font-size: 2rem;
-        text-align: center;
+        font-size: 1.75rem;
     }
 
     .subtitle {
-        text-align: center;
+        font-size: 1.1rem;
     }
 }

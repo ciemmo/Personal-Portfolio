@@ -1,4 +1,7 @@
+"use client"
+
 import styles from "./Skills.module.css";
+import useScrollAnimation from "@/hooks/useScrollAnimation";
 
 const skills = [
     "HTML",
@@ -20,6 +23,8 @@ const skills = [
 ];
 
 export default function Skills() {
+    useScrollAnimation();
+
     return (
         <section className={styles.skills}>
             <div className={styles.container}>

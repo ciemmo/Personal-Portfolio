@@ -1,5 +1,5 @@
 .about {
-    padding: var(--space-lg) 0;
+    padding: var(--space-xl) 0;
     background: var(--color-bg);
 }
 
@@ -9,7 +9,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-lg);
+    gap: var(--space-xl);
 }
 
 .text {
@@ -17,21 +17,23 @@
 }
 
 .title {
-    font-size: var(--font-title);
+    font-size: 2rem;
     margin-bottom: var(--space-sm);
     color: var(--color-text);
 }
 
 .subtitle {
-    font-size: var(--font-subtitle);
-    color: var(--color-secondary);
+    font-size: 1.2rem;
+    color: var(--color-text-light);
     margin-bottom: var(--space-md);
 }
 
 .paragraph {
-    font-size: var(--font-body);
-    margin-bottom: var(--space-sm);
+    font-size: 1rem;
+    margin-bottom: var(--space-md);
     max-width: 600px;
+    line-height: 1.6;
+    color: var(--color-text);
 }
 
 .imageWrapper {
@@ -44,7 +46,7 @@
     width: 300px;
     height: 300px;
     object-fit: cover;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
 }
 
@@ -56,11 +58,11 @@
     }
 
     .imageWrapper {
-        margin-top: var(--space-md);
+        margin-top: var(--space-lg);
     }
 
     .title {
-        font-size: 2rem;
+        font-size: 1.75rem;
     }
 
     .subtitle {
@@ -68,6 +70,6 @@
     }
 
     .paragraph {
-        margin: 0 auto var(--space-sm);
+        margin: 0 auto var(--space-md);
     }
 }
