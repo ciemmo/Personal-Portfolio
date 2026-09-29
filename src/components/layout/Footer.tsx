@@ -8,7 +8,6 @@ export default function Footer() {
     return (
         <footer className={styles.footer}>
             <div className={styles.container}>
-
                 {/* Navigation */}
                 <div className={styles.nav}>
                     <Link href="/" className={styles.navLink}>Home</Link>
@@ -19,7 +18,7 @@ export default function Footer() {
                 {/* Social Icons */}
                 <div className={styles.social}>
                     <a
-                        href="https://github.com/yourusername"
+                        href="https://github.com/ciemmo"
                         target="_blank"
                         className={styles.icon}
                     >
@@ -27,7 +26,7 @@ export default function Footer() {
                     </a>
 
                     <a
-                        href="https://linkedin.com/in/yourusername"
+                        href="https://www.linkedin.com/in/eogungbure/"
                         target="_blank"
                         className={styles.icon}
                     >
@@ -35,7 +34,7 @@ export default function Footer() {
                     </a>
 
                     <a
-                        href="mailto:your@email.com"
+                        href="mailto:eogungbure@gmail.com"
                         className={styles.icon}
                     >
                         <FaEnvelope />

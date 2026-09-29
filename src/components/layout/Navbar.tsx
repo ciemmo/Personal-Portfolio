@@ -59,7 +59,9 @@ export default function Navbar() {
                     onClick={toggleTheme}
                 >
                     {/* ⭐ Only render icon after hydration */}
-                    {hydrated && (isDark ? "☀️" : "🌙")}
+                    <span suppressHydrationWarning>
+                        {hydrated && (isDark ? "☀️" : "🌙")}
+                    </span>
                 </button>
             </div>
 

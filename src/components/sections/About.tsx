@@ -27,14 +27,6 @@ export default function About() {
                         always excited to take on new challenges.
                     </p>
                 </div>
-
-                <div className={styles.imageWrapper}>
-                    <img
-                        src="/images/profile.jpg"
-                        alt="Profile"
-                        className={styles.image}
-                    />
-                </div>
             </div>
         </section>
     );
