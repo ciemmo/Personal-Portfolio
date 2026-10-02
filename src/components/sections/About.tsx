@@ -1,7 +1,7 @@
 "use client"
 
 import styles from "./About.module.css";
-import useScrollAnimation from "@/hooks/useScrollAnimation";
+import useScrollAnimation from "../../hooks/useScrollAnimation";
 
 export default function About() {
     useScrollAnimation();

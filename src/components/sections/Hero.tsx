@@ -3,7 +3,7 @@
 import React from "react";
 import styles from "./Hero.module.css";
 import Link from "next/link";
-import useScrollAnimation from "@/hooks/useScrollAnimation";
+import useScrollAnimation from "../../hooks/useScrollAnimation";
 
 export default function Hero() {
     useScrollAnimation();
