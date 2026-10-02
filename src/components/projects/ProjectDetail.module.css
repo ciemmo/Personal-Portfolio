@@ -1,0 +1,38 @@
+.projectDetail {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.projectHeader {
+  margin-bottom: 2rem;
+}
+
+.projectTitle {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.projectTags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background-color: #e9ecef;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.projectContent {
+  line-height: 1.6;
+}
+
+.projectImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+}
