@@ -5,6 +5,7 @@
     position: sticky;
     top: 0;
     z-index: 50;
+    transition: transform 0.3s ease, background 0.3s ease;
 }
 
 .container {
@@ -31,11 +32,35 @@
     color: var(--color-text);
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
+    position: relative;
 }
 
 .link:hover {
     color: var(--color-primary);
+}
+
+.link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--color-primary);
+    transition: width 0.3s ease;
+}
+
+.link:hover::after {
+    width: 100%;
+}
+
+.activeLink {
+    color: var(--color-primary) !important;
+}
+
+.activeLink::after {
+    width: 100%;
 }
 
 /* Theme Toggle */
@@ -45,6 +70,11 @@
     font-size: 1.25rem;
     cursor: pointer;
     margin-left: var(--space-md);
+    transition: transform 0.2s ease;
+}
+
+.themeToggle:hover {
+    transform: scale(1.1);
 }
 
 /* Mobile */
@@ -61,12 +91,40 @@
     padding: var(--space-md);
     background: var(--color-bg);
     border-top: 1px solid var(--color-border);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    transform-origin: top;
+}
+
+.mobileMenuVisible {
+    display: flex;
+    animation: slideDown 0.3s ease forwards;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .mobileLink {
     color: var(--color-text);
     text-decoration: none;
     font-weight: 500;
+    padding: var(--space-xs) 0;
+    transition: all 0.2s ease;
+}
+
+.mobileLink:hover {
+    color: var(--color-primary);
+    padding-left: var(--space-xs);
 }
 
 @media (max-width: 768px) {
@@ -81,4 +139,15 @@
     .mobileMenu {
         display: flex;
     }
+}
+
+/* Hide navbar when scrolling down */
+.hidden {
+    transform: translateY(-100%);
+}
+
+/* Optional: make navbar slightly transparent when scrolled */
+.scrolled {
+    background: rgba(var(--color-bg-rgb), 0.95);
+    backdrop-filter: blur(10px);
 }
