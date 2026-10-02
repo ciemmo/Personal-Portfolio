@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import SearchBar from "./SearchBar";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
@@ -94,6 +95,11 @@ export default function Navbar() {
                     >
                         Contact
                     </Link>
+                </div>
+
+                {/* Search Bar - Desktop only */}
+                <div className={styles.searchContainer}>
+                    <SearchBar />
                 </div>
 
                 <div
