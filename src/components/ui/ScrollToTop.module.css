@@ -1,0 +1,32 @@
+.scrollToTop {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 1000;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.scrollToTop:hover {
+  opacity: 0.9;
+  transform: scale(1.1);
+}
+
+.scrollToTop:active {
+  transform: scale(0.95);
+}
+
+.scrollToTop.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
