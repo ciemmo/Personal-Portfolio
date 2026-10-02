@@ -1,0 +1,69 @@
+/* Project Detail Page Styles */
+
+/* Existing styles would be here if the file existed */
+
+/* Project Navigation */
+.project-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-xl);
+  padding: var(--space-lg) 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+}
+
+.nav-link.prev {
+  justify-content: flex-start;
+}
+
+.nav-link.next {
+  justify-content: flex-end;
+}
+
+.nav-label {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin-bottom: var(--space-xs);
+}
+
+.nav-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+  max-width: 150px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-link:hover .nav-label,
+.nav-link:hover .nav-title {
+  color: var(--color-primary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .project-navigation {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .nav-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nav-label,
+  .nav-title {
+    max-width: none;
+  }
+}

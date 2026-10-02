@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
 export async function generateMetadata(context: any) {
     const { slug } = await context.params;
@@ -41,6 +42,21 @@ export default async function ProjectDetailPage(context: any) {
 
     const project = await res.json();
 
+    // Fetch all projects for navigation
+    const allProjectsRes = await fetch("http://localhost:3000/api/projects", {
+        cache: "force-cache"
+    });
+    const allProjects: any[] = await allProjectsRes.json();
+
+    const currentIndex = allProjects.findIndex(p => p.slug === slug);
+
+    const prevProject = allProjects[
+      (currentIndex - 1 + allProjects.length) % allProjects.length
+    ];
+    const nextProject = allProjects[
+      (currentIndex + 1) % allProjects.length
+    ];
+
     return (
         <section
             style={{
@@ -66,7 +82,7 @@ export default async function ProjectDetailPage(context: any) {
 
             <h1
                 style={{
-                    fontSize: "2rem",
+                    fontSize: "2.5rem",
                     marginBottom: "var(--space-md)",
                 }}
             >
@@ -103,8 +119,8 @@ export default async function ProjectDetailPage(context: any) {
                     color: "var(--color-text-light)",
                 }}
             >
-                {project.tech.map((t: string) => (
-                    <li key={t} style={{ marginBottom: "var(--space-sm)" }}>
+                {project.tech.map((t: string, index: number) => (
+                    <li key={`${t}-${index}`} style={{ marginBottom: "var(--space-sm)" }}>
                         {t}
                     </li>
                 ))}
@@ -114,6 +130,7 @@ export default async function ProjectDetailPage(context: any) {
                 <a
                     href={project.github}
                     target="_blank"
+                    rel="noopener noreferrer"
                     style={{
                         display: "inline-block",
                         padding: "var(--space-sm) var(--space-md)",
@@ -127,6 +144,47 @@ export default async function ProjectDetailPage(context: any) {
                     View on GitHub
                 </a>
             )}
+
+            {project.demo && (
+                <a
+                    href={project.demo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                        display: "inline-block",
+                        marginLeft: "var(--space-sm)",
+                        padding: "var(--space-sm) var(--space-md)",
+                        background: "var(--color-success)",
+                        color: "var(--color-bg)",
+                        borderRadius: "var(--radius-md)",
+                        textDecoration: "none",
+                        fontWeight: 500,
+                    }}
+                >
+                    Live Demo
+                </a>
+            )}
+
+            {/* Project Navigation */}
+            <nav className="project-navigation">
+              <Link
+                href={`/projects/${prevProject.slug}`}
+                className="nav-link prev"
+                aria-label="Previous project"
+              >
+                <span className="nav-label">Previous Project</span>
+                <span className="nav-title">{prevProject.title}</span>
+              </Link>
+
+              <Link
+                href={`/projects/${nextProject.slug}`}
+                className="nav-link next"
+                aria-label="Next project"
+              >
+                <span className="nav-label">Next Project</span>
+                <span className="nav-title">{nextProject.title}</span>
+              </Link>
+            </nav>
         </section>
     );
 }

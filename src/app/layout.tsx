@@ -4,46 +4,25 @@ import "@/styles/layout.css";
 import "@/styles/animations.css";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
-
-import { Inter } from "next/font/google";
 import ScrollToTop from "@/components/ui/ScrollToTop";
-import PageTransitionWrapper from "@/components/ui/PageTransition";
-
-export const metadata = {
-    title: "Emmanuel | Software Engineer Portfolio",
-    description:
-        "Portfolio of Emmanuel, a software engineer specializing in full-stack development, system design, and scalable applications.",
-    keywords: [
-        "Software Engineer",
-        "Full Stack Developer",
-        "React Developer",
-        "Next.js Developer",
-        "MERN Developer",
-        "Portfolio",
-        "Emmanuel",
-    ],
-    authors: [{ name: "Emmanuel" }],
-    creator: "Emmanuel",
-    metadataBase: new URL("https://emmanuel"),
-    openGraph: {
-        title: "Emmanuel | Software Engineer Portfolio",
-        description:
-            "Explore projects, skills, and experience of Emmanuel, a full-stack software engineer.",
-        url: "https://your-domain.com",
-        siteName: "Emmanuel Portfolio",
-    },
-};
-
-const inter = Inter({
-    subsets: ["latin"],
-    display: "swap",
-});
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+    const pathname = usePathname();
+
+    // Only show breadcrumbs for nested routes (not home, not api routes)
+    const pathSegments = pathname.split("/").filter(Boolean);
+    const showBreadcrumbs =
+      pathname !== "/" &&
+      !pathname.startsWith("/api") &&
+      pathSegments.length > 0;
+
     return (
         <html lang="en">
             <body>
                 <Navbar />
+                {showBreadcrumbs && <Breadcrumb pathname={pathname} />}
                 <PageTransitionWrapper>
                     {children}
                 </PageTransitionWrapper>
@@ -51,5 +30,37 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Footer />
             </body>
         </html>
+    );
+}
+
+// Breadcrumb component
+function Breadcrumb({ pathname }: { pathname: string }) {
+    const segments = pathname
+      .split("/")
+      .filter(Boolean)
+      .map((segment, index) => ({
+        label: segment.charAt(0).toUpperCase() + segment.slice(1),
+        href: `/${segments.slice(0, index + 1).join("/")}`,
+        isLast: index === segments.length - 1
+      }));
+
+    return (
+      <nav className="breadcrumb" aria-label="breadcrumb">
+        <ol>
+          <li>
+            <Link href="/">Home</Link>
+          </li>
+          {segments.map((segment, index) => (
+            <li key={segment.label} className={segment.isLast ? "active" : ""}>
+              {!segment.isLast && (
+                <Link href={segment.href}>
+                  {segment.label}
+                </Link>
+              )}
+              {segment.isLast && <span>{segment.label}</span>}
+            }
+          ))}
+        </ol>
+      </nav>
     );
 }
