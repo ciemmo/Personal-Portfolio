@@ -58,7 +58,7 @@ function Breadcrumb({ pathname }: { pathname: string }) {
                 </Link>
               )}
               {segment.isLast && <span>{segment.label}</span>}
-            }
+            </li>
           ))}
         </ol>
       </nav>
