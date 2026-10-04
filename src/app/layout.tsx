@@ -34,6 +34,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 
 // Breadcrumb component
+"use client";
+
 function Breadcrumb({ pathname }: { pathname: string }) {
     const segments = pathname
       .split("/")
