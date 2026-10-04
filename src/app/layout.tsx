@@ -1,3 +1,5 @@
+"use client";
+
 import "@/styles/globals.css";
 import "@/styles/variables.css";
 import "@/styles/layout.css";
@@ -5,6 +7,7 @@ import "@/styles/animations.css";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import ScrollToTop from "@/components/ui/ScrollToTop";
+import PageTransitionWrapper from "@/components/ui/PageTransition";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -34,8 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 
 // Breadcrumb component
-"use client";
-
 function Breadcrumb({ pathname }: { pathname: string }) {
     const segments = pathname
       .split("/")
