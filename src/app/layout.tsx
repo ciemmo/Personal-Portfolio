@@ -38,14 +38,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 // Breadcrumb component
 function Breadcrumb({ pathname }: { pathname: string }) {
-    const segments = pathname
-      .split("/")
-      .filter(Boolean)
-      .map((segment, index) => ({
-        label: segment.charAt(0).toUpperCase() + segment.slice(1),
-        href: `/${segments.slice(0, index + 1).join("/")}`,
-        isLast: index === segments.length - 1
-      }));
+    const pathParts = pathname.split("/").filter(Boolean);
+    const items = [];
+    let currentPath = "";
+
+    for (let i = 0; i < pathParts.length; i++) {
+      const segment = pathParts[i];
+      currentPath += `/${segment}`;
+
+      items.push(
+        <li
+          key={segment}
+          className={i === pathParts.length - 1 ? "active" : ""}
+        >
+          {i === pathParts.length - 1 ? (
+            <span>{segment}</span>
+          ) : (
+            <Link href={currentPath}>
+              {segment}
+            </Link>
+          )}
+        </li>
+      );
+    }
 
     return (
       <nav className="breadcrumb" aria-label="breadcrumb">
@@ -53,16 +68,7 @@ function Breadcrumb({ pathname }: { pathname: string }) {
           <li>
             <Link href="/">Home</Link>
           </li>
-          {segments.map((segment, index) => (
-            <li key={segment.label} className={segment.isLast ? "active" : ""}>
-              {!segment.isLast && (
-                <Link href={segment.href}>
-                  {segment.label}
-                </Link>
-              )}
-              {segment.isLast && <span>{segment.label}</span>}
-            </li>
-          ))}
+          {items}
         </ol>
       </nav>
     );
