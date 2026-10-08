@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { skillRoles, skillIcons } from "@/data/skillRoles";
+import styles from "./ProjectDetail.module.css";
 
 export async function generateMetadata(context: any) {
     const { slug } = await context.params;
@@ -42,7 +44,7 @@ export default async function ProjectDetailPage(context: any) {
 
     const project = await res.json();
 
-    // Fetch all projects for navigation
+    // Fetch all projects for navigation and related projects
     const allProjectsRes = await fetch("http://localhost:3000/api/projects", {
         cache: "force-cache"
     });
@@ -57,132 +59,156 @@ export default async function ProjectDetailPage(context: any) {
       (currentIndex + 1) % allProjects.length
     ];
 
+    // Calculate related projects (sharing skills/tech)
+    const getRelatedProjects = (currentProject: any, allProjects: any[]) => {
+      return allProjects
+        .filter(p => p.slug !== currentProject.slug)
+        .map(project => {
+          // Calculate skill overlap score
+          const currentSkills = new Set(currentProject.skillRoles || []);
+          const projectSkills = new Set(project.skillRoles || []);
+          const intersection = [...currentSkills].filter(skill => projectSkills.has(skill));
+          const score = intersection.length;
+
+          return { project, score };
+        })
+        .filter(item => item.score > 0) // Only projects with shared skills
+        .sort((a, b) => b.score - a.score) // Highest score first
+        .slice(0, 3) // Top 3 related projects
+        .map(item => item.project);
+    };
+
+    const relatedProjects = getRelatedProjects(project, allProjects);
+
     return (
-        <section
-            style={{
-                padding: "var(--space-xl) var(--space-md)",
-                maxWidth: "800px",
-                margin: "0 auto",
-            }}
-        >
+        <section className={styles.projectDetail}>
             {/* Back to Projects */}
             <a
                 href="/projects"
-                style={{
-                    display: "inline-block",
-                    marginBottom: "var(--space-lg)",
-                    color: "var(--color-primary)",
-                    textDecoration: "none",
-                    fontSize: "0.9rem",
-                    fontWeight: 500,
-                }}
+                className={styles.backLink}
             >
                 ← Back to Projects
             </a>
 
-            <h1
-                style={{
-                    fontSize: "2.5rem",
-                    marginBottom: "var(--space-md)",
-                }}
-            >
+            <h1 className={styles.projectTitle}>
                 {project.title}
             </h1>
 
-            <div
-                style={{
-                    marginBottom: "var(--space-lg)",
-                    lineHeight: "1.7",
-                    color: "var(--color-text)",
-                }}
-            >
+            <div className={styles.projectLongDescription}>
                 {project.longDescription.split("\n").map((line: string, i: number) => (
-                    <p key={i} style={{ marginBottom: "var(--space-md)" }}>
+                    <p key={i}>
                         {line}
                     </p>
                 ))}
             </div>
 
-            <h2
-                style={{
-                    marginBottom: "var(--space-sm)",
-                    fontSize: "1.25rem",
-                }}
-            >
+            <h2 className={styles.sectionTitle}>
                 Tech Stack
             </h2>
 
-            <ul
-                style={{
-                    marginBottom: "var(--space-lg)",
-                    paddingLeft: "var(--space-md)",
-                    color: "var(--color-text-light)",
-                }}
-            >
-                {project.tech.map((t: string, index: number) => (
-                    <li key={`${t}-${index}`} style={{ marginBottom: "var(--space-sm)" }}>
-                        {t}
-                    </li>
-                ))}
-            </ul>
+            <div className={styles.techStack}>
+                <div className={styles.techTags}>
+                  {project.tech.map((tech: string) => {
+                    const roles = skillRoles[tech as keyof typeof skillRoles] || [];
+                    const icon = skillIcons[tech as keyof typeof skillIcons] || '•';
+                    const primaryRole = roles[0] || 'frontend'; // fallback
 
-            {project.github && (
+                    return (
+                      <span
+                        key={tech}
+                        className={`${styles.techTag} ${styles[`role-${primaryRole}`]} ${styles.techTagInteractive}`}
+                        title={roles.length > 0 ? roles.join(', ') : 'Skill'}
+                      >
+                        <span className={styles.techIcon}>{icon}</span>
+                        <span className={styles.techName}>{tech}</span>
+                      </span>
+                    );
+                  })}
+                </div>
+            </div>
+
+            <div className={styles.actionButtons}>
+              {project.github && (
                 <a
                     href={project.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{
-                        display: "inline-block",
-                        padding: "var(--space-sm) var(--space-md)",
-                        background: "var(--color-primary)",
-                        color: "var(--color-bg)",
-                        borderRadius: "var(--radius-md)",
-                        textDecoration: "none",
-                        fontWeight: 500,
-                    }}
+                    className={styles.actionButton + " " + styles.actionButtonPrimary}
                 >
                     View on GitHub
                 </a>
-            )}
+              )}
 
-            {project.demo && (
+              {project.demo && (
                 <a
                     href={project.demo}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{
-                        display: "inline-block",
-                        marginLeft: "var(--space-sm)",
-                        padding: "var(--space-sm) var(--space-md)",
-                        background: "var(--color-success)",
-                        color: "var(--color-bg)",
-                        borderRadius: "var(--radius-md)",
-                        textDecoration: "none",
-                        fontWeight: 500,
-                    }}
+                    className={styles.actionButton + " " + styles.actionButtonSecondary}
                 >
                     Live Demo
                 </a>
+              )}
+            </div>
+
+            {/* Related Projects */}
+            {relatedProjects.length > 0 && (
+              <>
+                <h2 className={styles.sectionTitle}>You might also like</h2>
+                <div className={styles.relatedProjects}>
+                  <div className={styles.relatedProjectsGrid}>
+                    {relatedProjects.map((relatedProject) => {
+                      // Calculate shared skills for display
+                      const currentSkills = new Set(project.skillRoles || []);
+                      const relatedSkills = new Set(relatedProject.skillRoles || []);
+                      const sharedSkills = [...currentSkills].filter(skill => relatedSkills.has(skill));
+
+                      return (
+                        <div key={relatedProject.slug} className={styles.relatedProjectCard}>
+                          <h3 className={styles.relatedProjectTitle}>
+                            <Link href={`/projects/${relatedProject.slug}`} className={styles.relatedProjectTitle}>
+                              {relatedProject.title}
+                            </Link>
+                          </h3>
+                          <div className={styles.relatedProjectMeta}>
+                            <span>{sharedSkills.length} shared skills</span>
+                          </div>
+                          {sharedSkills.length > 0 && (
+                            <div className={styles.relatedProjectSkills}>
+                              {sharedSkills.slice(0, 3).map((skill, index) => (
+                                <span key={`${skill}-{index}`}>
+                                  {skill + (index < sharedSkills.length - 1 ? ', ' : '')}
+                                </span>
+                              ))}
+                              {sharedSkills.length > 3 && '...'}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
             )}
 
             {/* Project Navigation */}
-            <nav className="project-navigation">
+            <nav className={styles.projectNavigation}>
               <Link
-                href={`/projects/${prevProject.slug}`}
-                className="nav-link prev"
-                aria-label="Previous project"
+                  href={`/projects/${prevProject.slug}`}
+                  className={styles.navLink + " " + styles.navLinkPrev}
+                  aria-label="Previous project"
               >
-                <span className="nav-label">Previous Project</span>
-                <span className="nav-title">{prevProject.title}</span>
+                  <span className="nav-label">Previous Project</span>
+                  <span className="nav-title">{prevProject.title}</span>
               </Link>
 
               <Link
-                href={`/projects/${nextProject.slug}`}
-                className="nav-link next"
-                aria-label="Next project"
+                  href={`/projects/${nextProject.slug}`}
+                  className={styles.navLink + " " + styles.navLinkNext}
+                  aria-label="Next project"
               >
-                <span className="nav-label">Next Project</span>
-                <span className="nav-title">{nextProject.title}</span>
+                  <span className="nav-label">Next Project</span>
+                  <span className="nav-title">{nextProject.title}</span>
               </Link>
             </nav>
         </section>

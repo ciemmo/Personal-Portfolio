@@ -7,25 +7,42 @@ export default function About() {
     useScrollAnimation();
 
     return (
-        <section className={styles.about}>
+        <section className={`${styles.about} ${styles.fadeUp}`}>
             <div className={styles.container}>
                 <div className={styles.text}>
-                    <h2 className={styles.title}>About Me</h2>
-                    <p className={styles.subtitle}>
-                        Computer Science Graduate & Aspiring Software Engineer
-                    </p>
+                    <div className={styles.staggerUp}>
+                        <h2 className={styles.title}>About Me</h2>
+                        <p className={styles.subtitle}>
+                            Computer Science Graduate & Aspiring Software Engineer
+                        </p>
 
-                    <p className={styles.paragraph}>
-                        I'm Emmanuel, a passionate software engineer who loves building clean,
-                        scalable, and user‑focused applications. I enjoy solving complex problems
-                        and turning ideas into real, functional software.
-                    </p>
+                        <p className={styles.paragraph}>
+                            I'm Emmanuel, a passionate software engineer who loves building clean,
+                            scalable, and user‑focused applications. I enjoy solving complex problems
+                            and turning ideas into real, functional software.
+                        </p>
 
-                    <p className={styles.paragraph}>
-                        My interests include full‑stack development, backend development, and creating
-                        fun, and useful applications. I’m always learning, always improving, and
-                        always excited to take on new challenges.
-                    </p>
+                        <p className={styles.paragraph}>
+                            My interests include full‑stack development, backend development, and creating
+                            fun, and useful applications. I’m always learning, always improving, and
+                            always excited to take on new challenges.
+                        </p>
+
+                        <div className={styles.ctaContainer}>
+                            <a
+                                href="/resume-emmanuel.pdf"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={styles.ctaButton}
+                            >
+                                View Resume
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div className={`${styles.imageWrapper} ${styles.fadeUp}`}>
+                    {/* Image placeholder - actual image would be added here */}
+                    <div className={styles.imagePlaceholder} />
                 </div>
             </div>
         </section>

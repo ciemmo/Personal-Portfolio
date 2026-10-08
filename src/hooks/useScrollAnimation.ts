@@ -5,7 +5,7 @@ import { useEffect } from "react";
 export default function useScrollAnimation() {
     useEffect(() => {
         const elements = document.querySelectorAll(
-            ".fade-in, .slide-up, .stagger > *"
+            ".fade-up, .stagger-up > *"
         );
 
         const observer = new IntersectionObserver(

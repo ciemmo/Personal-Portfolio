@@ -7,8 +7,10 @@ const ProjectSchema = new Schema(
         description: { type: String, required: true },
         longDescription: { type: String, required: true },
         tech: { type: [String], required: true },
+        skillRoles: { type: [String] },
         github: { type: String },
         demo: { type: String },
+        image: { type: String },
     },
     { timestamps: true }
 );
