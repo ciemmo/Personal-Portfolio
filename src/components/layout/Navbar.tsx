@@ -18,12 +18,23 @@ export default function Navbar() {
     useEffect(() => {
         setHydrated(true); // ⭐ ensures theme icon only renders client-side
 
+        // Check localStorage first
         const saved = localStorage.getItem("theme");
-        const dark = saved === "dark";
+        if (saved) {
+            const dark = saved === "dark";
+            setIsDark(dark);
+            if (dark) {
+                document.documentElement.classList.add("dark");
+            } else {
+                document.documentElement.classList.remove("dark");
+            }
+            return;
+        }
 
-        setIsDark(dark);
-
-        if (dark) {
+        // Check system preference
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        setIsDark(prefersDark);
+        if (prefersDark) {
             document.documentElement.classList.add("dark");
         } else {
             document.documentElement.classList.remove("dark");

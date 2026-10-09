@@ -1,9 +1,12 @@
 :root {
     /* Spacing */
+    --space-xxs: 0.25rem;
+    --space-xs: 0.5rem;
     --space-sm: 0.5rem;
     --space-md: 1rem;
     --space-lg: 2rem;
     --space-xl: 4rem;
+    --space-xxl: 6rem;
 
     /* Radii */
     --radius-sm: 6px;
@@ -16,28 +19,46 @@
     --color-text: #111111;
     --color-text-light: #555555;
     --color-border: #e5e7eb;
-
     --color-primary: #0070f3;
     --color-primary-hover: #0059c9;
+    --color-accent: #00f3b0;
+    --color-success: #10b981;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
 
     /* Shadows */
     --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.15);
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-medium: 300ms ease;
+    --transition-slow: 500ms ease;
+
+    /* Animation durations */
+    --animation-fast: 150ms;
+    --animation-medium: 300ms;
+    --animation-slow: 500ms;
 }
 
 /* DARK MODE */
 html.dark {
+    /* Dark Mode Colors */
     --color-bg: #0f0f0f;
     --color-bg-secondary: #1a1a1a;
-
     --color-text: #f5f5f5;
     --color-text-light: #cccccc;
-
     --color-border: #333333;
-
     --color-primary: #3b82f6;
     --color-primary-hover: #2563eb;
+    --color-accent: #00f3b0;
+    --color-success: #10b981;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
 
+    /* Shadows (lighter for dark mode) */
     --shadow-sm: 0 2px 6px rgba(255, 255, 255, 0.08);
     --shadow-md: 0 4px 12px rgba(255, 255, 255, 0.12);
+    --shadow-lg: 0 10px 20px rgba(255, 255, 255, 0.15);
 }

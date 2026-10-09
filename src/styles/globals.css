@@ -26,41 +26,6 @@ main {
     flex: 1;
 }
 
-/* Global Variables */
-:root {
-    /* Spacing */
-    --space-xs: 0.25rem;
-    --space-sm: 0.5rem;
-    --space-md: 1rem;
-    --space-lg: 2rem;
-    --space-xl: 4rem;
-
-    /* Colors */
-    --color-bg: #ffffff;
-    --color-text: #111;
-    --color-text-light: #555;
-    --color-border: #e5e7eb;
-    --color-primary: #0070f3;
-    --color-accent: #00f3b0;
-
-    /* Radius */
-    --radius-sm: 6px;
-    --radius-md: 12px;
-    --radius-lg: 20px;
-
-    /* Shadows */
-    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-
-/* Dark Mode */
-.dark {
-    --color-bg: #0d0d0d;
-    --color-text: #f5f5f5;
-    --color-text-light: #ccc;
-    --color-border: #333;
-    --color-accent: #00f3b0;
-}
 
 /* Links */
 a {
