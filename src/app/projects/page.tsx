@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 import ProjectSkeleton from "@/components/ui/ProjectSkeleton";
+import { skillRolesByTech, skillIcons } from "@/data/skillRoles";
 
 interface Project {
   slug: string;
@@ -27,7 +28,7 @@ export default function ProjectsPage() {
   const [allSkillRoles, setAllSkillRoles] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Fetch projects and extract unique technologies
   useEffect(() => {
@@ -228,18 +229,18 @@ export default function ProjectsPage() {
                 );
               })}
             </div>
-          </div>
 
-          <div className="filter-menu-footer">
-            <button
-              onClick={() => {
-                setSelectedTechFilters(new Set());
-                setSelectedSkillFilters(new Set());
-              }}
-              className="clear-filters-btn"
-            >
-              Clear All Filters
-            </button>
+            <div className="filter-menu-footer">
+              <button
+                onClick={() => {
+                  setSelectedTechFilters(new Set());
+                  setSelectedSkillFilters(new Set());
+                }}
+                className="clear-filters-btn"
+              >
+                Clear All Filters
+              </button>
+            </div>
           </div>
         </div>
       )}

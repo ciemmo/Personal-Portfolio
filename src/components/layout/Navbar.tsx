@@ -106,6 +106,19 @@ export default function Navbar() {
                     >
                         Contact
                     </Link>
+                    <Link
+                        href="/blog"
+                        className={`${styles.link} ${getActiveClass("/blog")}`}
+                    >
+                        Blog
+                    </Link>
+                    {/* Upload Resume link - for development/admin use */}
+                    <Link
+                        href="/upload-resume"
+                        className={`${styles.link} ${getActiveClass("/upload-resume")} ${styles.adminLink}`}
+                    >
+                        Upload Resume
+                    </Link>
                 </div>
 
                 {/* Search Bar - Desktop only */}
@@ -156,6 +169,21 @@ export default function Navbar() {
                         onClick={() => setOpen(false)}
                     >
                         Contact
+                    </Link>
+                    <Link
+                        href="/blog"
+                        className={`${styles.mobileLink} ${getActiveClass("/blog")}`}
+                        onClick={() => setOpen(false)}
+                    >
+                        Blog
+                    </Link>
+                    {/* Upload Resume link in mobile menu */}
+                    <Link
+                        href="/upload-resume"
+                        className={`${styles.mobileLink} ${getActiveClass("/upload-resume")} ${styles.adminLink}`}
+                        onClick={() => setOpen(false)}
+                    >
+                        Upload Resume
                     </Link>
                 </div>
             )}

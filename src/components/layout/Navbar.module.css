@@ -68,6 +68,26 @@
     width: 100%;
 }
 
+/* Admin link styling */
+.adminLink {
+    background: var(--color-primary);
+    color: var(--color-bg);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+}
+
+.adminLink:hover {
+    background: var(--color-primary-dark);
+    color: var(--color-bg);
+}
+
+.adminLink::after {
+    display: none;
+}
+
 /* Search Container */
 .searchContainer {
     display: flex;
@@ -351,9 +371,11 @@
 .loader:nth-child(1) {
     animation-delay: 0s;
 }
+
 .loader:nth-child(2) {
     animation-delay: 0.2s;
 }
+
 .loader:nth-child(3) {
     animation-delay: 0.4s;
 }
