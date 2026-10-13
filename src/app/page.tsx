@@ -1,8 +1,10 @@
 import About from "@/components/sections/About";
 import Achievements from "@/components/sections/Achievements";
+import Certifications from "@/components/sections/Certifications";
 import Hero from "@/components/sections/Hero";
 import InteractiveSkills from "@/components/sections/InteractiveSkills";
 import ProjectsGrid from "@/components/sections/ProjectsGrid";
+import WorkExperience from "@/components/sections/WorkExperience";
 import { getAllBlogPosts } from "@/lib/mdx";
 import Link from "next/link";
 import styles from "./page.module.css";
@@ -29,6 +31,8 @@ export default async function Home() {
             <Hero />
             <About />
             <Achievements />
+            <WorkExperience />
+            <Certifications />
             <section className={styles.blogSection}>
                 <h2 className={styles.title}>Recent Blog Posts</h2>
                 <p className={styles.description}>

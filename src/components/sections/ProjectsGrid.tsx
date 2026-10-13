@@ -54,8 +54,34 @@ export default function ProjectsGrid({ projects }: ProjectsGridProps) {
 
         <div className={styles.grid}>
           {isLoading && displayProjects.length === 0 ? (
-            // Loading skeleton or spinner could go here
-            <p>Loading projects...</p>
+            // Loading skeletons
+            <>
+              {[1, 2, 3].map((i) => (
+                <div key={i} className={styles.projectCard}>
+                  <div className={styles.projectSkeleton}>
+                    <div className={styles.projectSkeletonTitle}>
+                      <div className={styles.projectSkeletonLine} style={{ width: "80%" }} />
+                      <div className={styles.projectSkeletonLine} style={{ width: "60%" }} />
+                    </div>
+                    <div className={styles.projectSkeletonDescription}>
+                      <div className={styles.projectSkeletonLine} style={{ width: "70%" }} />
+                      <div className={styles.projectSkeletonLine} style={{ width: "50%" }} />
+                      <div className={styles.projectSkeletonLine} style={{ width: "30%" }} />
+                      <div className={styles.projectSkeletonLine} style={{ width: "60%" }} />
+                      <div className={styles.projectSkeletonLine} style={{ width: "40%" }} />
+                    </div>
+                    {/*
+                      Show demo indicator skeleton only for some items to add variety
+                    */}
+                    {i % 2 === 0 && (
+                      <div className={styles.projectSkeletonDemo}>
+                        <div className={styles.projectSkeletonLine} style={{ width: "50%" }} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </>
           ) : (
             displayProjects.map((project) => (
               <ProjectCard key={project.slug} project={project} />

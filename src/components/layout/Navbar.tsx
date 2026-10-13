@@ -87,7 +87,7 @@ export default function Navbar() {
                     Emmanuel
                 </Link>
 
-                <div className={styles.links}>
+                <button className={styles.links}>
                     <Link
                         href="/"
                         className={`${styles.link} ${getActiveClass("/")}`}
@@ -99,6 +99,18 @@ export default function Navbar() {
                         className={`${styles.link} ${getActiveClass("/projects")}`}
                     >
                         Projects
+                    </Link>
+                    <Link
+                        href="/workExperience"
+                        className={`${styles.link} ${getActiveClass("/workExperience")}`}
+                    >
+                        Experience
+                    </Link>
+                    <Link
+                        href="/certifications"
+                        className={`${styles.link} ${getActiveClass("/certifications")}`}
+                    >
+                        Certifications
                     </Link>
                     <Link
                         href="/contact"
@@ -119,23 +131,25 @@ export default function Navbar() {
                     >
                         Upload Resume
                     </Link>
-                </div>
+                </button>
 
                 {/* Search Bar - Desktop only */}
                 <div className={styles.searchContainer}>
                     <SearchBar />
                 </div>
 
-                <div
+                <button
                     className={styles.mobileToggle}
                     onClick={() => setOpen(!open)}
+                  aria-label="Open menu"
                 >
                     ☰
-                </div>
+                </button>
 
                 <button
                     className={styles.themeToggle}
                     onClick={toggleTheme}
+                    aria-label="Toggle theme"
                 >
                     {/* ⭐ Only render icon after hydration */}
                     <span suppressHydrationWarning>
@@ -145,7 +159,7 @@ export default function Navbar() {
             </div>
 
             {open && (
-                <div
+                <button
                     className={`${styles.mobileMenu} ${styles.mobileMenuVisible}`}
                     onClick={() => setOpen(false)} // Close when clicking a link
                 >
@@ -162,6 +176,20 @@ export default function Navbar() {
                         onClick={() => setOpen(false)}
                     >
                         Projects
+                    </Link>
+                    <Link
+                        href="/workExperience"
+                        className={`${styles.mobileLink} ${getActiveClass("/workExperience")}`}
+                        onClick={() => setOpen(false)}
+                    >
+                        Experience
+                    </Link>
+                    <Link
+                        href="/certifications"
+                        className={`${styles.mobileLink} ${getActiveClass("/certifications")}`}
+                        onClick={() => setOpen(false)}
+                    >
+                        Certifications
                     </Link>
                     <Link
                         href="/contact"
@@ -185,7 +213,7 @@ export default function Navbar() {
                     >
                         Upload Resume
                     </Link>
-                </div>
+                </button>
             )}
         </nav>
     );

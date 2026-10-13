@@ -24,11 +24,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en">
             <body>
+                <a href="#main-content" className="skip-to-content">Skip to main content</a>
                 <Navbar />
                 {showBreadcrumbs && <Breadcrumb pathname={pathname} />}
-                <PageTransitionWrapper>
-                    {children}
-                </PageTransitionWrapper>
+                <main id="main-content">
+                    <PageTransitionWrapper>
+                        {children}
+                    </PageTransitionWrapper>
+                </main>
                 <ScrollToTop />
                 <Footer />
             </body>

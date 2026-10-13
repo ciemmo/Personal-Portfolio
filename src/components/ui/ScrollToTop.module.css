@@ -2,7 +2,7 @@
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  background-color: #007bff;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 50%;
@@ -11,10 +11,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer
+  box-shadow: var(--shadow-sm);
   z-index: 1000;
   transition: opacity 0.3s, transform 0.3s;
+}
+.scrollToTop:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .scrollToTop:hover {
