@@ -4,20 +4,23 @@ import styles from "./About.module.css";
 import useScrollAnimation from "../../hooks/useScrollAnimation";
 
 export default function About() {
-    useScrollAnimation();
+    useScrollAnimation(
+        `.${styles["fade-up"]}, .${styles["stagger-up"]} > *`,
+        styles.animate
+    );
 
     return (
-        <section className={`${styles.about} ${styles.fadeUp}`}>
+        <section className={`${styles.about} ${styles["fade-up"]}`}>
             <div className={styles.container}>
                 <div className={styles.text}>
-                    <div className={styles.staggerUp}>
+                    <div className={styles["stagger-up"]}>
                         <h2 className={styles.title}>About Me</h2>
                         <p className={styles.subtitle}>
                             Computer Science Graduate & Aspiring Software Engineer
                         </p>
 
                         <p className={styles.paragraph}>
-                            I'm Emmanuel, a passionate software engineer who loves building clean,
+                            I&apos;m Emmanuel, a passionate software engineer who loves building clean,
                             scalable, and user‑focused applications. I enjoy solving complex problems
                             and turning ideas into real, functional software.
                         </p>
@@ -40,7 +43,7 @@ export default function About() {
                         </div>
                     </div>
                 </div>
-                <div className={`${styles.imageWrapper} ${styles.fadeUp}`}>
+                <div className={`${styles.imageWrapper} ${styles["fade-up"]}`}>
                     {/* Image placeholder - actual image would be added here */}
                     <div className={styles.imagePlaceholder} />
                 </div>
