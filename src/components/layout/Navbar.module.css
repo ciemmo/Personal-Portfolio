@@ -1,11 +1,18 @@
 .navbar {
-    background: var(--color-bg);
-    border-bottom: 1px solid var(--color-border);
+    background: transparent;
+    border-bottom: 1px solid transparent;
     padding: var(--space-sm) 0;
     position: sticky;
     top: 0;
     z-index: 50;
-    transition: transform 0.3s ease, background 0.3s ease;
+    transition: transform 0.3s ease, background 0.3s ease, border-bottom-color 0.3s ease;
+}
+
+/* Add subtle background when scrolled for readability */
+.navbar.scrolled {
+    background: rgba(var(--color-bg-rgb), 0.85);
+    border-bottom-color: var(--color-border);
+    backdrop-filter: blur(10px);
 }
 
 .container {
@@ -36,7 +43,8 @@
 .link {
     color: var(--color-text);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1.1rem;
     transition: all 0.2s ease;
     position: relative;
 }
@@ -166,7 +174,8 @@
 .mobileLink {
     color: var(--color-text);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1.1rem;
     padding: var(--space-xs) 0;
     transition: all 0.2s ease;
 }
@@ -210,29 +219,35 @@
 .search-bar {
     position: relative;
     display: inline-block;
-    width: 240px;
+    width: 250px;
 }
 
 .search-toggle {
-    background: transparent;
-    border: none;
-    font-size: 1.25rem;
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    font-size: 1.1rem;
     cursor: pointer;
     color: var(--color-text);
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
+    border-radius: var(--radius-md);
     transition: all 0.2s ease;
     margin: 0 var(--space-xs);
+    font-weight: 500;
 }
 
 .search-toggle:hover {
-    background: var(--color-bg-alt);
-    color: var(--color-primary);
-    transform: scale(1.1);
+    background: var(--color-primary);
+    color: var(--color-bg);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.search-toggle:active {
+    transform: translateY(0);
 }
 
 .search-panel {

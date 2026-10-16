@@ -1,0 +1,739 @@
+.certifications {
+  padding: var(--space-xl) 0;
+  background-color: var(--color-bg);
+}
+
+.container {
+  width: min(1200px, 90%);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.title {
+  font-size: var(--font-h2);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-sm);
+  color: var(--color-text);
+  position: relative;
+  display: inline-block;
+  line-height: var(--line-height-tight);
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  border-radius: 2px;
+}
+
+.subtitle {
+  font-size: var(--font-h4);
+  color: var(--color-text-light);
+  margin-bottom: var(--space-lg);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: var(--line-height-relaxed);
+}
+
+/* Loading and error states */
+.loading,
+.error,
+.empty {
+  text-align: center;
+  padding: var(--space-xl);
+  color: var(--color-text-light);
+  font-size: var(--font-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Section containers */
+.certificationsSection,
+.educationSection {
+  margin-bottom: var(--space-xl);
+}
+
+/* Enhanced loading state with animation */
+.loading {
+  position: relative;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Section titles */
+.sectionTitle {
+  font-size: var(--font-h3);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-md);
+  color: var(--color-text);
+  text-align: left;
+  width: 100%;
+  position: relative;
+  display: inline-block;
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  border-radius: 2px;
+}
+
+/* Timeline styles */
+.timeline {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-lg) 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-primary);
+  transform: translateX(-50%);
+}
+
+.timelineItem {
+  position: relative;
+  padding: var(--space-md) 0;
+}
+
+/* Alternate alignment for timeline items */
+.timelineItem:nth-child(odd) {
+  /* Align odd items to the left */
+}
+
+.timelineItem:nth-child(even) {
+  /* Align even items to the right */
+}
+
+/* Timeline indicator (dot and line) */
+.timelineIndicator {
+  position: absolute;
+  left: 50%;
+  top: var(--space-md);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timelineDot {
+  width: 16px;
+  height: 16px;
+  background-color: var(--color-primary);
+  border-radius: 50%;
+  z-index: 10;
+}
+
+.timelineLine {
+  width: 2px;
+  height: calc(100% - 16px);
+  background-color: var(--color-primary);
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+/* Adjust timeline indicator position based on item parity */
+.timelineItem:nth-child(odd) .timelineIndicator {
+  left: calc(50% + 8px); /* Offset to the right */
+}
+
+.timelineItem:nth-child(even) .timelineIndicator {
+  left: calc(50% - 8px); /* Offset to the left */
+}
+
+/* Content containers */
+.timelineContent {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  transition:
+    transform var(--transition-sm),
+    box-shadow var(--transition-md),
+    border-color var(--transition-md);
+  max-width: 400px;
+  position: relative;
+  isolation: isolate;
+}
+
+.timelineContent:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(var(--color-primary-rgb), 0.15);
+  border-color: var(--color-primary);
+}
+
+.timelineContent:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+/* Position content based on item parity */
+.timelineItem:nth-child(odd) .timelineContent {
+  margin-left: var(--space-lg);
+  float: left;
+  clear: left;
+}
+
+.timelineItem:nth-child(even) .timelineContent {
+  margin-right: var(--space-lg);
+  float: right;
+  clear: right;
+}
+
+/* Enhanced depth with pseudo-element */
+.timelineContent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  opacity: 0;
+  transition: opacity var(--transition-md);
+}
+
+.timelineContent:hover::before {
+  opacity: 1;
+}
+
+.timelineContent:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 3px rgba(var(--color-primary-rgb), 0.25);
+}
+
+/* Grid layouts (keep for fallback or alternative view) */
+.certificationsGrid,
+.educationGrid {
+  display: grid;
+  gap: var(--space-xl);
+  margin-top: var(--space-lg);
+}
+
+/* Responsive design */
+
+/* Certification Badge Styles */
+.certificationCard {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform var(--transition-sm),
+    box-shadow var(--transition-md),
+    border-color var(--transition-md),
+    background-color var(--transition-sm);
+  isolation: isolate;
+}
+
+.certificationCard:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 0 0 3px rgba(var(--color-primary-rgb), 0.25);
+}
+
+.certificationCard:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(var(--color-primary-rgb), 0.15);
+  border-color: var(--color-primary);
+  transition:
+    transform var(--transition-sm),
+    box-shadow var(--transition-md),
+    border-color var(--transition-md);
+}
+
+.certificationCard:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+/* Enhanced depth with pseudo-element */
+.certificationCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  opacity: 0;
+  transition: opacity var(--transition-md);
+}
+
+.certificationCard:hover::before {
+  opacity: 1;
+}
+
+.certificationBadge {
+  display: flex;
+  align-items: center;
+  padding: var(--space-md);
+  gap: var(--space-md);
+}
+
+.badgeLogo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+}
+
+.badgeLogoPlaceholder {
+  width: 60px;
+  height: 60px;
+  background-color: var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.badgeContent {
+  flex: 1;
+}
+
+.badgeName {
+  font-size: var(--font-h4);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-xs);
+  color: var(--color-text);
+  line-height: var(--line-height-tight);
+}
+
+.badgeOrg {
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-xs);
+  color: var(--color-primary);
+}
+
+.badgeDates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  font-size: var(--font-sm);
+  color: var(--color-text-light);
+}
+
+.issueDate,
+.expiryDate {
+  display: flex;
+  align-items: center;
+}
+
+.expiredBadge {
+  background-color: var(--color-danger);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: var(--space-xxs) var(--space-xs);
+  border-radius: var(--radius-sm);
+  margin-left: var(--space-xs);
+}
+
+.expiresSoonBadge {
+  background-color: var(--color-warning);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: var(--space-xxs) var(--space-xs);
+  border-radius: var(--radius-sm);
+  margin-left: var(--space-xs);
+}
+
+.badgeCredential {
+  font-size: var(--font-sm);
+  color: var(--color-text-light);
+  margin-bottom: var(--space-xs);
+  font-family: monospace;
+}
+
+.badgeSkills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.skillTag {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text);
+  padding: var(--space-xxs) var(--space-xs);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.badgeDescription {
+  font-size: var(--font-sm);
+  color: var(--color-text-light);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-md);
+}
+
+.verifyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs) var(--space-sm);
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  transition:
+    background-color var(--transition-md),
+    transform var(--transition-sm),
+    box-shadow var(--transition-sm);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.verifyButton:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.verifyButton:active {
+  transform: translateY(0);
+}
+
+.verifyButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 3px rgba(var(--color-primary-rgb), 0.25);
+}
+
+/* Education Card Styles */
+.educationCard {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--color-border);
+  transition:
+    transform var(--transition-sm),
+    box-shadow var(--transition-md),
+    border-color var(--transition-md);
+  position: relative;
+  isolation: isolate;
+}
+
+.educationCard:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(var(--color-primary-rgb), 0.1);
+  border-color: var(--color-primary);
+  transition:
+    transform var(--transition-sm),
+    box-shadow var(--transition-md),
+    border-color var(--transition-md);
+}
+
+/* Enhanced depth with pseudo-element */
+.educationCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  opacity: 0;
+  transition: opacity var(--transition-md);
+}
+
+.educationCard:hover::before {
+  opacity: 1;
+}
+
+.educationCard:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.educationCard:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 0 0 3px rgba(var(--color-primary-rgb), 0.25);
+}
+
+.educationBadge {
+  display: flex;
+  align-items: center;
+  padding: var(--space-md);
+  gap: var(--space-md);
+}
+
+.educationLogo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.educationLogoPlaceholder {
+  width: 50px;
+  height: 50px;
+  background-color: var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.educationContent {
+  flex: 1;
+}
+
+.educationName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+  color: var(--color-text);
+}
+
+.educationProvider {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: var(--space-xs);
+  color: var(--color-primary);
+}
+
+.educationDate,
+.educationHours {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin-bottom: var(--space-xs);
+}
+
+.educationSkills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+}
+
+.educationSkillTag {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text);
+  padding: var(--space-xxs) var(--space-xs);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.educationDescription {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  line-height: 1.5;
+}
+
+/* Skeleton styles */
+.certificationSkeleton {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  gap: var(--space-md);
+}
+
+/* Enhanced skeleton with subtle wave animation */
+.certSkeletonLogo,
+.certSkeletonLine {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-tertiary) 25%,
+    rgba(255, 255, 255, 0.05) 50%,
+    var(--color-bg-tertiary) 75%
+  );
+  background-size: 200% 100%;
+  animation: subtle-wave 1.8s ease-in-out infinite;
+  border-radius: inherit;
+}
+
+.certSkeletonLogo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.certSkeletonContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.certSkeletonName {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.certSkeletonOrg {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.certSkeletonDate {
+  height: 0.75rem;
+  border-radius: var(--radius-sm);
+}
+
+/* Dark mode support for skeletons */
+html.dark .certSkeletonLogo,
+html.dark .certSkeletonLine {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-tertiary) 25%,
+    rgba(0, 0, 0, 0.05) 50%,
+    var(--color-bg-tertiary) 75%
+  );
+}
+
+/* Animation for skeleton */
+@keyframes subtle-wave {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .title {
+    font-size: calc(var(--font-h2) - 0.25rem);
+  }
+
+  .subtitle {
+    font-size: var(--font-h4);
+  }
+
+  .sectionTitle {
+    font-size: var(--font-h3);
+  }
+
+  .certificationsGrid,
+  .educationGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+
+  .certificationBadge,
+  .educationBadge {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-sm);
+  }
+
+  .badgeLogo,
+  .educationLogo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .badgeLogoPlaceholder,
+  .educationLogoPlaceholder {
+    width: 50px;
+    height: 50px;
+  }
+
+  .badgeContent,
+  .educationContent {
+    width: 100%;
+  }
+}
+
+.certificationCard,
+.educationCard {
+    padding: var(--space-sm);
+}
+
+/* Reduced motion support for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .certifications,
+  .container,
+  .title,
+  .subtitle,
+  .sectionTitle,
+  .certificationsGrid,
+  .educationGrid,
+  .certificationCard,
+  .educationCard,
+  .certSkeletonLine {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Fade up animation */
+.fadeUp {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fadeUp.animate {
+  opacity: 1;
+  transform: translateY(0);
+}

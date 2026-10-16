@@ -12,12 +12,13 @@ body {
   font-size: 16px;
   scroll-behavior: smooth;
   transition: background-color 0.3s ease, color 0.3s ease;
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  background-color: var(--color-bg);
 }
 
 body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  line-height: 1.6;
   display: flex;
   flex-direction: column;
 }
@@ -29,11 +30,14 @@ main {
 /* Global Variables */
 :root {
   /* Spacing */
+  --space-xxs: 0.125rem;
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 2rem;
-  --space-xl: 4rem;
+  --space-md: 0.75rem;
+  --space-lg: 1.25rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
 
   /* Colors */
   --color-bg: #ffffff;
@@ -41,15 +45,44 @@ main {
   --color-text-light: #555;
   --color-border: #e5e7eb;
   --color-primary: #0070f3;
+  --color-success: #28a745;
+  --color-danger: #dc3545;
 
   /* Radius */
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 20px;
+  --radius-xl: 24px;
 
   /* Shadows */
   --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.15);
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+
+  /* Transitions */
+  --transition-sm: 0.15s ease;
+  --transition-md: 0.25s ease;
+  --transition-lg: 0.35s ease;
+
+  /* Typography */
+  --font-display: 2.5rem;
+  --font-h1: 2rem;
+  --font-h2: 1.75rem;
+  --font-h3: 1.5rem;
+  --font-h4: 1.25rem;
+  --font-body: 1rem;
+  --font-sm: 0.875rem;
+
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.6;
+  --line-height-relaxed: 1.8;
 }
 
 /* Dark Mode */

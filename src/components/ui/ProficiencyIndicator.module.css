@@ -1,0 +1,50 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 0.875rem;
+}
+
+.levelIndicator {
+  display: flex;
+  gap: var(--space-xxs);
+}
+
+.levelDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--color-text-light);
+  transition: all 0.2s ease;
+}
+
+.levelDot.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  transform: scale(1.1);
+}
+
+.label {
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Size variations */
+.small {
+  font-size: 0.75rem;
+}
+
+.small .levelDot {
+  width: 6px;
+  height: 6px;
+}
+
+.large {
+  font-size: 1rem;
+}
+
+.large .levelDot {
+  width: 10px;
+  height: 10px;
+}

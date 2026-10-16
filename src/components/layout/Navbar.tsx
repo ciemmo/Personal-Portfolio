@@ -12,6 +12,7 @@ export default function Navbar() {
     const [hydrated, setHydrated] = useState(false); // ⭐ prevents hydration mismatch
     const [scrollY, setScrollY] = useState(0);
     const [isVisible, setIsVisible] = useState(true);
+    const [isScrolled, setIsScrolled] = useState(false);
     const lastScrollY = useRef(0);
     const pathname = usePathname();
 
@@ -53,6 +54,10 @@ export default function Navbar() {
                 // Scrolling up or at top
                 setIsVisible(true);
             }
+
+            // Update scrolled state for navbar styling
+            setIsScrolled(currentScrollY > 50);
+
             lastScrollY.current = currentScrollY <= 0 ? 0 : currentScrollY;
         };
 
@@ -80,14 +85,14 @@ export default function Navbar() {
 
     return (
         <nav
-            className={`${styles.navbar} ${isVisible ? "" : styles.hidden}`}
+            className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""} ${isVisible ? "" : styles.hidden}`}
         >
             <div className={styles.container}>
                 <Link href="/" className={styles.logo}>
                     Emmanuel
                 </Link>
 
-                <button className={styles.links}>
+                <div className={styles.links}>
                     <Link
                         href="/"
                         className={`${styles.link} ${getActiveClass("/")}`}
@@ -118,20 +123,7 @@ export default function Navbar() {
                     >
                         Contact
                     </Link>
-                    <Link
-                        href="/blog"
-                        className={`${styles.link} ${getActiveClass("/blog")}`}
-                    >
-                        Blog
-                    </Link>
-                    {/* Upload Resume link - for development/admin use */}
-                    <Link
-                        href="/upload-resume"
-                        className={`${styles.link} ${getActiveClass("/upload-resume")} ${styles.adminLink}`}
-                    >
-                        Upload Resume
-                    </Link>
-                </button>
+                </div>
 
                 {/* Search Bar - Desktop only */}
                 <div className={styles.searchContainer}>
@@ -159,7 +151,7 @@ export default function Navbar() {
             </div>
 
             {open && (
-                <button
+                <div
                     className={`${styles.mobileMenu} ${styles.mobileMenuVisible}`}
                     onClick={() => setOpen(false)} // Close when clicking a link
                 >
@@ -198,22 +190,7 @@ export default function Navbar() {
                     >
                         Contact
                     </Link>
-                    <Link
-                        href="/blog"
-                        className={`${styles.mobileLink} ${getActiveClass("/blog")}`}
-                        onClick={() => setOpen(false)}
-                    >
-                        Blog
-                    </Link>
-                    {/* Upload Resume link in mobile menu */}
-                    <Link
-                        href="/upload-resume"
-                        className={`${styles.mobileLink} ${getActiveClass("/upload-resume")} ${styles.adminLink}`}
-                        onClick={() => setOpen(false)}
-                    >
-                        Upload Resume
-                    </Link>
-                </button>
+                </div>
             )}
         </nav>
     );

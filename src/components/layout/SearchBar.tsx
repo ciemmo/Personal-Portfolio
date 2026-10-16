@@ -14,10 +14,39 @@ interface Project {
   _id?: string;
 }
 
+interface SearchablePage {
+  path: string;
+  title: string;
+  description: string;
+  icon: string;
+}
+
+const searchablePages: SearchablePage[] = [
+  {
+    path: "/contact",
+    title: "Contact Me",
+    description: "Get in touch for collaborations, opportunities, or questions",
+    icon: "📧"
+  },
+  {
+    path: "/workExperience",
+    title: "Work Experience",
+    description: "Professional journey and technical expertise gained through various roles",
+    icon: "💼"
+  },
+  {
+    path: "/certifications",
+    title: "Certifications",
+    description: "Official certifications, badges, and ongoing learning pursuits",
+    icon: "🏆"
+  }
+];
+
 export default function SearchBar() {
   const [query, setQuery] = useState("");
   const [projects, setProjects] = useState<Project[]>([]);
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
+  const [filteredPages, setFilteredPages] = useState<SearchablePage[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [isOpen, setIsOpen] = useState(false);
@@ -80,6 +109,7 @@ export default function SearchBar() {
         setIsOpen(false);
         setQuery("");
         setFilteredProjects(projectsRef.current);
+        setFilteredPages(searchablePages);
         setActiveIndex(-1);
       }
     };
@@ -90,13 +120,17 @@ export default function SearchBar() {
 
   // Handle keyboard navigation
   useEffect(() => {
-    if (!isOpen || filteredProjects.length === 0) return;
+    if (!isOpen) return;
+
+    const totalResults = filteredProjects.length + filteredPages.length;
+    if (totalResults === 0) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsOpen(false);
         setQuery("");
         setFilteredProjects(projectsRef.current);
+        setFilteredPages(searchablePages);
         setActiveIndex(-1);
         return;
       }
@@ -104,7 +138,7 @@ export default function SearchBar() {
       if (event.key === "ArrowDown") {
         event.preventDefault();
         setActiveIndex((prev) =>
-          prev >= filteredProjects.length - 1 ? 0 : prev + 1
+          prev >= totalResults - 1 ? 0 : prev + 1
         );
         return;
       }
@@ -112,18 +146,28 @@ export default function SearchBar() {
       if (event.key === "ArrowUp") {
         event.preventDefault();
         setActiveIndex((prev) =>
-          prev <= 0 ? filteredProjects.length - 1 : prev - 1
+          prev <= 0 ? totalResults - 1 : prev - 1
         );
         return;
       }
 
       if (event.key === "Enter" && activeIndex >= 0) {
         event.preventDefault();
-        const project = filteredProjects[activeIndex];
-        router.push(`/projects/${project.slug}`);
+        // Check if active item is a project or page
+        if (activeIndex < filteredProjects.length) {
+          // It's a project
+          const project = filteredProjects[activeIndex];
+          router.push(`/projects/${project.slug}`);
+        } else {
+          // It's a page
+          const pageIndex = activeIndex - filteredProjects.length;
+          const page = filteredPages[pageIndex];
+          router.push(page.path);
+        }
         setIsOpen(false);
         setQuery("");
         setFilteredProjects(projectsRef.current);
+        setFilteredPages(searchablePages);
         setActiveIndex(-1);
         return;
       }
@@ -131,17 +175,28 @@ export default function SearchBar() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, filteredProjects.length, activeIndex, router]);
+  }, [isOpen, filteredProjects.length, filteredPages.length, activeIndex, router]);
 
   // Handle form submission (Enter key in input)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (activeIndex >= 0 && filteredProjects.length > 0) {
-      const project = filteredProjects[activeIndex];
-      router.push(`/projects/${project.slug}`);
+    if (activeIndex >= 0) {
+      // Check if active item is a project or page
+      const totalProjects = filteredProjects.length;
+      if (activeIndex < totalProjects) {
+        // It's a project
+        const project = filteredProjects[activeIndex];
+        router.push(`/projects/${project.slug}`);
+      } else {
+        // It's a page
+        const pageIndex = activeIndex - totalProjects;
+        const page = filteredPages[pageIndex];
+        router.push(page.path);
+      }
       setIsOpen(false);
       setQuery("");
       setFilteredProjects(projectsRef.current);
+      setFilteredPages(searchablePages);
       setActiveIndex(-1);
     }
   };
@@ -152,6 +207,17 @@ export default function SearchBar() {
     setIsOpen(false);
     setQuery("");
     setFilteredProjects(projectsRef.current);
+    setFilteredPages(searchablePages);
+    setActiveIndex(-1);
+  };
+
+  // Handle page selection from click
+  const handlePageSelect = (page: SearchablePage) => {
+    router.push(page.path);
+    setIsOpen(false);
+    setQuery("");
+    setFilteredProjects(projectsRef.current);
+    setFilteredPages(searchablePages);
     setActiveIndex(-1);
   };
 
@@ -190,8 +256,8 @@ export default function SearchBar() {
       <button
         className="search-toggle"
         onClick={toggleSearch}
-        aria-label="Search projects"
-        title="Search projects"
+        aria-label="Search projects and pages"
+        title="Search projects and pages"
       >
         🔍
       </button>
@@ -204,10 +270,10 @@ export default function SearchBar() {
               type="text"
               id="search-input"
               className="search-input"
-              placeholder="Search projects by title, description, or technology..."
+              placeholder="Search projects, pages, and more..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              aria-label="Search projects"
+              aria-label="Search projects and pages"
               autoComplete="off"
             />
             <button
@@ -220,39 +286,66 @@ export default function SearchBar() {
           </form>
 
           {/* Results Dropdown */}
-          {filteredProjects.length > 0 && (
-            <div className="search-results">
-              {filteredProjects.map((project, index) => (
-                <div
-                  key={project.slug}
-                  className={`search-result-item ${
-                    index === activeIndex ? "active" : ""
-                  }`}
-                  onMouseEnter={() => setActiveIndex(index)}
-                  onClick={() => handleProjectSelect(project)}
-                >
-                  <div className="search-result-content">
-                    <h3 className="search-result-title">{project.title}</h3>
-                    <p className="search-result-description">{project.description}</p>
-                    {project.tech.length > 0 && (
-                      <div className="search-result-tech">
-                        {project.tech.map((tech) => (
-                          <span key={tech} className="tech-tag">
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+          <div className="search-results">
+            {filteredProjects.length > 0 && (
+              <>
+                {filteredProjects.map((project, index) => (
+                  <div
+                    key={project.slug}
+                    className={`search-result-item ${
+                      index === activeIndex ? "active" : ""
+                    }`}
+                    onMouseEnter={() => setActiveIndex(index)}
+                    onClick={() => handleProjectSelect(project)}
+                  >
+                    <div className="search-result-content">
+                      <h3 className="search-result-title">{project.title}</h3>
+                      <p className="search-result-description">{project.description}</p>
+                      {project.tech.length > 0 && (
+                        <div className="search-result-tech">
+                          {project.tech.map((tech) => (
+                            <span key={tech} className="tech-tag">
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </>
+            )}
+            {filteredPages.length > 0 && (
+              <>
+                {filteredPages.map((page, index) => {
+                  const resultIndex = filteredProjects.length + index;
+                  return (
+                    <div
+                      key={page.path}
+                      className={`search-result-item ${
+                        resultIndex === activeIndex ? "active" : ""
+                      }`}
+                      onMouseEnter={() => setActiveIndex(resultIndex)}
+                      onClick={() => handlePageSelect(page)}
+                    >
+                      <div className="search-result-content">
+                        <div className="search-result-icon">{page.icon}</div>
+                        <div>
+                          <h3 className="search-result-title">{page.title}</h3>
+                          <p className="search-result-description">{page.description}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            )}
+          </div>
 
           {/* Empty State */}
-          {query.trim() !== "" && filteredProjects.length === 0 && (
+          {query.trim() !== "" && (filteredProjects.length === 0 && filteredPages.length === 0) && (
             <div className="search-empty">
-              <p>No projects match "{query}"</p>
+              <p>No results match "{query}"</p>
               <p>Try a different search term</p>
             </div>
           )}
