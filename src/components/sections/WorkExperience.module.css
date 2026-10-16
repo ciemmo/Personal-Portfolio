@@ -123,6 +123,7 @@
   margin: 0 var(--space-lg);
   position: relative;
   isolation: isolate;
+  display: flow-root; /* Fix float containment */
 }
 
 .experienceCard:hover {
@@ -182,6 +183,7 @@
   background-color: var(--color-primary);
   border-radius: 50%;
   z-index: 10;
+  display: none; /* Hide the blue dot as requested */
 }
 
 .timelineLine {
@@ -211,12 +213,14 @@
 
 .timelineItem:nth-child(odd) .experienceContent {
   margin-left: var(--space-lg);
+  margin-top: var(--space-md);
   float: left;
   clear: left;
 }
 
 .timelineItem:nth-child(even) .experienceContent {
   margin-right: var(--space-lg);
+  margin-top: var(--space-md);
   float: right;
   clear: right;
 }

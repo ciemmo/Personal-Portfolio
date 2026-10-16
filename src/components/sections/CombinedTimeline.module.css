@@ -1,0 +1,573 @@
+.combinedTimeline {
+  padding: var(--space-xl) 0;
+  background-color: var(--color-bg);
+}
+
+.container {
+  width: min(1200px, 90%);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.title {
+  font-size: var(--font-h2);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-sm);
+  color: var(--color-text);
+  position: relative;
+  display: inline-block;
+  line-height: var(--line-height-tight);
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  border-radius: 2px;
+}
+
+.subtitle {
+  font-size: var(--font-h4);
+  color: var(--color-text-light);
+  margin-bottom: var(--space-lg);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: var(--line-height-relaxed);
+}
+
+/* Loading and error states */
+.loading,
+.error,
+.empty {
+  text-align: center;
+  padding: var(--space-xl);
+  color: var(--color-text-light);
+  font-size: var(--font-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Enhanced loading state with animation */
+.loading {
+  position: relative;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Timeline styles */
+.timeline {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-lg) 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-primary);
+  transform: translateX(-50%);
+}
+
+.timelineItem {
+  position: relative;
+  padding: var(--space-md) 0;
+}
+
+/* Adjust timeline indicator position based on item parity */
+.timelineItem:nth-child(odd) {
+  /* Align odd items to the left */
+}
+
+.timelineItem:nth-child(even) {
+  /* Align even items to the right */
+}
+
+.timelineCard {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  transition:
+    transform var(--transition-sm),
+    box-shadow var(--transition-md),
+    border-color var(--transition-md);
+  margin: 0 var(--space-lg);
+  position: relative;
+  isolation: isolate;
+  display: flow-root; /* Fix float containment */
+}
+
+.timelineCard:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(var(--color-primary-rgb), 0.15);
+  border-color: var(--color-primary);
+  transition:
+    transform var(--transition-sm),
+    box-shadow var(--transition-md),
+    border-color var(--transition-md);
+}
+
+.timelineCard:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+/* Enhanced depth with pseudo-element */
+.timelineCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  opacity: 0;
+  transition: opacity var(--transition-md);
+}
+
+.timelineCard:hover::before {
+  opacity: 1;
+}
+
+.timelineCard:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 0 0 3px rgba(var(--color-primary-rgb), 0.25);
+}
+
+.timelineIndicator {
+  position: absolute;
+  left: 50%;
+  top: var(--space-md);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timelineDot {
+  width: 16px;
+  height: 16px;
+  background-color: var(--color-primary);
+  border-radius: 50%;
+  z-index: 10;
+  display: none; /* Hide the blue dot as requested */
+}
+
+.timelineLine {
+  width: 2px;
+  height: calc(100% - 16px);
+  background-color: var(--color-primary);
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+/* Adjust timeline indicator position based on item parity */
+.timelineItem:nth-child(odd) .timelineIndicator {
+  left: calc(50% + 8px); /* Offset to the right */
+}
+
+.timelineItem:nth-child(even) .timelineIndicator {
+  left: calc(50% - 8px); /* Offset to the left */
+}
+
+.timelineContent {
+  background-color: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+  max-width: 400px;
+}
+
+.timelineItem:nth-child(odd) .timelineContent {
+  margin-left: var(--space-lg);
+  margin-top: var(--space-md);
+  float: left;
+  clear: left;
+}
+
+.timelineItem:nth-child(even) .timelineContent {
+  margin-right: var(--space-lg);
+  margin-top: var(--space-md);
+  float: right;
+  clear: right;
+}
+
+/* Timeline content styles */
+.timelineHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--space-xs);
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.timelineIconWork,
+.timelineIconEducation {
+  font-size: 1.5rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg-tertiary);
+  border-radius: 50%;
+}
+
+.timelineTypeLabel {
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.timelineMainContent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.workExperienceSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: flex-start;
+}
+
+.companyLogo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+.companyName {
+  font-size: var(--font-h4);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-xs);
+}
+
+.companyName a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.companyName a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.roleName {
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.degreeName {
+  font-size: var(--font-h4);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-xs);
+}
+
+.fieldOfStudy {
+  font-size: var(--font-sm);
+  color: var(--color-text-light);
+  margin-bottom: var(--space-xs);
+  font-style: italic;
+}
+
+.certificateLink {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.certificateLink:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.timelineDetails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  font-size: var(--font-sm);
+  color: var(--color-text-light);
+}
+
+.detailLabel {
+  font-weight: var(--font-weight-medium);
+  margin-right: var(--space-xs);
+}
+
+.detailValue {
+  font-weight: 400;
+}
+
+.timelineDescription {
+  margin-bottom: var(--space-md);
+}
+
+.descriptionTitle {
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-xs);
+  color: var(--color-text);
+}
+
+.responsibilitiesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.responsibilityItem {
+  padding: var(--space-xs) 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.responsibilityItem:last-child {
+  border-bottom: none;
+}
+
+.educationSkeleton {
+  display: flex;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+}
+
+/* Enhanced skeleton with subtle wave animation */
+.timelineSkeletonLogo,
+.timelineSkeletonLine {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-tertiary) 25%,
+    rgba(255, 255, 255, 0.05) 50%,
+    var(--color-bg-tertiary) 75%
+  );
+  background-size: 200% 100%;
+  animation: subtle-wave 1.8s ease-in-out infinite;
+  border-radius: inherit;
+}
+
+.timelineSkeletonLogo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: var(--space-sm);
+}
+
+.timelineSkeletonContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.timelineSkeletonHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.timelineSkeletonTitle {
+  margin-bottom: var(--space-sm);
+}
+
+.timelineSkeletonInstitution {
+  margin-bottom: var(--space-sm);
+}
+
+.timelineSkeletonRole {
+  margin-bottom: var(--space-sm);
+}
+
+.timelineSkeletonPeriod {
+  height: 0.75rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.timelineSkeletonLocation {
+  height: 0.75rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.timelineSkeletonDescription {
+  height: 1.5rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-sm);
+}
+
+/* Dark mode support for skeletons */
+html.dark .timelineSkeletonLogo,
+html.dark .timelineSkeletonLine {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-tertiary) 25%,
+    rgba(0, 0, 0, 0.05) 50%,
+    var(--color-bg-tertiary) 75%
+  );
+}
+
+/* Animation for skeleton */
+@keyframes subtle-wave {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .title {
+    font-size: calc(var(--font-h2) - 0.25rem);
+  }
+
+  .subtitle {
+    font-size: var(--font-h4);
+  }
+
+  .timeline::before {
+    left: 20px;
+    width: 2px;
+  }
+
+  .timelineItem {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .timelineItem:nth-child(odd) .timelineIndicator,
+  .timelineItem:nth-child(even) .timelineIndicator {
+    left: 20px;
+    transform: none;
+  }
+
+  .timelineCard {
+    margin: 0;
+    width: 100%;
+  }
+
+  .timelineContent {
+    margin: 0;
+    width: 100%;
+    float: none;
+    clear: none;
+  }
+
+  .timelineDot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .timelineLine {
+    width: 2px;
+  }
+}
+
+/* Reduced motion support for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .combinedTimeline,
+  .container,
+  .title,
+  .subtitle,
+  .timeline,
+  .timelineItem,
+  .timelineCard,
+  .timelineContent,
+  .timelineSkeletonLine {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Fade up animation */
+.fadeUp {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fadeUp.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger up animation */
+.staggerUp > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.staggerUp > *.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.staggerUp > *:nth-child(1) {
+  transition-delay: 0.1s;
+}
+
+.staggerUp > *:nth-child(2) {
+  transition-delay: 0.2s;
+}
+
+.staggerUp > *:nth-child(3) {
+  transition-delay: 0.3s;
+}
+
+.staggerUp > *:nth-child(4) {
+  transition-delay: 0.4s;
+}
