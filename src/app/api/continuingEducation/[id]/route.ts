@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
-import Education from "@/models/Education";
+import ContinuingEducation from "@/models/ContinuingEducation";
 import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(
@@ -12,20 +12,32 @@ export async function GET(
     await connectDB();
 
     const { id } = await params;
-    const education = await Education.findById(id);
+    const continuingEducation = await ContinuingEducation.findById(id);
 
-    if (!education) {
+    if (!continuingEducation) {
       return NextResponse.json(
-        { error: "Education not found" },
+        { error: "Continuing education not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(education.toObject ? education.toObject() : education);
+    // Convert to plain object for JSON serialization
+    const continuingEducationPlain = continuingEducation.toObject ? continuingEducation.toObject() : continuingEducation;
+
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(continuingEducationPlain, {
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${continuingEducationPlain._id}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
-    console.error("Error fetching education:", error);
+    console.error("Error fetching continuing education:", error);
     return NextResponse.json(
-      { error: "Failed to fetch education" },
+      { error: "Failed to fetch continuing education" },
       { status: 500 }
     );
   }
@@ -47,8 +59,8 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
-    // Update the education with explicitly controlled fields
-    const updatedEducation = await Education.findByIdAndUpdate(
+    // Update the continuing education with explicitly controlled fields
+    const updatedContinuingEducation = await ContinuingEducation.findByIdAndUpdate(
       id,
       {
         institution: typeof body.institution === 'string' ? body.institution : "",
@@ -61,23 +73,35 @@ export async function PUT(
         honors: Array.isArray(body.honors) ? body.honors : [],
         gpa: typeof body.gpa === 'string' ? body.gpa : "",
         activities: Array.isArray(body.activities) ? body.activities : [],
-        certificateUrl: typeof body.url === 'string' ? body.url : "",
+        certificateUrl: typeof body.certificateUrl === 'string' ? body.certificateUrl : "",
       },
       { new: true, runValidators: true }
     );
 
-    if (!updatedEducation) {
+    if (!updatedContinuingEducation) {
       return NextResponse.json(
-        { error: "Education not found" },
+        { error: "Continuing education not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(updatedEducation.toObject ? updatedEducation.toObject() : updatedEducation);
+    // Convert to plain object for JSON serialization
+    const continuingEducationPlain = updatedContinuingEducation.toObject ? updatedContinuingEducation.toObject() : updatedContinuingEducation;
+
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(continuingEducationPlain, {
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${continuingEducationPlain._id}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
-    console.error("Error updating education:", error);
+    console.error("Error updating continuing education:", error);
     return NextResponse.json(
-      { error: "Failed to update education" },
+      { error: "Failed to update continuing education" },
       { status: 500 }
     );
   }

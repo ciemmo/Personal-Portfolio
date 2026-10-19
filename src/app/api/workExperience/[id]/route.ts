@@ -21,7 +21,19 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(workExperience.toObject ? workExperience.toObject() : workExperience);
+    // Convert to plain object for JSON serialization
+    const workExperiencePlain = workExperience.toObject ? workExperience.toObject() : workExperience;
+
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(workExperiencePlain, {
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${workExperiencePlain._id}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
     console.error("Error fetching work experience:", error);
     return NextResponse.json(
@@ -73,7 +85,19 @@ export async function PUT(
       );
     }
 
-    return NextResponse.json(updatedWorkExperience.toObject ? updatedWorkExperience.toObject() : updatedWorkExperience);
+    // Convert to plain object for JSON serialization
+    const workExperiencePlain = updatedWorkExperience.toObject ? updatedWorkExperience.toObject() : updatedWorkExperience;
+
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(workExperiencePlain, {
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${workExperiencePlain._id}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
     console.error("Error updating work experience:", error);
     return NextResponse.json(

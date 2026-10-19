@@ -21,7 +21,19 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(skill.toObject ? skill.toObject() : skill);
+    // Convert to plain object for JSON serialization
+    const skillPlain = skill.toObject ? skill.toObject() : skill;
+
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(skillPlain, {
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${skillPlain._id}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
     console.error("Error fetching skill:", error);
     return NextResponse.json(
@@ -119,7 +131,19 @@ export async function PUT(
       );
     }
 
-    return NextResponse.json(updatedSkill.toObject ? updatedSkill.toObject() : updatedSkill);
+    // Convert to plain object for JSON serialization
+    const skillPlain = updatedSkill.toObject ? updatedSkill.toObject() : updatedSkill;
+
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(skillPlain, {
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${skillPlain._id}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
     console.error("Error updating skill:", error);
     return NextResponse.json(

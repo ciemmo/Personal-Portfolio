@@ -15,7 +15,16 @@ export async function GET(request: NextRequest) {
     // Convert to plain object for JSON serialization
     const resumePlain = resume ? resume.toObject() : null;
 
-    return NextResponse.json(resumePlain || {});
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(resumePlain || {}, {
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${resumePlain?._id || 'resume'}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
     console.error("Error fetching resume:", error);
     return NextResponse.json(
@@ -46,10 +55,20 @@ export async function POST(request: NextRequest) {
       { upsert: true, new: true, runValidators: true }
     );
 
-    return NextResponse.json(
-      updatedResume.toObject ? updatedResume.toObject() : updatedResume,
-      { status: 200 }
-    );
+    // Convert to plain object for JSON serialization
+    const resumePlain = updatedResume.toObject ? updatedResume.toObject() : updatedResume;
+
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(resumePlain, {
+      status: 200,
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${resumePlain._id}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
     console.error("Error updating resume:", error);
     return NextResponse.json(

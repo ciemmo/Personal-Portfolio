@@ -21,7 +21,19 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(certification.toObject ? certification.toObject() : certification);
+    // Convert to plain object for JSON serialization
+    const certificationPlain = certification.toObject ? certification.toObject() : certification;
+
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(certificationPlain, {
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${certificationPlain._id}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
     console.error("Error fetching certification:", error);
     return NextResponse.json(
@@ -72,7 +84,19 @@ export async function PUT(
       );
     }
 
-    return NextResponse.json(updatedCertification.toObject ? updatedCertification.toObject() : updatedCertification);
+    // Convert to plain object for JSON serialization
+    const certificationPlain = updatedCertification.toObject ? updatedCertification.toObject() : updatedCertification;
+
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(certificationPlain, {
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${certificationPlain._id}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
     console.error("Error updating certification:", error);
     return NextResponse.json(

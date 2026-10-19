@@ -21,7 +21,19 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(education.toObject ? education.toObject() : education);
+    // Convert to plain object for JSON serialization
+    const educationPlain = education.toObject ? education.toObject() : education;
+
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(educationPlain, {
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${educationPlain._id}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
     console.error("Error fetching education:", error);
     return NextResponse.json(
@@ -73,7 +85,19 @@ export async function PUT(
       );
     }
 
-    return NextResponse.json(updatedEducation.toObject ? updatedEducation.toObject() : updatedEducation);
+    // Convert to plain object for JSON serialization
+    const educationPlain = updatedEducation.toObject ? updatedEducation.toObject() : updatedEducation;
+
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(educationPlain, {
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${educationPlain._id}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
     console.error("Error updating education:", error);
     return NextResponse.json(

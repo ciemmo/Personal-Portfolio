@@ -21,7 +21,19 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(achievement.toObject ? achievement.toObject() : achievement);
+    // Convert to plain object for JSON serialization
+    const achievementPlain = achievement.toObject ? achievement.toObject() : achievement;
+
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(achievementPlain, {
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${achievementPlain._id}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
     console.error("Error fetching achievement:", error);
     return NextResponse.json(
@@ -68,7 +80,19 @@ export async function PUT(
       );
     }
 
-    return NextResponse.json(updatedAchievement.toObject ? updatedAchievement.toObject() : updatedAchievement);
+    // Convert to plain object for JSON serialization
+    const achievementPlain = updatedAchievement.toObject ? updatedAchievement.toObject() : updatedAchievement;
+
+    // Set cache headers for better performance
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
+
+    return NextResponse.json(achievementPlain, {
+      headers: {
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${achievementPlain._id}-${Date.now()}"`,
+      },
+    });
   } catch (error) {
     console.error("Error updating achievement:", error);
     return NextResponse.json(
