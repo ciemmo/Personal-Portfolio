@@ -123,13 +123,23 @@ export default async function ProjectDetailPage(context: any) {
                         const icon = skillIcons[tech as keyof typeof skillIcons] || '•';
                         const primaryRole = roles[0] || 'frontend'; // fallback
 
+                        // Custom styling for specific technologies
+                        const isCustomStyled = tech === 'C++' || tech === 'C#';
+                        const customStyle = isCustomStyled ? {
+                            color: tech === 'C++' ? '#00599C' : '#239120',
+                            fontSize: '1.5rem'
+                        } : {};
+
                         return (
                           <span
                             key={tech}
                             className={`${styles.techTag} ${styles[`role-${primaryRole}`]} ${styles.techTagInteractive}`}
                             title={roles.length > 0 ? roles.join(', ') : 'Skill'}
                           >
-                            <span className={styles.techIcon}>{icon}</span>
+                            <span
+                              className={styles.techIcon}
+                              style={customStyle}
+                            >{icon}</span>
                             <span className={styles.techName}>{tech}</span>
                           </span>
                         );

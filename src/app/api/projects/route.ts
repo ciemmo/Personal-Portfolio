@@ -47,16 +47,22 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate required fields
-    if (!body.name || !body.description || !body.technologies || !body.imageUrl || !body.sourceUrl || !body.liveUrl) {
+    if (!body.title || !body.description || !body.tech || !body.image) {
       return NextResponse.json(
-        { error: "Name, description, technologies, imageUrl, sourceUrl, and liveUrl are required" },
+        { error: "Title, description, technologies, and image are required" },
         { status: 400 }
       );
     }
 
-    // Create new project
+    // Create new project with correctly mapped fields
     const newProject = await Project.create({
-      ...body,
+      title: body.title,
+      description: body.description,
+      tech: body.tech,
+      skillRoles: body.skillRoles || [],
+      github: body.github || "",
+      demo: body.demo || "",
+      image: body.image || "",
     });
 
     return NextResponse.json(

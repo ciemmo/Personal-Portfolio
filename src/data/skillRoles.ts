@@ -216,11 +216,11 @@ export const skillIcons: Record<string, string> = {
   "Django": "■",
   "FastAPI": "■",
   "Flask": "■",
-  "C++": () => <span style={{ color: '#00599C', fontSize: '1.5rem' }}>C++</span>, // Custom
+  "C++": "⚙", // Custom
   "Ruby on Rails": "◇",
   "Java": "▣",
   "Spring Boot": "▣",
-  "C#": () => <span style={{ color: '#239120', fontSize: '1.5rem' }}>C#</span>, // Custom since no perfect icon
+  "C#": "🔷", // Custom since no perfect icon
   ".NET": "⬢",
   "PHP": "◇",
   "Laravel": "◇",
@@ -240,7 +240,6 @@ export const skillIcons: Record<string, string> = {
   // DevOps
   "Azure": "○",
   "Google Cloud": "○",
-  "Firebase": "▣",
   "Jenkins": "☩",
   "Travis CI": "○",
   "CircleCI": "○",

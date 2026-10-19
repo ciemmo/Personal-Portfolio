@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 import ProjectSkeleton from "@/components/ui/ProjectSkeleton";
+import ProjectCard from "@/components/projects/ProjectCard";
 import { skillRolesByTech, skillIcons } from "@/data/skillRoles";
 
 interface Project {
@@ -73,14 +74,14 @@ export default function ProjectsPage() {
     // Check tech filters
     const techMatches = selectedTechFilters.size === 0
       || [...selectedTechFilters].every(tech =>
-          project.tech.includes(tech)
-        );
+        project.tech.includes(tech)
+      );
 
     // Check skill role filters
     const skillMatches = selectedSkillFilters.size === 0
       || [...selectedSkillFilters].some(role =>
-          (project.skillRoles || []).includes(role)
-        );
+        (project.skillRoles || []).includes(role)
+      );
 
     // A project matches if it satisfies search AND tech AND skill filters
     return matchesSearch && techMatches && skillMatches;
@@ -93,7 +94,7 @@ export default function ProjectsPage() {
         <div className="projects-header">
           <h1 className="projects-title">Projects</h1>
           <p className="projects-subtitle">
-            Explore my work across different technologies and domains
+            Loading your projects...
           </p>
         </div>
 
@@ -103,6 +104,11 @@ export default function ProjectsPage() {
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <ProjectSkeleton key={i} />
           ))}
+        </div>
+
+        {/* Loading Hint */}
+        <div className="loading-hint">
+          <p>Loading projects... Please wait.</p>
         </div>
       </section>
     );
@@ -117,9 +123,15 @@ export default function ProjectsPage() {
           <div className="header-actions">
             {/* Search Bar */}
             <div className="search-wrapper">
+              <div className="search-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
               <input
                 type="text"
-                placeholder="Search projects..."
+                placeholder="Search projects by title or description..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="search-input"
@@ -134,7 +146,11 @@ export default function ProjectsPage() {
               aria-label="Toggle filters"
               aria-expanded={isFilterOpen}
             >
-              🔍
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
             </button>
           </div>
         </div>
@@ -160,74 +176,84 @@ export default function ProjectsPage() {
           <div className="filter-menu-content">
             {/* Technology Filters */}
             <div className="filter-section">
-              <h4>Filter by Technology</h4>
-              <button
-                className={`filter-btn ${selectedTechFilters.size === 0 ? "active-filter" : ""}`}
-                onClick={() => {
-                  setSelectedTechFilters(new Set());
-                }}
-              >
-                All ({projects.length})
-              </button>
-              {allTech.map(tech => {
-                const count = projects.filter(p =>
-                  p.tech.includes(tech)
-                ).length;
+              <div className="filter-section-header">
+                <h4>Filter by Technology</h4>
+                <p className="filter-section-description">Select technologies to filter projects</p>
+              </div>
+              <div className="filter-button-group">
+                <button
+                  className={`filter-btn ${selectedTechFilters.size === 0 ? "active-filter" : ""}`}
+                  onClick={() => {
+                    setSelectedTechFilters(new Set());
+                  }}
+                >
+                  All ({projects.length})
+                </button>
+                {allTech.map(tech => {
+                  const count = projects.filter(p =>
+                    p.tech.includes(tech)
+                  ).length;
 
-                return (
-                  <button
-                    key={tech}
-                    className={`filter-btn ${selectedTechFilters.has(tech) ? "active-filter" : ""}`}
-                    onClick={() => {
-                      const newSet = new Set(selectedTechFilters);
-                      if (newSet.has(tech)) {
-                        newSet.delete(tech);
-                      } else {
-                        newSet.add(tech);
-                      }
-                      setSelectedTechFilters(newSet);
-                    }}
-                  >
-                    {tech} ({count})
-                  </button>
-                );
-              })}
+                  return (
+                    <button
+                      key={tech}
+                      className={`filter-btn ${selectedTechFilters.has(tech) ? "active-filter" : ""}`}
+                      onClick={() => {
+                        const newSet = new Set(selectedTechFilters);
+                        if (newSet.has(tech)) {
+                          newSet.delete(tech);
+                        } else {
+                          newSet.add(tech);
+                        }
+                        setSelectedTechFilters(newSet);
+                      }}
+                    >
+                      {tech} ({count})
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Skill Role Filters */}
             <div className="filter-section">
-              <h4>Filter by Skill Role</h4>
-              <button
-                className={`filter-btn ${selectedSkillFilters.size === 0 ? "active-filter" : ""}`}
-                onClick={() => {
-                  setSelectedSkillFilters(new Set());
-                }}
-              >
-                All ({projects.length})
-              </button>
-              {allSkillRoles.map(role => {
-                const count = projects.filter(p =>
-                  (p.skillRoles || []).includes(role)
-                ).length;
+              <div className="filter-section-header">
+                <h4>Filter by Skill Role</h4>
+                <p className="filter-section-description">Select skill roles to filter projects</p>
+              </div>
+              <div className="filter-button-group">
+                <button
+                  className={`filter-btn ${selectedSkillFilters.size === 0 ? "active-filter" : ""}`}
+                  onClick={() => {
+                    setSelectedSkillFilters(new Set());
+                  }}
+                >
+                  All ({projects.length})
+                </button>
+                {allSkillRoles.map(role => {
+                  const count = projects.filter(p =>
+                    (p.skillRoles || []).includes(role)
+                  ).length;
 
-                return (
-                  <button
-                    key={role}
-                    className={`filter-btn ${selectedSkillFilters.has(role) ? "active-filter" : ""}`}
-                    onClick={() => {
-                      const newSet = new Set(selectedSkillFilters);
-                      if (newSet.has(role)) {
-                        newSet.delete(role);
-                      } else {
-                        newSet.add(role);
-                      }
-                      setSelectedSkillFilters(newSet);
-                    }}
-                  >
-                    {role} ({count})
-                  </button>
-                );
-              })}
+                  return (
+                    <button
+                      key={role}
+                      className={`filter-btn ${selectedSkillFilters.has(role) ? "active-filter" : ""}`}
+                      onClick={() => {
+                        const newSet = new Set(selectedSkillFilters);
+                        if (newSet.has(role)) {
+                          newSet.delete(role);
+                        } else {
+                          newSet.add(role);
+                        }
+                        setSelectedSkillFilters(newSet);
+                      }}
+                    >
+                      {role} ({count})
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="filter-menu-footer">
@@ -246,134 +272,101 @@ export default function ProjectsPage() {
       )}
 
       {/* Projects Grid */}
-      {filteredProjects.length > 0 ? (
+      {filteredProjects.length > 0 ?
         <div className="projects-grid">
           {filteredProjects.map(project => (
-            <Link
-              key={project.slug}
-              href={`/projects/${project.slug}`}
-              className="project-card-enhanced"
-              passHref
-            >
-              <div className="card-container">
-                {/* Image with hover effects */}
-                <div className="card-image-wrapper">
-                  {project.image && (
-                    <OptimizedImage
-                      src={project.image}
-                      alt={project.title}
-                      width={400}
-                      height={250}
-                      className="project-image"
-                      // Prioritize first 3 images (above the fold on desktop)
-                      priority={filteredProjects.indexOf(project) < 3}
-                      // Add blur placeholder for better loading experience
-                      blurPlaceholder
-                    />
-                  )}
-                  <div className="image-overlay">
-                    <div className="overlay-content">
-                      <span className="overlay-tag">View Details</span>
-                      {project.demo && (
-                        <a
-                          href={project.demo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="demo-link"
-                          aria-label="Live demo"
-                        >
-                          🔗 Demo
-                        </a>
-                      )}
-                      {project.github && (
-                        <a
-                          href={project.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="github-link"
-                          aria-label="Source code"
-                        >
-                          💻 Code
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Project info with micro-interactions */}
-                <div className="card-info">
-                  <h3 className="project-title">{project.title}</h3>
-                  <p className="project-description">{project.description}</p>
-
-                  {/* Interactive tech tags */}
-                  <div className="tech-tags">
-                    {project.tech.map((tech, index) => (
-                      <span
-                        key={index}
-                        className="tech-tag"
-                        aria-label={`Technology: ${tech}`}
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Depth indicator for long description */}
-                  {project.longDescription && (
-                    <div className="depth-indicator" aria-label="Full case study available">
-                      <span>•••</span>
-                      <span className="depth-text">Full case study</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Link>
+            <ProjectCard key={project.slug} project={project}></ProjectCard>
           ))}
+
         </div>
-      ) : (
-        <div className="projects-empty">
-          <p>No projects match your search and filters.</p>
-          <p>Try adjusting your search or filter selections.</p>
-        </div>
-      )}
+        : (
+          <div className="projects-empty">
+            <div className="projects-empty-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <p className="projects-empty-title">No projects found</p>
+            <p className="projects-empty-description">
+              No projects match your current search and filter criteria.
+              Try adjusting your search terms or selecting different filters.
+            </p>
+            <p className="projects-empty-suggestion">
+              <em>Tip: Start with a broad search, then narrow down using filters</em>
+            </p>
+          </div>
+        )}
 
       {/* Results count and filters info */}
       <div className="projects-footer">
         <div className="results-count">
           {filteredProjects.length} project{filteredProjects.length !== 1 ? "s" : ""}
-          {((selectedTechFilters.size > 0 || selectedSkillFilters.size > 0 || searchQuery.trim() !== "") &&
-            (() => {
-              let filterText = '';
-
-              // Add search query if present
-              if (searchQuery.trim() !== "") {
-                filterText += `Search: "${searchQuery}"`;
-
-                // Add separator if we also have filters
-                if (selectedTechFilters.size > 0 || selectedSkillFilters.size > 0) {
-                  filterText += ' | ';
-                }
-              }
-
-              // Add tech filters
-              if (selectedTechFilters.size > 0) {
-                filterText += [...selectedTechFilters].join(', ');
-              }
-
-              // Add separator between tech and skill filters
-              if (selectedTechFilters.size > 0 && selectedSkillFilters.size > 0) {
-                filterText += ' & ';
-              }
-
-              // Add skill role filters
-              if (selectedSkillFilters.size > 0) {
-                filterText += [...selectedSkillFilters].join(', ');
-              }
-
-              return filterText ? ` | Filtered by: ${filterText}` : '';
-            })()
-          )}
         </div>
+        {(() => {
+          let filterText = '';
+
+          // Add search query if present
+          if (searchQuery.trim() !== "") {
+            filterText += `"${searchQuery}"`;
+
+            // Add separator if we also have filters
+            if (selectedTechFilters.size > 0 || selectedSkillFilters.size > 0) {
+              filterText += ' • ';
+            }
+          }
+
+          // Add tech filters
+          if (selectedTechFilters.size > 0) {
+            filterText += [...selectedTechFilters].join(', ');
+          }
+
+          // Add separator between tech and skill filters
+          if (selectedTechFilters.size > 0 && selectedSkillFilters.size > 0) {
+            filterText += ' • ';
+          }
+
+          // Add skill role filters
+          if (selectedSkillFilters.size > 0) {
+            filterText += [...selectedSkillFilters].join(', ');
+          }
+
+          return filterText;
+        })() && (
+            <span className="filters-info">
+              Filtered by: {(() => {
+                let filterText = '';
+
+                // Add search query if present
+                if (searchQuery.trim() !== "") {
+                  filterText += `"${searchQuery}"`;
+
+                  // Add separator if we also have filters
+                  if (selectedTechFilters.size > 0 || selectedSkillFilters.size > 0) {
+                    filterText += ' • ';
+                  }
+                }
+
+                // Add tech filters
+                if (selectedTechFilters.size > 0) {
+                  filterText += [...selectedTechFilters].join(', ');
+                }
+
+                // Add separator between tech and skill filters
+                if (selectedTechFilters.size > 0 && selectedSkillFilters.size > 0) {
+                  filterText += ' • ';
+                }
+
+                // Add skill role filters
+                if (selectedSkillFilters.size > 0) {
+                  filterText += [...selectedSkillFilters].join(', ');
+                }
+
+                return filterText;
+              })()}
+            </span>
+          )}
       </div>
     </section>
   );
