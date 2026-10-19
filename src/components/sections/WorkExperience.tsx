@@ -148,7 +148,7 @@ function ExperienceCard({ experience }: ExperienceCardProps) {
         <div className={styles.experienceContent}>
           {/* Company and role */}
           <div className={styles.experienceHeader}>
-            {experience.logo ? (
+            {experience.logo && typeof experience.logo === 'string' && experience.logo.trim() !== '' ? (
               <img
                 src={experience.logo}
                 alt={`${experience.company} logo`}

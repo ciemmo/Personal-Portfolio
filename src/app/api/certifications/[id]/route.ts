@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import Certification from "@/models/Certification";
+import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
@@ -11,7 +12,6 @@ export async function GET(
     await connectDB();
 
     const { id } = await params;
-
     const certification = await Certification.findById(id);
 
     if (!certification) {
@@ -35,25 +35,32 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
     const { id } = await params;
     const body = await request.json();
 
-    // Validate required fields
-    if (!body.name || !body.issuingOrganization || !body.issueDate) {
-      return NextResponse.json(
-        { error: "Name, issuing organization, and issue date are required" },
-        { status: 400 }
-      );
-    }
-
-    // Update the certification
+    // Update the certification with explicitly controlled fields
     const updatedCertification = await Certification.findByIdAndUpdate(
       id,
       {
-        ...body,
+        name: typeof body.name === 'string' ? body.name : "",
+        issuingOrganization: typeof body.issuingOrganization === 'string' ? body.issuingOrganization : "",
+        issueDate: typeof body.issueDate === 'string' ? body.issueDate : "",
+        expirationDate: body.expirationDate === null || body.expirationDate === "" ? null : (typeof body.expirationDate === 'string' ? body.expirationDate : ""),
+        credentialId: typeof body.credentialId === 'string' ? body.credentialId : "",
+        credentialUrl: typeof body.credentialUrl === 'string' ? body.credentialUrl : "",
+        skills: Array.isArray(body.skills) ? body.skills : [],
+        description: typeof body.description === 'string' ? body.description : "",
+        logoUrl: typeof body.logoUrl === 'string' ? body.logoUrl : "",
+        color: typeof body.color === 'string' ? body.color : "",
       },
       { new: true, runValidators: true }
     );
@@ -79,11 +86,16 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
     const { id } = await params;
-
     const deletedCertification = await Certification.findByIdAndDelete(id);
 
     if (!deletedCertification) {

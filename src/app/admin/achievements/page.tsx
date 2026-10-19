@@ -283,6 +283,7 @@ export default function AdminAchievementsPage() {
                 placeholder="Enter date (YYYY or YYYY-MM-DD)"
                 required
               />
+              <p className={styles.helpText>Use formats like 2023 or 2023-06-15</p>
             </div>
 
             <div className={styles.formGroup}>
@@ -363,7 +364,7 @@ export default function AdminAchievementsPage() {
         <h2 className={styles.sectionTitle}>All Achievements ({achievements.length})</h2>
         {achievements.length === 0 ? (
           <div className={styles.emptyState}>
-            <p>No achievements found. Add your first achievement above!</p>
+            <p>No achievements found. Add your first achievement above to get started!</p>
           </div>
         ) : (
           <div className={styles.achievementsGrid}>

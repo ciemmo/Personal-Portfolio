@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import Project from "@/models/Project";
+import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,90 +10,63 @@ export async function GET(request: NextRequest) {
     await connectDB();
 
     // Fetch all projects from database
-    const projects = await Project.find({}).sort({ createdAt: -1 });
+    const projects = await Project.find({}).sort({ name: 1 });
 
-    // Enhance projects with skillRoles based on tech stack
-    const enhancedProjects = projects.map(project => {
-      // Convert to plain object if it's a Mongoose document
-      const projectObj = project.toObject ? project.toObject() : project;
-
-      // Initialize skillRoles if not present
-      if (!projectObj.skillRoles) {
-        projectObj.skillRoles = [];
-      }
-
-      // Map tech to skill roles (simple heuristic)
-      const techLower = projectObj.tech.map((t: string) => t.toLowerCase());
-
-      // Frontend indicators
-      const frontendTechs = ['html', 'css', 'javascript', 'typescript', 'react', 'vue', 'angular', 'svelte', 'bootstrap', 'tailwind'];
-      if (frontendTechs.some((tech: string) => techLower.includes(tech))) {
-        if (!projectObj.skillRoles.includes('frontend')) {
-          projectObj.skillRoles.push('frontend');
-        }
-      }
-
-      // Backend indicators
-      const backendTechs = ['node.js', 'express', 'django', 'flask', 'spring', '.net', 'java', 'python', 'ruby', 'php', 'laravel', 'rails'];
-      if (backendTechs.some((tech: string) => techLower.includes(tech))) {
-        if (!projectObj.skillRoles.includes('backend')) {
-          projectObj.skillRoles.push('backend');
-        }
-      }
-
-      // DevOps indicators
-      const devopsTechs = ['docker', 'kubernetes', 'aws', 'azure', 'gcp', 'jenkins', 'ci/cd', 'terraform', 'ansible'];
-      if (devopsTechs.some((tech: string) => techLower.includes(tech))) {
-        if (!projectObj.skillRoles.includes('devops')) {
-          projectObj.skillRoles.push('devops');
-        }
-      }
-
-      // Database indicators
-      const databaseTechs = ['mysql', 'postgresql', 'mongodb', 'redis', 'sqlite', 'oracle', 'sql server'];
-      if (databaseTechs.some((tech: string) => techLower.includes(tech))) {
-        if (!projectObj.skillRoles.includes('database')) {
-          projectObj.skillRoles.push('database');
-        }
-      }
-
-      // Mobile indicators
-      const mobileTechs = ['react native', 'flutter', 'swift', 'kotlin', 'ionic', 'xamarin'];
-      if (mobileTechs.some((tech: string) => techLower.includes(tech))) {
-        if (!projectObj.skillRoles.includes('mobile')) {
-          projectObj.skillRoles.push('mobile');
-        }
-      }
-
-      // UI/UX indicators
-      if (projectObj.tech.some((t: string) => ['figma', 'sketch', 'adobe xd', 'photoshop', 'illustrator'].includes(t.toLowerCase()))) {
-        if (!projectObj.skillRoles.includes('ui/ux')) {
-          projectObj.skillRoles.push('ui/ux');
-        }
-      }
-
-      // If no skills detected, add a default
-      if (projectObj.skillRoles.length === 0) {
-        projectObj.skillRoles = ['fullstack'];
-      }
-
-      return projectObj;
-    });
+    // Convert to plain objects for JSON serialization
+    const projectsPlain = projects.map(project => project.toObject ? project.toObject() : project);
 
     // Set cache headers for better performance
-    // Cache for 1 hour (in seconds)
-    const oneHourInSeconds = 60 * 60;
+    // Cache for 30 minutes (in seconds)
+    const thirtyMinutesInSeconds = 30 * 60;
 
-    return NextResponse.json(enhancedProjects, {
+    return NextResponse.json(projectsPlain, {
       headers: {
-        "Cache-Control": `public, max-age=${oneHourInSeconds}, stale-while-revalidate=86400`,
-        "ETag": `"${enhancedProjects.length}-${Date.now()}"`,
+        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
+        "ETag": `"${projectsPlain.length}-${Date.now()}"`,
       },
-    });
+    );
   } catch (error) {
     console.error("Error fetching projects:", error);
     return NextResponse.json(
       { error: "Failed to fetch projects" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
+  try {
+    await connectDB();
+
+    const body = await request.json();
+
+    // Validate required fields
+    if (!body.name || !body.description || !body.technologies || !body.imageUrl || !body.sourceUrl || !body.liveUrl) {
+      return NextResponse.json(
+        { error: "Name, description, technologies, imageUrl, sourceUrl, and liveUrl are required" },
+        { status: 400 }
+      );
+    }
+
+    // Create new project
+    const newProject = await Project.create({
+      ...body,
+    });
+
+    return NextResponse.json(
+      newProject.toObject ? newProject.toObject() : newProject,
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Error creating project:", error);
+    return NextResponse.json(
+      { error: "Failed to create project" },
       { status: 500 }
     );
   }

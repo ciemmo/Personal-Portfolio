@@ -1,85 +1,59 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import fs from "fs/promises";
-import path from "path";
+import { connectDB } from "@/lib/db";
+import Resume from "@/models/Resume";
+import { authenticateRequest } from "@/lib/auth";
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    // Parse the multipart form data
-    const formData = await request.formData();
-    const file = formData.get("resume") as File | null;
+    // Connect to MongoDB
+    await connectDB();
 
-    if (!file) {
-      return NextResponse.json(
-        { error: "No resume file provided" },
-        { status: 400 }
-      );
-    }
+    // Fetch resume from database
+    const resume = await Resume.findOne({});
 
-    // Validate file type (optional)
-    const allowedTypes = ["application/pdf"];
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(
-        { error: "Invalid file type. Only PDF files are allowed." },
-        { status: 400 }
-      );
-    }
+    // Convert to plain object for JSON serialization
+    const resumePlain = resume ? resume.toObject() : null;
 
-    // Convert File to Buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Define file path - store in public directory
-    const filename = "resume-emmanuel.pdf";
-    const filePath = path.join(process.cwd(), "public", filename);
-
-    // Write file to public directory
-    await fs.writeFile(filePath, buffer);
-
-    // Return success response with file URL
-    return NextResponse.json({
-      message: "Resume uploaded successfully",
-      filename: filename,
-      url: `/${filename}`
-    }, {
-      status: 200
-    });
-
+    return NextResponse.json(resumePlain || {});
   } catch (error) {
-    console.error("Error uploading resume:", error);
+    console.error("Error fetching resume:", error);
     return NextResponse.json(
-      { error: "Failed to upload resume" },
+      { error: "Failed to fetch resume" },
       { status: 500 }
     );
   }
 }
 
-// Optional: Add a GET endpoint to retrieve resume info
-export async function GET(request: NextRequest) {
-  try {
-    const filename = "resume-emmanuel.pdf";
-    const filePath = path.join(process.cwd(), "public", filename);
+export async function POST(request: NextRequest) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
 
-    // Check if file exists
-    try {
-      await fs.access(filePath);
-      return NextResponse.json({
-        exists: true,
-        url: `/${filename}`,
-        filename: filename
-      });
-    } catch {
-      return NextResponse.json({
-        exists: false,
-        message: "Resume file not found"
-      }, {
-        status: 404
-      });
-    }
-  } catch (error) {
-    console.error("Error checking resume:", error);
+  try {
+    await connectDB();
+
+    const body = await request.json();
+
+    // Update or create resume
+    const updatedResume = await Resume.findOneAndUpdate(
+      {},
+      {
+        ...body,
+      },
+      { upsert: true, new: true, runValidators: true }
+    );
+
     return NextResponse.json(
-      { error: "Failed to check resume status" },
+      updatedResume.toObject ? updatedResume.toObject() : updatedResume,
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating resume:", error);
+    return NextResponse.json(
+      { error: "Failed to update resume" },
       { status: 500 }
     );
   }

@@ -333,6 +333,7 @@ export default function AdminCertificationsPage() {
                 className={styles.input}
                 placeholder="Enter expiration date (YYYY-MM-DD) or leave blank"
               />
+              <p className={styles.helpText>Leave blank if the certification does not expire</p>
             </div>
 
             <div className={styles.formGroup}>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import Education from "@/models/Education";
+import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,6 +35,12 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
@@ -47,9 +54,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create new education
+    // Create new education with explicitly controlled fields
     const newEducation = await Education.create({
-      ...body,
+      institution: typeof body.institution === 'string' ? body.institution : "",
+      degree: typeof body.degree === 'string' ? body.degree : "",
+      fieldOfStudy: typeof body.fieldOfStudy === 'string' ? body.fieldOfStudy : "",
+      startDate: typeof body.startDate === 'string' ? body.startDate : "",
+      endDate: body.endDate === null || body.endDate === "" ? null : (typeof body.endDate === 'string' ? body.endDate : ""),
+      location: typeof body.location === 'string' ? body.location : "",
+      description: typeof body.description === 'string' ? body.description : "",
+      honors: Array.isArray(body.honors) ? body.honors : [],
+      gpa: typeof body.gpa === 'string' ? body.gpa : "",
+      activities: Array.isArray(body.activities) ? body.activities : [],
+      certificateUrl: typeof body.certificateUrl === 'string' ? body.certificateUrl : "",
     });
 
     return NextResponse.json(

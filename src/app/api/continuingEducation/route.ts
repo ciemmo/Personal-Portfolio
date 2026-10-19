@@ -2,34 +2,81 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import Education from "@/models/Education";
+import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
     // Connect to MongoDB
     await connectDB();
 
-    // Fetch all continuing educations from database
-    // For now, we'll treat continuing education as a type of education
-    // In the future, we could add a "type" field to distinguish if needed
-    const educations = await Education.find({}).sort({ startDate: -1 });
+    // Fetch all continuing education records from database
+    const continuingEducation = await Education.find({}).sort({ startDate: -1 });
 
     // Convert to plain objects for JSON serialization
-    const educationsPlain = educations.map(edu => edu.toObject ? edu.toObject() : edu);
+    const continuingEducationPlain = continuingEducation.map(ce => ce.toObject ? ce.toObject() : ce);
 
     // Set cache headers for better performance
     // Cache for 30 minutes (in seconds)
     const thirtyMinutesInSeconds = 30 * 60;
 
-    return NextResponse.json(educationsPlain, {
+    return NextResponse.json(continuingEducationPlain, {
       headers: {
         "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
-        "ETag": `"${educationsPlain.length}-${Date.now()}"`,
+        "ETag": `"${continuingEducationPlain.length}-${Date.now()}"`,
       },
     });
   } catch (error) {
-    console.error("Error fetching continuing educations:", error);
+    console.error("Error fetching continuing education:", error);
     return NextResponse.json(
-      { error: "Failed to fetch continuing educations" },
+      { error: "Failed to fetch continuing education" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
+  try {
+    await connectDB();
+
+    const body = await request.json();
+
+    // Validate required fields
+    if (!body.institution || !body.degree || !body.fieldOfStudy || !body.startDate) {
+      return NextResponse.json(
+        { error: "Institution, degree, field of study, and start date are required" },
+        { status: 400 }
+      );
+    }
+
+    // Create new continuing education (as Education record) with explicitly controlled fields
+    const newEducation = await Education.create({
+      institution: typeof body.institution === 'string' ? body.institution : "",
+      degree: typeof body.degree === 'string' ? body.degree : "",
+      fieldOfStudy: typeof body.fieldOfStudy === 'string' ? body.fieldOfStudy : "",
+      startDate: typeof body.startDate === 'string' ? body.startDate : "",
+      endDate: body.endDate === null || body.endDate === "" ? null : (typeof body.endDate === 'string' ? body.endDate : ""),
+      location: typeof body.location === 'string' ? body.location : "",
+      description: typeof body.description === 'string' ? body.description : "",
+      honors: Array.isArray(body.honors) ? body.honors : [],
+      gpa: typeof body.gpa === 'string' ? body.gpa : "",
+      activities: Array.isArray(body.activities) ? body.activities : [],
+      certificateUrl: typeof body.url === 'string' ? body.url : "",
+    });
+
+    return NextResponse.json(
+      newEducation.toObject ? newEducation.toObject() : newEducation,
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Error creating continuing education:", error);
+    return NextResponse.json(
+      { error: "Failed to create continuing education" },
       { status: 500 }
     );
   }

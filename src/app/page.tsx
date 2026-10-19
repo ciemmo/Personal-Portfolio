@@ -1,6 +1,7 @@
 import About from "@/components/sections/About";
 import Achievements from "@/components/sections/Achievements";
 import Certifications from "@/components/sections/Certifications";
+import Education from "@/components/sections/Education";
 import Hero from "@/components/sections/Hero";
 import InteractiveSkills from "@/components/sections/InteractiveSkills";
 import ProjectsGrid from "@/components/sections/ProjectsGrid";
@@ -29,6 +30,7 @@ export default async function Home() {
             <About />
             <Achievements />
             <WorkExperience />
+            <Education />
             <Certifications />
             <InteractiveSkills />
             <ProjectsGrid projects={projects} />

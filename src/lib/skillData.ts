@@ -13,7 +13,7 @@ export type Skill = {
   updatedAt: string;
 };
 
-export type SkillCategory = 'frontend' | 'backend' | 'devops' | 'database' | 'mobile' | 'uiux' | 'fullstack';
+export type SkillCategory = 'Languages' | 'Frameworks' | 'DevOps and Cloud' | 'Developer Tools';
 
 /**
  * Fetch all skills from the API
@@ -130,13 +130,10 @@ export function useSkills() {
  */
 export function groupSkillsByCategory(skills: Skill[]): Record<SkillCategory, Skill[]> {
   const grouped: Record<SkillCategory, Skill[]> = {
-    frontend: [],
-    backend: [],
-    devops: [],
-    database: [],
-    mobile: [],
-    uiux: [],
-    fullstack: [],
+    Languages: [],
+    Frameworks: [],
+    'DevOps and Cloud': [],
+    'Developer Tools': [],
   };
 
   skills.forEach(skill => {

@@ -339,6 +339,7 @@ export default function AdminWorkExperiencePage() {
                 placeholder="Enter start date (YYYY or YYYY-MM)"
                 required
               />
+              <p className={styles.helpText}>Use formats like 2023 or 2023-06</p>
             </div>
 
             <div className={styles.formGroup}>
@@ -354,6 +355,7 @@ export default function AdminWorkExperiencePage() {
                 className={styles.input}
                 placeholder="Enter end date (YYYY or YYYY-MM) or leave blank"
               />
+              <p className={styles.helpText}>Use formats like 2023 or 2023-06</p>
             </div>
 
             <div className={styles.formGroup}>

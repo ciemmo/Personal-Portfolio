@@ -55,7 +55,7 @@ function Breadcrumb({ pathname }: { pathname: string }) {
           className={i === pathParts.length - 1 ? "active" : ""}
         >
           {i === pathParts.length - 1 ? (
-            <span>{segment}</span>
+            <span aria-current="page">{segment}</span>
           ) : (
             <Link href={currentPath}>
               {segment}

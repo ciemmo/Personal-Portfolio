@@ -333,6 +333,7 @@ export default function AdminContinuingEducationPage() {
                 placeholder="Enter start date (YYYY-MM-DD)"
                 required
               />
+              <p className={styles.helpText}>Use formats like 2023 or 2023-06-15</p>
             </div>
 
             <div className={styles.formGroup}>
@@ -348,6 +349,7 @@ export default function AdminContinuingEducationPage() {
                 className={styles.input}
                 placeholder="Enter end date (YYYY-MM-DD) or leave blank if ongoing"
               />
+              <p className={styles.helpText}>Use formats like 2023 or 2023-06-15</p>
             </div>
 
             <div className={styles.formGroup}>
@@ -363,6 +365,7 @@ export default function AdminContinuingEducationPage() {
                 className={styles.input}
                 placeholder="Enter grade, GPA, or score"
               />
+              <p className={styles.helpText}>Enter as X.X/X.X format (e.g., 3.7/4.0 or 4.0/5.0)</p>
             </div>
 
             <div className={styles.formGroup}>

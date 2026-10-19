@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import Education from "@/models/Education";
+import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
@@ -11,7 +12,6 @@ export async function GET(
     await connectDB();
 
     const { id } = await params;
-
     const education = await Education.findById(id);
 
     if (!education) {
@@ -35,25 +35,33 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
     const { id } = await params;
     const body = await request.json();
 
-    // Validate required fields
-    if (!body.institution || !body.degree || !body.startDate) {
-      return NextResponse.json(
-        { error: "Institution, degree, and start date are required" },
-        { status: 400 }
-      );
-    }
-
-    // Update the education
+    // Update the education with explicitly controlled fields
     const updatedEducation = await Education.findByIdAndUpdate(
       id,
       {
-        ...body,
+        institution: typeof body.institution === 'string' ? body.institution : "",
+        degree: typeof body.degree === 'string' ? body.degree : "",
+        fieldOfStudy: typeof body.fieldOfStudy === 'string' ? body.fieldOfStudy : "",
+        startDate: typeof body.startDate === 'string' ? body.startDate : "",
+        endDate: body.endDate === null || body.endDate === "" ? null : (typeof body.endDate === 'string' ? body.endDate : ""),
+        location: typeof body.location === 'string' ? body.location : "",
+        description: typeof body.description === 'string' ? body.description : "",
+        honors: Array.isArray(body.honors) ? body.honors : [],
+        gpa: typeof body.gpa === 'string' ? body.gpa : "",
+        activities: Array.isArray(body.activities) ? body.activities : [],
+        certificateUrl: typeof body.certificateUrl === 'string' ? body.certificateUrl : "",
       },
       { new: true, runValidators: true }
     );
@@ -79,11 +87,16 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
     const { id } = await params;
-
     const deletedEducation = await Education.findByIdAndDelete(id);
 
     if (!deletedEducation) {

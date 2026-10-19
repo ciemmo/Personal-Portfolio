@@ -8,7 +8,7 @@ import { FaHtml5, FaCss3Alt, FaJsSquare, FaReact, FaNodeJs, FaPython, FaJava,
        FaDatabase, FaGitAlt, FaLinux, FaAndroid, FaFigma, FaCloud, FaCode } from "react-icons/fa";
 import { SiTypescript, SiMongodb, SiExpress, SiDocker, SiKubernetes, SiSpring,
        SiDotnet, SiRubyonrails, SiLaravel, SiWordpress, SiShopify } from "react-icons/si";
-import { TbBrandNextjs } from "react-icons/tb";
+import { TbBrandNextjs, TbBrandCSharp, TbBrandCpp } from "react-icons/tb";
 import styles from "./InteractiveSkills.module.css";
 
 // Skill to icon mapping
@@ -18,8 +18,8 @@ const skillIcons = {
   "TypeScript": SiTypescript,
   "Python": FaPython,
   "Java": FaJava,
-  "C#": () => <span style={{ color: '#239120', fontSize: '1.5rem' }}>C#</span>, // Custom since no perfect icon
-  "C++": () => <span style={{ color: '#00599C', fontSize: '1.5rem' }}>C++</span>, // Custom
+  "C#": TbBrandCSharp,
+  "C++": TbBrandCpp,
   "HTML": FaHtml5,
   "CSS": FaCss3Alt,
   "SQL": FaDatabase,
@@ -69,24 +69,18 @@ export default function InteractiveSkills() {
   const groupedSkills: Record<string, Skill[]> = React.useMemo(() => {
     if (!allSkills || allSkills.length === 0) {
       return {
-        frontend: [],
-        backend: [],
-        devops: [],
-        database: [],
-        mobile: [],
-        uiux: [],
-        fullstack: [],
+        Languages: [],
+        Frameworks: [],
+        'DevOps and Cloud': [],
+        'Developer Tools': [],
       };
     }
 
     const grouped: Record<string, Skill[]> = {
-      frontend: [],
-      backend: [],
-      devops: [],
-      database: [],
-      mobile: [],
-      uiux: [],
-      fullstack: [],
+      Languages: [],
+      Frameworks: [],
+      'DevOps and Cloud': [],
+      'Developer Tools': [],
     };
 
     allSkills.forEach(skill => {
@@ -137,46 +131,32 @@ export default function InteractiveSkills() {
 
       <div className={styles.tabs}>
         <button
-          className={`${styles.tab} ${selectedRole === "frontend" ? styles.activeTab : ""}`}
-          onClick={() => setSelectedRole("frontend")}
+          className={`${styles.tab} ${selectedRole === "Languages" ? styles.activeTab : ""}`}
+          onClick={() => setSelectedRole("Languages")}
+          aria-selected={selectedRole === "Languages"}
         >
-          Frontend
+          Languages
         </button>
         <button
-          className={`${styles.tab} ${selectedRole === "backend" ? styles.activeTab : ""}`}
-          onClick={() => setSelectedRole("backend")}
+          className={`${styles.tab} ${selectedRole === "Frameworks" ? styles.activeTab : ""}`}
+          onClick={() => setSelectedRole("Frameworks")}
+          aria-selected={selectedRole === "Frameworks"}
         >
-          Backend
+          Frameworks
         </button>
         <button
-          className={`${styles.tab} ${selectedRole === "devops" ? styles.activeTab : ""}`}
-          onClick={() => setSelectedRole("devops")}
+          className={`${styles.tab} ${selectedRole === "DevOps and Cloud" ? styles.activeTab : ""}`}
+          onClick={() => setSelectedRole("DevOps and Cloud")}
+          aria-selected={selectedRole === "DevOps and Cloud"}
         >
-          DevOps
+          DevOps and Cloud
         </button>
         <button
-          className={`${styles.tab} ${selectedRole === "database" ? styles.activeTab : ""}`}
-          onClick={() => setSelectedRole("database")}
+          className={`${styles.tab} ${selectedRole === "Developer Tools" ? styles.activeTab : ""}`}
+          onClick={() => setSelectedRole("Developer Tools")}
+          aria-selected={selectedRole === "Developer Tools"}
         >
-          Database
-        </button>
-        <button
-          className={`${styles.tab} ${selectedRole === "mobile" ? styles.activeTab : ""}`}
-          onClick={() => setSelectedRole("mobile")}
-        >
-          Mobile
-        </button>
-        <button
-          className={`${styles.tab} ${selectedRole === "uiux" ? styles.activeTab : ""}`}
-          onClick={() => setSelectedRole("uiux")}
-        >
-          UI/UX
-        </button>
-        <button
-          className={`${styles.tab} ${selectedRole === "fullstack" ? styles.activeTab : ""}`}
-          onClick={() => setSelectedRole("fullstack")}
-        >
-          Fullstack
+          Developer Tools
         </button>
       </div>
 

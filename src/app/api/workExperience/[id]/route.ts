@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import WorkExperience from "@/models/WorkExperience";
+import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
@@ -11,7 +12,6 @@ export async function GET(
     await connectDB();
 
     const { id } = await params;
-
     const workExperience = await WorkExperience.findById(id);
 
     if (!workExperience) {
@@ -35,25 +35,33 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
     const { id } = await params;
     const body = await request.json();
 
-    // Validate required fields
-    if (!body.company || !body.role || !body.startDate) {
-      return NextResponse.json(
-        { error: "Company, role, and start date are required" },
-        { status: 400 }
-      );
-    }
-
-    // Update the work experience
+    // Update the work experience with explicitly controlled fields
     const updatedWorkExperience = await WorkExperience.findByIdAndUpdate(
       id,
       {
-        ...body,
+        company: typeof body.company === 'string' ? body.company : "",
+        role: typeof body.role === 'string' ? body.role : "",
+        location: typeof body.location === 'string' ? body.location : "",
+        startDate: typeof body.startDate === 'string' ? body.startDate : "",
+        endDate: body.endDate === null || body.endDate === "" ? null : (typeof body.endDate === 'string' ? body.endDate : ""),
+        duration: typeof body.duration === 'string' ? body.duration : "",
+        responsibilities: Array.isArray(body.responsibilities) ? body.responsibilities : [],
+        technologies: Array.isArray(body.technologies) ? body.technologies : [],
+        highlights: Array.isArray(body.highlights) ? body.highlights : [],
+        url: typeof body.url === 'string' ? body.url : "",
+        logo: typeof body.logo === 'string' ? body.logo : "",
       },
       { new: true, runValidators: true }
     );
@@ -79,11 +87,16 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
     const { id } = await params;
-
     const deletedWorkExperience = await WorkExperience.findByIdAndDelete(id);
 
     if (!deletedWorkExperience) {

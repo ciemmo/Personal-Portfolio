@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import Achievement from "@/models/Achievement";
+import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
@@ -11,7 +12,6 @@ export async function GET(
     await connectDB();
 
     const { id } = await params;
-
     const achievement = await Achievement.findById(id);
 
     if (!achievement) {
@@ -35,25 +35,28 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
     const { id } = await params;
     const body = await request.json();
 
-    // Validate required fields
-    if (!body.title || !body.date) {
-      return NextResponse.json(
-        { error: "Title and date are required" },
-        { status: 400 }
-      );
-    }
-
-    // Update the achievement
+    // Update the achievement with explicitly controlled fields
     const updatedAchievement = await Achievement.findByIdAndUpdate(
       id,
       {
-        ...body,
+        title: typeof body.title === 'string' ? body.title : "",
+        description: typeof body.description === 'string' ? body.description : "",
+        date: typeof body.date === 'string' ? body.date : "",
+        category: typeof body.category === 'string' ? body.category : "",
+        icon: typeof body.icon === 'string' ? body.icon : "",
+        url: typeof body.url === 'string' ? body.url : "",
       },
       { new: true, runValidators: true }
     );
@@ -79,11 +82,16 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
     const { id } = await params;
-
     const deletedAchievement = await Achievement.findByIdAndDelete(id);
 
     if (!deletedAchievement) {

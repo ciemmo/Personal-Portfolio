@@ -12,6 +12,10 @@ const SkillSchema = new Schema(
       type: String,
       required: true,
       enum: [
+        'Languages',
+        'Frameworks',
+        'DevOps and Cloud',
+        'Developer Tools',
         'frontend',
         'backend',
         'devops',
@@ -54,4 +58,8 @@ const SkillSchema = new Schema(
 // Index for faster querying by category
 SkillSchema.index({ category: 1 });
 
-export default models.Skill || mongoose.model("Skill", SkillSchema);
+// Delete existing model to prevent issues with hot reloading in Next.js development
+if (mongoose.models.Skill) {
+  delete mongoose.models.Skill;
+}
+export default mongoose.model("Skill", SkillSchema);

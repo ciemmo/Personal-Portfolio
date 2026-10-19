@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import Skill from "@/models/Skill";
+import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
@@ -11,7 +12,6 @@ export async function GET(
     await connectDB();
 
     const { id } = await params;
-
     const skill = await Skill.findById(id);
 
     if (!skill) {
@@ -35,14 +35,32 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
     const { id } = await params;
     const body = await request.json();
 
+    // Ensure proficiency is a number (handle case where client sends it as string)
+    if (typeof body.proficiency === 'string') {
+      body.proficiency = parseInt(body.proficiency, 10);
+    }
+
     // Validate required fields
-    if (!body.name || !body.category || body.proficiency === undefined) {
+    // Check if name is provided and not just whitespace (accounting for schema trim: true)
+    const nameIsValid = typeof body.name === 'string' && body.name.trim() !== '';
+    // Check if category is provided and not empty or just whitespace
+    const categoryIsValid = typeof body.category === 'string' && body.category.trim() !== '';
+    // Check if proficiency is provided and a valid number
+    const proficiencyIsValid = typeof body.proficiency === 'number' && !isNaN(body.proficiency) && body.proficiency >= 0 && body.proficiency <= 3;
+
+    if (!nameIsValid || !categoryIsValid || !proficiencyIsValid) {
       return NextResponse.json(
         { error: "Name, category, and proficiency are required" },
         { status: 400 }
@@ -57,10 +75,19 @@ export async function PUT(
       );
     }
 
-    // Validate category
+    // Validate category - TEMPORARILY including old categories for migration
     const validCategories = [
-      'frontend', 'backend', 'devops', 'database',
-      'mobile', 'uiux', 'fullstack'
+      'Languages',
+      'Frameworks',
+      'DevOps and Cloud',
+      'Developer Tools',
+      'frontend',
+      'backend',
+      'devops',
+      'database',
+      'mobile',
+      'uiux',
+      'fullstack'
     ];
     if (!validCategories.includes(body.category)) {
       return NextResponse.json(
@@ -69,14 +96,20 @@ export async function PUT(
       );
     }
 
-    // Update the skill
+    // Update the skill with explicitly controlled fields
     const updatedSkill = await Skill.findByIdAndUpdate(
       id,
       {
-        ...body,
-        lastUpdated: new Date()
+        name: typeof body.name === 'string' ? body.name : "",
+        category: typeof body.category === 'string' ? body.category : "",
+        proficiency: body.proficiency,
+        description: typeof body.description === 'string' ? body.description : "",
+        icon: typeof body.icon === 'string' ? body.icon : "",
+        color: typeof body.color === 'string' ? body.color : "",
+        isFeatured: typeof body.isFeatured === 'boolean' ? body.isFeatured : false,
+        lastUpdated: new Date() // Always update to current time on update
       },
-      { new: true, runValidators: true }
+      { new: true }
     );
 
     if (!updatedSkill) {
@@ -90,7 +123,7 @@ export async function PUT(
   } catch (error) {
     console.error("Error updating skill:", error);
     return NextResponse.json(
-      { error: "Failed to update skill" },
+      { error: "Failed to update skill", details: String(error) },
       { status: 500 }
     );
   }
@@ -100,11 +133,16 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
     const { id } = await params;
-
     const deletedSkill = await Skill.findByIdAndDelete(id);
 
     if (!deletedSkill) {

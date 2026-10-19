@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import WorkExperience from "@/models/WorkExperience";
+import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,6 +35,12 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
@@ -47,9 +54,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create new work experience
+    // Create new work experience with explicitly controlled fields
     const newWorkExperience = await WorkExperience.create({
-      ...body,
+      company: typeof body.company === 'string' ? body.company : "",
+      role: typeof body.role === 'string' ? body.role : "",
+      location: typeof body.location === 'string' ? body.location : "",
+      startDate: typeof body.startDate === 'string' ? body.startDate : "",
+      endDate: body.endDate === null || body.endDate === "" ? null : (typeof body.endDate === 'string' ? body.endDate : ""),
+      duration: typeof body.duration === 'string' ? body.duration : "",
+      responsibilities: Array.isArray(body.responsibilities) ? body.responsibilities : [],
+      technologies: Array.isArray(body.technologies) ? body.technologies : [],
+      highlights: Array.isArray(body.highlights) ? body.highlights : [],
+      url: typeof body.url === 'string' ? body.url : "",
+      logo: typeof body.logo === 'string' ? body.logo : "",
     });
 
     return NextResponse.json(

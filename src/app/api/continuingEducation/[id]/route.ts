@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import Education from "@/models/Education";
+import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
@@ -11,21 +12,20 @@ export async function GET(
     await connectDB();
 
     const { id } = await params;
-
     const education = await Education.findById(id);
 
     if (!education) {
       return NextResponse.json(
-        { error: "Continuing education not found" },
+        { error: "Education not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json(education.toObject ? education.toObject() : education);
   } catch (error) {
-    console.error("Error fetching continuing education:", error);
+    console.error("Error fetching education:", error);
     return NextResponse.json(
-      { error: "Failed to fetch continuing education" },
+      { error: "Failed to fetch education" },
       { status: 500 }
     );
   }
@@ -35,33 +35,49 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
     const { id } = await params;
     const body = await request.json();
 
-    // Update the education
+    // Update the education with explicitly controlled fields
     const updatedEducation = await Education.findByIdAndUpdate(
       id,
       {
-        ...body,
+        institution: typeof body.institution === 'string' ? body.institution : "",
+        degree: typeof body.degree === 'string' ? body.degree : "",
+        fieldOfStudy: typeof body.fieldOfStudy === 'string' ? body.fieldOfStudy : "",
+        startDate: typeof body.startDate === 'string' ? body.startDate : "",
+        endDate: body.endDate === null || body.endDate === "" ? null : (typeof body.endDate === 'string' ? body.endDate : ""),
+        location: typeof body.location === 'string' ? body.location : "",
+        description: typeof body.description === 'string' ? body.description : "",
+        honors: Array.isArray(body.honors) ? body.honors : [],
+        gpa: typeof body.gpa === 'string' ? body.gpa : "",
+        activities: Array.isArray(body.activities) ? body.activities : [],
+        certificateUrl: typeof body.url === 'string' ? body.url : "",
       },
       { new: true, runValidators: true }
     );
 
     if (!updatedEducation) {
       return NextResponse.json(
-        { error: "Continuing education not found" },
+        { error: "Education not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json(updatedEducation.toObject ? updatedEducation.toObject() : updatedEducation);
   } catch (error) {
-    console.error("Error updating continuing education:", error);
+    console.error("Error updating education:", error);
     return NextResponse.json(
-      { error: "Failed to update continuing education" },
+      { error: "Failed to update education" },
       { status: 500 }
     );
   }
@@ -71,28 +87,33 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Authenticate the request
+  const authResponse = await authenticateRequest();
+  if (authResponse) {
+    return authResponse;
+  }
+
   try {
     await connectDB();
 
     const { id } = await params;
-
     const deletedEducation = await Education.findByIdAndDelete(id);
 
     if (!deletedEducation) {
       return NextResponse.json(
-        { error: "Continuing education not found" },
+        { error: "Education not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json(
-      { message: "Continuing education deleted successfully" },
+      { message: "Education deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting continuing education:", error);
+    console.error("Error deleting education:", error);
     return NextResponse.json(
-      { error: "Failed to delete continuing education" },
+      { error: "Failed to delete education" },
       { status: 500 }
     );
   }

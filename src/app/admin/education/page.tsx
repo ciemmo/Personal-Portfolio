@@ -414,6 +414,7 @@ export default function AdminEducationPage() {
                 className={styles.input}
                 placeholder="Enter GPA (e.g., 3.8/4.0)"
               />
+              <p className={styles.helpText>Enter as X.X/X.X format (e.g., 3.7/4.0 or 4.0/5.0)</p>
             </div>
 
             <div className={styles.formGroup}>

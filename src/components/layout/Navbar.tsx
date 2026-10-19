@@ -133,7 +133,7 @@ export default function Navbar() {
                 <button
                     className={styles.mobileToggle}
                     onClick={() => setOpen(!open)}
-                  aria-label="Open menu"
+                  aria-label={open ? "Close menu" : "Open menu"}
                 >
                     ☰
                 </button>

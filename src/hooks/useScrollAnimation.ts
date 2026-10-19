@@ -2,6 +2,13 @@
 
 import { useEffect } from "react";
 
+/**
+ * Custom hook for animating elements when they enter the viewport
+ * @param selector - CSS selector for elements to animate (default: ".fade-up, .stagger-up > *")
+ * @param animationClass - CSS class to add when element is visible (default: "animate")
+ *
+ * @returns void - Sets up observers that automatically animate matching elements
+ */
 export default function useScrollAnimation(
     selector = ".fade-up, .stagger-up > *",
     animationClass = "animate"

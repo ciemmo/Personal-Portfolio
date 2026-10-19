@@ -25,7 +25,7 @@ export default function AdminSkillsPage() {
   const [editingSkillId, setEditingSkillId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<Skill>>({
     name: "",
-    category: "frontend",
+    category: "Languages",
     proficiency: 0,
     description: "",
     icon: "",
@@ -44,7 +44,14 @@ export default function AdminSkillsPage() {
         throw new Error(`Failed to fetch: ${response.statusText}`);
       }
       const data = await response.json();
-      setSkills(data);
+      // Ensure proficiency values are numbers (handle case where DB stores them as strings)
+      const skillsWithNumericProficiency = data.map(skill => ({
+        ...skill,
+        proficiency: typeof skill.proficiency === 'number'
+          ? skill.proficiency
+          : parseInt(skill.proficiency, 10) || 0
+      }));
+      setSkills(skillsWithNumericProficiency);
     } catch (err: any) {
       setError("Failed to load skills. Please try again later.");
       console.error("Error fetching skills:", err);
@@ -105,7 +112,14 @@ export default function AdminSkillsPage() {
     setError(null);
 
     // Validate required fields
-    if (!formData.name || !formData.category || formData.proficiency === undefined) {
+    // Check if name is provided and not just whitespace
+    const nameIsValid = typeof formData.name === 'string' && formData.name.trim() !== '';
+    // Check if category is provided and not empty or just whitespace
+    const categoryIsValid = typeof formData.category === 'string' && formData.category.trim() !== '';
+    // Check if proficiency is provided and a valid number
+    const proficiencyIsValid = typeof formData.proficiency === 'number' && !isNaN(formData.proficiency) && formData.proficiency >= 0 && formData.proficiency <= 3;
+
+    if (!nameIsValid || !categoryIsValid || !proficiencyIsValid) {
       setError("Name, category, and proficiency are required");
       return;
     }
@@ -122,13 +136,20 @@ export default function AdminSkillsPage() {
         });
 
         if (!response.ok) {
-          throw new Error(`Failed to update: ${response.statusText}`);
+          let errorDetails = response.statusText;
+          try {
+            const errorBody = await response.json();
+            errorDetails = errorBody.details || errorBody.error || response.statusText;
+          } catch {
+            // ignore parse errors
+          }
+          throw new Error(`Failed to update: ${errorDetails}`);
         }
 
         setEditingSkillId(null);
         setFormData({
           name: "",
-          category: "frontend",
+          category: "Languages",
           proficiency: 0,
           description: "",
           icon: "",
@@ -153,7 +174,7 @@ export default function AdminSkillsPage() {
         setEditingSkillId(null);
         setFormData({
           name: "",
-          category: "frontend",
+          category: "Languages",
           proficiency: 0,
           description: "",
           icon: "",
@@ -195,10 +216,15 @@ export default function AdminSkillsPage() {
   // Handle edit skill
   const handleEdit = (skill: Skill) => {
     setEditingSkillId(skill._id);
+    // Ensure proficiency is a number (handle case where DB stores it as string)
+    const proficiencyValue = typeof skill.proficiency === 'number'
+      ? skill.proficiency
+      : parseInt(skill.proficiency, 10) || 0;
+
     setFormData({
       name: skill.name,
       category: skill.category,
-      proficiency: skill.proficiency,
+      proficiency: proficiencyValue,
       description: skill.description || "",
       icon: skill.icon || "",
       color: skill.color || "",
@@ -244,7 +270,7 @@ export default function AdminSkillsPage() {
               setEditingSkillId("ADD_MODE");
               setFormData({
                 name: "",
-                category: "frontend",
+                category: "Languages",
                 proficiency: 0,
                 description: "",
                 icon: "",
@@ -398,17 +424,14 @@ export default function AdminSkillsPage() {
               <select
                 id="skillCategory"
                 name="category"
-                value={formData.category || "frontend"}
+                value={formData.category || "Languages"}
                 onChange={(e) => handleInputChange(e as React.ChangeEvent<HTMLSelectElement>)}
                 className={styles.select}
               >
-                <option value="frontend">Frontend</option>
-                <option value="backend">Backend</option>
-                <option value="devops">DevOps</option>
-                <option value="database">Database</option>
-                <option value="mobile">Mobile</option>
-                <option value="uiux">UI/UX</option>
-                <option value="fullstack">Fullstack</option>
+                <option value="Languages">Languages</option>
+                <option value="Frameworks">Frameworks</option>
+                <option value="DevOps and Cloud">DevOps and Cloud</option>
+                <option value="Developer Tools">Developer Tools</option>
               </select>
             </div>
 
