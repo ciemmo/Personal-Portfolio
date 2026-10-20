@@ -25,29 +25,48 @@ export default function WorkExperience() {
   const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [fetchStatus, setFetchStatus] = useState<string>("idle");
 
   // Fetch work experience data
   useEffect(() => {
+    let mounted = true;
+
     const fetchWorkExperience = async () => {
       setLoading(true);
       setError(null);
+      setFetchStatus("fetching");
       try {
+        console.log("[WorkExperience] Starting fetch to /api/workExperience");
         const res = await fetch("/api/workExperience");
+        console.log("[WorkExperience] Response status:", res.status, res.statusText);
         if (!res.ok) {
           throw new Error(`Failed to fetch: ${res.statusText}`);
         }
         const data = await res.json();
-        setWorkExperiences(data);
+        console.log("[WorkExperience] Data received:", data.length, "items");
+        if (mounted) {
+          setWorkExperiences(data);
+          setFetchStatus("success");
+        }
       } catch (err) {
-        console.error("Error fetching work experience:", err);
-        setError("Failed to load work experience. Please try again later.");
-        setWorkExperiences([]); // Set to empty array on error
+        console.error("[WorkExperience] Error fetching work experience:", err);
+        if (mounted) {
+          setError("Failed to load work experience. Please try again later.");
+          setWorkExperiences([]);
+          setFetchStatus("error: " + (err instanceof Error ? err.message : String(err)));
+        }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchWorkExperience();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const handleRetry = useCallback(() => {
@@ -59,6 +78,10 @@ export default function WorkExperience() {
   if (loading) {
     return (
       <div className={styles.loading}>
+        {/* Debug: Show fetch status */}
+        <div style={{ padding: "1rem", background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "0.5rem", marginBottom: "1rem", fontSize: "0.875rem", fontFamily: "monospace" }}>
+          <strong>Debug:</strong> Fetch status: {fetchStatus}
+        </div>
         {/* Work Experience Skeletons */}
         <div className={styles.timeline}>
           {/* Show 3 skeleton items while loading */}
@@ -216,7 +239,7 @@ const ExperienceCardComponent = ({ experience }: ExperienceCardProps) => {
             <h4 className={styles.responsibilitiesTitle}>Responsibilities:</h4>
             <ul className={styles.responsibilitiesList}>
               {experience.responsibilities.map((resp, index) => (
-                <li key={index} className={styles.responsibilityItem}>
+                <li key={`resp-${index}-${resp.slice(0, 20)}`} className={styles.responsibilityItem}>
                   {resp}
                 </li>
               ))}
@@ -228,7 +251,7 @@ const ExperienceCardComponent = ({ experience }: ExperienceCardProps) => {
             <h4 className={styles.technologiesTitle}>Technologies:</h4>
             <div className={styles.technologiesList}>
               {experience.technologies.map((tech, index) => (
-                <span key={index} className={styles.technologyBadge}>
+                <span key={`tech-${index}-${tech}`} className={styles.technologyBadge}>
                   {tech}
                 </span>
               ))}

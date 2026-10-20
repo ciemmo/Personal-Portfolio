@@ -24,29 +24,48 @@ export default function Education() {
   const [educations, setEducations] = useState<Education[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [fetchStatus, setFetchStatus] = useState<string>("idle");
 
   // Fetch education data
   useEffect(() => {
+    let mounted = true;
+
     const fetchEducations = async () => {
       setLoading(true);
       setError(null);
+      setFetchStatus("fetching");
       try {
+        console.log("[Education] Starting fetch to /api/education");
         const res = await fetch("/api/education");
+        console.log("[Education] Response status:", res.status, res.statusText);
         if (!res.ok) {
           throw new Error(`Failed to fetch: ${res.statusText}`);
         }
         const data = await res.json();
-        setEducations(data);
+        console.log("[Education] Data received:", data.length, "items");
+        if (mounted) {
+          setEducations(data);
+          setFetchStatus("success");
+        }
       } catch (err) {
-        console.error("Error fetching education:", err);
-        setError("Failed to load education. Please try again later.");
-        setEducations([]); // Set to empty array on error
+        console.error("[Education] Error fetching education:", err);
+        if (mounted) {
+          setError("Failed to load education. Please try again later.");
+          setEducations([]);
+          setFetchStatus("error: " + (err instanceof Error ? err.message : String(err)));
+        }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchEducations();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const handleRetry = useCallback(() => {
@@ -58,6 +77,10 @@ export default function Education() {
   if (loading) {
     return (
       <div className={styles.loading}>
+        {/* Debug: Show fetch status */}
+        <div style={{ padding: "1rem", background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "0.5rem", marginBottom: "1rem", fontSize: "0.875rem", fontFamily: "monospace" }}>
+          <strong>Debug:</strong> Fetch status: {fetchStatus}
+        </div>
         {/* Education Skeletons */}
         <div className={styles.timeline}>
           {/* Show 3 skeleton items while loading */}
@@ -221,7 +244,7 @@ const EducationCardComponent = ({ education }: EducationCardProps) => {
               <h4 className={styles.honorsTitle}>Honors & Awards:</h4>
               <div className={styles.honorsList}>
                 {education.honors.map((honor, index) => (
-                  <span key={index} className={styles.honorItem}>
+                  <span key={`honor-${index}-${honor.slice(0, 20)}`} className={styles.honorItem}>
                     • {honor}
                   </span>
                 ))}
@@ -243,7 +266,7 @@ const EducationCardComponent = ({ education }: EducationCardProps) => {
               <h4 className={styles.activitiesTitle}>Activities:</h4>
               <div className={styles.activitiesList}>
                 {education.activities.map((activity, index) => (
-                  <span key={index} className={styles.activityItem}>
+                  <span key={`activity-${index}-${activity.slice(0, 20)}`} className={styles.activityItem}>
                     • {activity}
                   </span>
                 ))}

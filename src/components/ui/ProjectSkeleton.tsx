@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import styles from "./ProjectSkeleton.module.css";
 
-export default function ProjectSkeleton() {
+interface ProjectSkeletonProps {
+  style?: React.CSSProperties;
+  className?: string;
+}
+
+export default function ProjectSkeleton({ style, className = "" }: ProjectSkeletonProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -18,7 +23,7 @@ export default function ProjectSkeleton() {
   }
 
   return (
-    <div className={styles.skeleton}>
+    <div className={`${styles.skeleton} ${className}`} style={style}>
       {/* Skeleton image */}
       <div className={styles.skeletonImage} />
 

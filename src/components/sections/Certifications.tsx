@@ -219,6 +219,7 @@ const CertificationCardComponent = memo(function CertificationCard({
     </article>
   );
 });
+export const CertificationCard = CertificationCardComponent;
 
 export default function Certifications() {
   const scrollRef = useRef<HTMLElement>(null);
@@ -227,6 +228,7 @@ export default function Certifications() {
   const [continuingEducation, setContinuingEducation] = useState<ContinuingEducation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [fetchStatus, setFetchStatus] = useState<string>("idle");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedYear, setSelectedYear] = useState<string>("all");
@@ -269,37 +271,64 @@ export default function Certifications() {
 
   // Fetch certifications data
   useEffect(() => {
+    let mounted = true;
+
     const fetchCertifications = async () => {
       setLoading(true);
       setError(null);
+      setFetchStatus("fetching certifications");
       try {
+        console.log("[Certifications] Starting fetch to /api/certifications");
         const res = await fetch("/api/certifications");
+        console.log("[Certifications] Response status:", res.status, res.statusText);
         if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
         const data = await res.json();
-        setCertifications(data);
+        console.log("[Certifications] Data received:", data.length, "items");
+        if (mounted) {
+          setCertifications(data);
+          setFetchStatus("certifications success");
+        }
       } catch (err) {
-        console.error("Error fetching certifications:", err);
-        setError("Failed to load certifications. Please try again later.");
-        setCertifications([]);
+        console.error("[Certifications] Error fetching certifications:", err);
+        if (mounted) {
+          setError("Failed to load certifications. Please try again later.");
+          setCertifications([]);
+          setFetchStatus("certifications error: " + (err instanceof Error ? err.message : String(err)));
+        }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
     const fetchContinuingEducation = async () => {
       try {
+        console.log("[Certifications] Starting fetch to /api/continuingEducation");
         const res = await fetch("/api/continuingEducation");
+        console.log("[Certifications] Continuing education response status:", res.status, res.statusText);
         if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
         const data = await res.json();
-        setContinuingEducation(data);
+        console.log("[Certifications] Continuing education data received:", data.length, "items");
+        if (mounted) {
+          setContinuingEducation(data);
+          setFetchStatus("all success");
+        }
       } catch (err) {
-        console.error("Error fetching continuing education:", err);
-        setContinuingEducation([]);
+        console.error("[Certifications] Error fetching continuing education:", err);
+        if (mounted) {
+          setContinuingEducation([]);
+          setFetchStatus(prev => prev + "; continuing education error: " + (err instanceof Error ? err.message : String(err)));
+        }
       }
     };
 
     fetchCertifications();
     fetchContinuingEducation();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const handleRetry = useCallback(() => {
@@ -415,6 +444,11 @@ export default function Certifications() {
                 Official certifications, badges, and ongoing learning pursuits
               </p>
             </div>
+          </div>
+
+          {/* Debug: Show fetch status */}
+          <div style={{ padding: "1rem", background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "0.5rem", marginBottom: "1rem", fontSize: "0.875rem", fontFamily: "monospace", margin: "0 1rem 1rem" }}>
+            <strong>Debug:</strong> Fetch status: {fetchStatus}
           </div>
 
           <div className={styles.timeline} role="list" aria-label="Certifications timeline">
@@ -585,7 +619,7 @@ export default function Certifications() {
               } as React.CSSProperties}
               role="listitem"
             >
-              <CertificationCard
+              <CertificationCardComponent
                 ref={(el) => { cardRefs.current[index] = el; }}
                 item={item}
                 isExpanded={expandedItems.has(item.id)}

@@ -4,7 +4,6 @@ import React from "react";
 import styles from "./Hero.module.css";
 import Link from "next/link";
 import useScrollAnimation from "../../hooks/useScrollAnimation";
-import OptimizedImage from "@/components/ui/OptimizedImage";
 
 export default function Hero() {
   useScrollAnimation(".fade-up, .stagger-up > *", "animate");
@@ -117,15 +116,12 @@ export default function Hero() {
 
         <div className={styles.imageWrapper}>
           <div className={styles.imageFrame}>
-            <OptimizedImage
-              src="/images/placeholder.png"
-              alt="Emmanuel - Software Engineer"
-              className={styles.profileImage}
-              priority={true}
-              width={380}
-              height={380}
-              sizes="(max-width: 768px) 280px, (max-width: 1024px) 320px, 380px"
-            />
+            <div className={styles.profilePlaceholder} aria-hidden="true">
+              <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="120" height="120">
+                <circle cx="60" cy="40" r="20" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M20 110c0-30 25-45 40-45s40 15 40 45" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+              </svg>
+            </div>
           </div>
 
           {/* Floating badges around the image */}
