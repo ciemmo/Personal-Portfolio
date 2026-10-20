@@ -431,6 +431,39 @@ html.dark .experienceSkeletonLine {
   }
 }
 
+/* Empty State Styles */
+.emptyState {
+  text-align: center;
+  padding: var(--space-lg);
+  color: var(--color-text-light);
+  font-style: italic;
+}
+
+.emptyStateIcon {
+  margin-bottom: var(--space-md);
+}
+
+.emptyStateBriefcase {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px dashed var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-sm);
+  position: relative;
+  color: var(--color-primary);
+  font-size: 2rem;
+}
+
+.emptyStateText {
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: var(--line-height-relaxed);
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .title {

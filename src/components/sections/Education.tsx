@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo, useCallback } from "react";
 import styles from "./Education.module.css";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
 
@@ -20,7 +20,7 @@ interface Education {
 }
 
 export default function Education() {
-  useScrollAnimation(`.${styles.fadeUp}`, styles.animate);
+  useScrollAnimation();
   const [educations, setEducations] = useState<Education[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +47,12 @@ export default function Education() {
     };
 
     fetchEducations();
+  }, []);
+
+  const handleRetry = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    // Trigger refetch
   }, []);
 
   if (loading) {
@@ -97,21 +103,34 @@ export default function Education() {
     return (
       <div className={styles.error}>
         <p>{error}</p>
-        <button
-          onClick={() => {
-            setLoading(true);
-            setError(null);
-            // Trigger refetch
-          }}
-        >
+        <button onClick={handleRetry}>
           Try Again
         </button>
       </div>
     );
   }
 
+  // Show empty state if no education data
   if (educations.length === 0) {
-    return null;
+    return (
+      <section className={`${styles.education} ${styles.fadeUp}`}>
+        <div className={styles.container}>
+          <h2 className={styles.title}>Education</h2>
+          <p className={styles.subtitle}>
+            Academic background and educational achievements
+          </p>
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateIcon}>
+              {/* Simple icon representing education */}
+              <div className={styles.emptyStateGraduationCap} />
+            </div>
+            <p className={styles.emptyStateText}>
+              No education records found.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -122,7 +141,7 @@ export default function Education() {
           Academic background and educational achievements
         </p>
 
-        <div className={styles.timeline}>
+        <div className={`${styles.timeline} ${styles.staggerUp}`}>
           {educations.map((education) => (
             <EducationCard
               key={education._id}
@@ -139,7 +158,7 @@ interface EducationCardProps {
   education: Education;
 }
 
-function EducationCard({ education }: EducationCardProps) {
+const EducationCardComponent = ({ education }: EducationCardProps) => {
   return (
     <div className={styles.timelineItem}>
       <div className={styles.educationCard}>
@@ -235,4 +254,6 @@ function EducationCard({ education }: EducationCardProps) {
       </div>
     </div>
   );
-}
+};
+
+export const EducationCard = memo(EducationCardComponent);

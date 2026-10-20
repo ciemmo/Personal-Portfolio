@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo, useCallback } from "react";
 import styles from "./WorkExperience.module.css";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 interface WorkExperience {
   _id: string;
@@ -20,7 +21,7 @@ interface WorkExperience {
 }
 
 export default function WorkExperience() {
-  useScrollAnimation(`.${styles.fadeUp}`, styles.animate);
+  useScrollAnimation();
   const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +48,12 @@ export default function WorkExperience() {
     };
 
     fetchWorkExperience();
+  }, []);
+
+  const handleRetry = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    // Trigger refetch
   }, []);
 
   if (loading) {
@@ -92,21 +99,34 @@ export default function WorkExperience() {
     return (
       <div className={styles.error}>
         <p>{error}</p>
-        <button
-          onClick={() => {
-            setLoading(true);
-            setError(null);
-            // Trigger refetch
-          }}
-        >
+        <button onClick={handleRetry}>
           Try Again
         </button>
       </div>
     );
   }
 
+  // Show empty state if no work experience data
   if (workExperiences.length === 0) {
-    return null;
+    return (
+      <section className={`${styles.workExperience} ${styles.fadeUp}`}>
+        <div className={styles.container}>
+          <h2 className={styles.title}>Work Experience</h2>
+          <p className={styles.subtitle}>
+            Professional journey and technical expertise gained through various roles
+          </p>
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateIcon}>
+              {/* Simple icon representing work experience */}
+              <div className={styles.emptyStateBriefcase} />
+            </div>
+            <p className={styles.emptyStateText}>
+              No work experience records found.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -117,7 +137,7 @@ export default function WorkExperience() {
           Professional journey and technical expertise gained through various roles
         </p>
 
-        <div className={styles.timeline}>
+        <div className={`${styles.timeline} ${styles.staggerUp}`}>
           {workExperiences.map((experience) => (
             <ExperienceCard
               key={experience._id}
@@ -134,7 +154,7 @@ interface ExperienceCardProps {
   experience: WorkExperience;
 }
 
-function ExperienceCard({ experience }: ExperienceCardProps) {
+const ExperienceCardComponent = ({ experience }: ExperienceCardProps) => {
   return (
     <div className={styles.timelineItem}>
       <div className={styles.experienceCard}>
@@ -149,10 +169,13 @@ function ExperienceCard({ experience }: ExperienceCardProps) {
           {/* Company and role */}
           <div className={styles.experienceHeader}>
             {experience.logo && typeof experience.logo === 'string' && experience.logo.trim() !== '' ? (
-              <img
+              <OptimizedImage
                 src={experience.logo}
                 alt={`${experience.company} logo`}
                 className={styles.companyLogo}
+                width={50}
+                height={50}
+                // Handle error case by using onError with a fallback
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = "/logos/default.png";
@@ -227,4 +250,6 @@ function ExperienceCard({ experience }: ExperienceCardProps) {
       </div>
     </div>
   );
-}
+};
+
+export const ExperienceCard = memo(ExperienceCardComponent);

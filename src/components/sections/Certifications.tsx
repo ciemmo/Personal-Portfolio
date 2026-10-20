@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef, memo } from "react";
 import styles from "./Certifications.module.css";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
+import OptimizedImage from "@/components/ui/OptimizedImage";
+import { FaAngleDown, FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaSearch, FaFilter } from "react-icons/fa";
 
 interface Certification {
   id: string;
@@ -16,6 +18,7 @@ interface Certification {
   description?: string;
   logoUrl?: string;
   color?: string;
+  category?: string;
 }
 
 interface ContinuingEducation {
@@ -28,14 +31,241 @@ interface ContinuingEducation {
   description?: string;
   certificateUrl?: string;
   logoUrl?: string;
+  category?: string;
 }
 
+type CertificationItem = Certification & { type: "certification" };
+type EducationItem = ContinuingEducation & { type: "education" };
+type UnifiedItem = CertificationItem | EducationItem;
+
+const CATEGORY_COLORS: Record<string, string> = {
+  cloud: "#FF9900",
+  frontend: "#61DAFB",
+  backend: "#339933",
+  database: "#336791",
+  devops: "#F7DF1E",
+  security: "#E34F26",
+  testing: "#C21325",
+  agile: "#0052CC",
+  general: "#6366F1",
+};
+
+const EXPIRY_STATUS = {
+  active: { label: "ACTIVE", class: "status-active", icon: FaCheckCircle, color: "var(--color-success)" },
+  expiring: { label: "EXPIRING SOON", class: "status-expiring", icon: FaExclamationTriangle, color: "var(--color-warning)" },
+  expired: { label: "EXPIRED", class: "status-expired", icon: FaTimesCircle, color: "var(--color-danger)" },
+} as const;
+
+function getExpiryStatus(expirationDate?: string) {
+  if (!expirationDate) return EXPIRY_STATUS.active;
+  const expiry = new Date(expirationDate).getTime();
+  const now = new Date().getTime();
+  const threeMonths = 3 * 30 * 24 * 60 * 60 * 1000;
+  if (expiry < now) return EXPIRY_STATUS.expired;
+  if (expiry - now <= threeMonths) return EXPIRY_STATUS.expiring;
+  return EXPIRY_STATUS.active;
+}
+
+function formatDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function getYear(dateString: string) {
+  return new Date(dateString).getFullYear();
+}
+
+const CertificationCardComponent = memo(function CertificationCard({
+  item,
+  isExpanded,
+  onToggle,
+}: {
+  item: UnifiedItem;
+  isExpanded: boolean;
+  onToggle: () => void;
+}) {
+  const isCert = item.type === "certification";
+  const status = isCert ? getExpiryStatus(item.expirationDate) : EXPIRY_STATUS.active;
+  const categoryColor = item.category ? CATEGORY_COLORS[item.category.toLowerCase()] : "var(--color-primary)";
+  const year = isCert ? getYear(item.issueDate) : getYear(item.completionDate);
+
+  return (
+    <article
+      className={`${styles.card} ${isExpanded ? styles.expanded : ""} ${isCert ? styles.certification : styles.education}`}
+      style={{ "--category-color": categoryColor } as React.CSSProperties}
+    >
+      <div className={styles.cardInner} onClick={onToggle} role="button" tabIndex={0} onKeyDown={(e) => e.key === "Enter" || e.key === " " ? (e.preventDefault(), onToggle()) : undefined} aria-expanded={isExpanded} aria-label={isExpanded ? `Collapse ${item.name}` : `Expand ${item.name}`}>
+        <div className={styles.cardHeader}>
+          <div className={styles.cardIconWrapper}>
+            {item.logoUrl ? (
+              <OptimizedImage
+                src={item.logoUrl}
+                alt={`${isCert ? item.issuingOrganization : item.provider} logo`}
+                className={styles.cardIcon}
+                width={48}
+                height={48}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/logos/default.png";
+                }}
+              />
+            ) : (
+              <div className={styles.cardIconPlaceholder} aria-hidden="true" />
+            )}
+          </div>
+          <div className={styles.cardMeta}>
+            <h3 className={styles.cardTitle}>{item.name}</h3>
+            <p className={styles.cardOrg}>{isCert ? item.issuingOrganization : item.provider}</p>
+            <div className={styles.cardMetaRow}>
+              <span className={styles.cardDate}>
+                <span className={styles.dateIcon} aria-hidden="true">📅</span>
+                {isCert ? `Issued ${formatDate(item.issueDate)}` : `Completed ${formatDate(item.completionDate)}`}
+              </span>
+              {isCert && item.expirationDate && (
+                <span className={`${styles.expiryBadge} ${styles[status.class]}`}>
+                  <status.icon className={styles.expiryIcon} aria-hidden="true" />
+                  {status.label}
+                </span>
+              )}
+              {item.type === "education" && item.hours && (
+                <span className={styles.cardHours}>
+                  <span className={styles.hoursIcon} aria-hidden="true">⏱️</span>
+                  {item.hours} hrs
+                </span>
+              )}
+            </div>
+          </div>
+          <button
+            className={styles.expandToggle}
+            onClick={(e) => { e.stopPropagation(); onToggle(); }}
+            aria-label={isExpanded ? "Collapse details" : "Expand details"}
+            aria-expanded={isExpanded}
+          >
+            <FaAngleDown className={`${styles.expandIcon} ${isExpanded ? styles.rotated : ""}`} aria-hidden="true" />
+          </button>
+        </div>
+
+        <div className={styles.cardContent} role="region" aria-label={`${item.name} details`}>
+          {isCert && item.credentialId && (
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Credential ID</span>
+              <code className={styles.detailValue}>{item.credentialId}</code>
+            </div>
+          )}
+
+          {item.skills && item.skills.length > 0 && (
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Skills</span>
+              <div className={styles.skillTags}>
+                {item.skills.map((skill, idx) => (
+                  <span key={idx} className={styles.skillTag}>{skill}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {item.description && (
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Description</span>
+              <p className={styles.detailDescription}>{item.description}</p>
+            </div>
+          )}
+
+          {isCert && item.credentialUrl && (
+            <a
+              href={item.credentialUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.verifyButton}
+              onClick={(e) => e.stopPropagation()}
+            >
+              Verify Credential
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </a>
+          )}
+
+          {item.type === "education" && item.certificateUrl && (
+            <a
+              href={item.certificateUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.certificateButton}
+              onClick={(e) => e.stopPropagation()}
+            >
+              View Certificate
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </a>
+          )}
+        </div>
+      </div>
+
+      <div className={styles.cardConnector} aria-hidden="true">
+        <div className={styles.connectorDot} />
+        <div className={styles.connectorLine} />
+      </div>
+    </article>
+  );
+});
+
 export default function Certifications() {
-  useScrollAnimation(`.${styles.fadeUp}`, styles.animate);
+  const scrollRef = useRef<HTMLElement>(null);
+  const [inView, setInView] = useState(false);
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [continuingEducation, setContinuingEducation] = useState<ContinuingEducation[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedYear, setSelectedYear] = useState<string>("all");
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const cardRefs = useRef<(HTMLArticleElement | null)[]>([]);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  // Scroll animation observer
+  useEffect(() => {
+    const element = scrollRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setInView(true);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  // useScrollAnimation for child elements
+  useScrollAnimation(".fade-up, .stagger-up > *", "animate");
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQuery.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
 
   // Fetch certifications data
   useEffect(() => {
@@ -44,33 +274,27 @@ export default function Certifications() {
       setError(null);
       try {
         const res = await fetch("/api/certifications");
-        if (!res.ok) {
-          throw new Error(`Failed to fetch: ${res.statusText}`);
-        }
+        if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
         const data = await res.json();
         setCertifications(data);
       } catch (err) {
         console.error("Error fetching certifications:", err);
         setError("Failed to load certifications. Please try again later.");
-        setCertifications([]); // Set to empty array on error
+        setCertifications([]);
       } finally {
         setLoading(false);
       }
     };
 
-    // Fetch continuing education data
     const fetchContinuingEducation = async () => {
       try {
         const res = await fetch("/api/continuingEducation");
-        if (!res.ok) {
-          throw new Error(`Failed to fetch: ${res.statusText}`);
-        }
+        if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
         const data = await res.json();
         setContinuingEducation(data);
       } catch (err) {
         console.error("Error fetching continuing education:", err);
-        // Don't set error for continuing education as it's supplementary
-        setContinuingEducation([]); // Set to empty array on error
+        setContinuingEducation([]);
       }
     };
 
@@ -78,279 +302,329 @@ export default function Certifications() {
     fetchContinuingEducation();
   }, []);
 
+  const handleRetry = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    // The fetch effects will re-run due to loading state change
+    window.location.reload();
+  }, []);
+
+  // Combine and filter items
+  const allItems = useMemo((): UnifiedItem[] => {
+    const certs: UnifiedItem[] = certifications.map(c => ({ ...c, type: "certification" as const }));
+    const edu: UnifiedItem[] = continuingEducation.map(e => ({ ...e, type: "education" as const }));
+    return [...certs, ...edu].sort((a, b) => {
+      const dateA = a.type === "certification" ? a.issueDate : a.completionDate;
+      const dateB = b.type === "certification" ? b.issueDate : b.completionDate;
+      return new Date(dateB).getTime() - new Date(dateA).getTime();
+    });
+  }, [certifications, continuingEducation]);
+
+  const categories = useMemo(() => {
+    const cats = new Set<string>();
+    allItems.forEach(item => {
+      if (item.category) cats.add(item.category);
+    });
+    return Array.from(cats).sort();
+  }, [allItems]);
+
+  const years = useMemo(() => {
+    const yrs = new Set<string>();
+    allItems.forEach(item => {
+      const year = item.type === "certification" ? getYear(item.issueDate) : getYear(item.completionDate);
+      yrs.add(year.toString());
+    });
+    return Array.from(yrs).sort((a, b) => parseInt(b) - parseInt(a));
+  }, [allItems]);
+
+  const filteredItems = useMemo(() => {
+    return allItems.filter(item => {
+      const matchesSearch = searchQuery === "" ||
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.type === "certification" ? item.issuingOrganization : item.provider).toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.skills.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      const matchesCategory = selectedCategory === "all" || item.category === selectedCategory;
+
+      const itemYear = item.type === "certification" ? getYear(item.issueDate) : getYear(item.completionDate);
+      const matchesYear = selectedYear === "all" || itemYear.toString() === selectedYear;
+
+      return matchesSearch && matchesCategory && matchesYear;
+    });
+  }, [allItems, searchQuery, selectedCategory, selectedYear]);
+
+  const toggleExpand = useCallback((id: string) => {
+    setExpandedItems(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  // Keyboard navigation
+  const handleKeyDown = useCallback((e: KeyboardEvent, index: number) => {
+    const cards = cardRefs.current.filter((ref): ref is HTMLArticleElement => ref !== null);
+    const maxIndex = cards.length - 1;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setFocusedIndex(prev => Math.min(prev + 1, maxIndex));
+        cards[Math.min(index + 1, maxIndex)]?.focus();
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setFocusedIndex(prev => Math.max(prev - 1, 0));
+        cards[Math.max(index - 1, 0)]?.focus();
+        break;
+      case "Home":
+        e.preventDefault();
+        setFocusedIndex(0);
+        cards[0]?.focus();
+        break;
+      case "End":
+        e.preventDefault();
+        setFocusedIndex(maxIndex);
+        cards[maxIndex]?.focus();
+        break;
+      case "Enter":
+      case " ":
+        if (e.target === cards[index]) {
+          e.preventDefault();
+          toggleExpand(filteredItems[index].id);
+        }
+        break;
+    }
+  }, [filteredItems, toggleExpand]);
+
   if (loading) {
     return (
-      <div className={styles.loading}>
-        {/* Certification Skeletons */}
-        <div className={styles.certificationsGrid}>
-          {/* Show 3 skeleton cards while loading */}
-          {[1, 2, 3].map((i) => (
-            <div key={i} className={styles.certificationCard}>
-              <div className={styles.certificationSkeleton}>
-                <div className={styles.certSkeletonLogo} />
-                <div className={styles.certSkeletonContent}>
-                  <div className={styles.certSkeletonName}>
-                    <div className={styles.certSkeletonLine} style={{ width: "80%" }} />
-                    <div className={styles.certSkeletonLine} style={{ width: "60%" }} />
+      <section className={`${styles.certifications} ${styles.fadeUp}`} ref={scrollRef} aria-labelledby="certifications-title">
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.headerContent}>
+              <span className={styles.sectionLabel}>
+                <span className={styles.sectionLabelIcon} role="img" aria-label="certifications">📜</span>
+                Certifications & Education
+              </span>
+              <h2 id="certifications-title" className={styles.title}>
+                Professional Credentials
+              </h2>
+              <p className={styles.subtitle}>
+                Official certifications, badges, and ongoing learning pursuits
+              </p>
+            </div>
+          </div>
+
+          <div className={styles.timeline} role="list" aria-label="Certifications timeline">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className={styles.skeletonCard} role="listitem" aria-hidden="true">
+                <div className={styles.skeletonCardInner}>
+                  <div className={styles.skeletonHeader}>
+                    <div className={styles.skeletonIcon} />
+                    <div className={styles.skeletonMeta}>
+                      <div className={styles.skeletonTitle} />
+                      <div className={styles.skeletonOrg} />
+                      <div className={styles.skeletonMetaRow}>
+                        <div className={styles.skeletonDate} />
+                        <div className={styles.skeletonBadge} />
+                      </div>
+                    </div>
+                    <div className={styles.skeletonExpand} />
                   </div>
-                  <div className={styles.certSkeletonOrg}>
-                    <div className={styles.certSkeletonLine} style={{ width: "60%" }} />
-                    <div className={styles.certSkeletonLine} style={{ width: "40%" }} />
-                  </div>
-                  <div className={styles.certSkeletonDate} />
-                  <div className={styles.certSkeletonSkills}>
-                    <div className={styles.certSkeletonLine} style={{ width: "70%" }} />
-                    <div className={styles.certSkeletonLine} style={{ width: "50%" }} />
-                    <div className={styles.certSkeletonLine} style={{ width: "40%" }} />
+                  <div className={styles.skeletonContent}>
+                    <div className={styles.skeletonDetailRow}>
+                      <div className={styles.skeletonLine} />
+                      <div className={styles.skeletonLine} style={{ width: "60%" }} />
+                    </div>
+                    <div className={styles.skeletonDetailRow}>
+                      <div className={styles.skeletonLine} />
+                      <div className={styles.skeletonLine} style={{ width: "80%" }} />
+                    </div>
                   </div>
                 </div>
+                <div className={styles.skeletonConnector} />
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
     );
   }
 
   if (error) {
     return (
-      <div className={styles.error}>
-        <p>{error}</p>
-        <button
-          onClick={() => {
-            setLoading(true);
-            setError(null);
-            // Trigger refetch
-          }}
-        >
-          Try Again
-        </button>
-      </div>
+      <section className={`${styles.certifications} ${styles.fadeUp}`} ref={scrollRef} aria-labelledby="certifications-title">
+        <div className={styles.container}>
+          <div className={styles.error}>
+            <p>{error}</p>
+            <button onClick={handleRetry} className={styles.retryButton}>
+              Try Again
+            </button>
+          </div>
+        </div>
+      </section>
     );
   }
 
-  // Return null if no certifications and no continuing education data
-  if (certifications.length === 0 && continuingEducation.length === 0) {
-    return null;
+  if (filteredItems.length === 0 && allItems.length > 0) {
+    return (
+      <section className={`${styles.certifications} ${styles.fadeUp}`} ref={scrollRef} aria-labelledby="certifications-title">
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.headerContent}>
+              <span className={styles.sectionLabel}>
+                <span className={styles.sectionLabelIcon} role="img" aria-label="certifications">📜</span>
+                Certifications & Education
+              </span>
+              <h2 id="certifications-title" className={styles.title}>
+                Professional Credentials
+              </h2>
+              <p className={styles.subtitle}>
+                Official certifications, badges, and ongoing learning pursuits
+              </p>
+            </div>
+            <div className={styles.filters}>
+              <div className={styles.searchWrapper}>
+                <FaSearch className={styles.searchIcon} aria-hidden="true" />
+                <input
+                  type="search"
+                  className={styles.searchInput}
+                  placeholder="Search certifications..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label="Search certifications"
+                />
+              </div>
+              <div className={styles.filterGroup}>
+                <select className={styles.filterSelect} value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} aria-label="Filter by category">
+                  <option value="all">All Categories</option>
+                  {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                </select>
+                <select className={styles.filterSelect} value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} aria-label="Filter by year">
+                  <option value="all">All Years</option>
+                  {years.map(yr => <option key={yr} value={yr}>{yr}</option>)}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateIcon}>
+              <div className={styles.emptyStateBadge}>
+                <div className={styles.emptyStateCircle} />
+                <FaSearch className={styles.emptyStateSearchIcon} aria-hidden="true" />
+              </div>
+            </div>
+            <p className={styles.emptyStateText}>
+              No certifications match your current filters.
+            </p>
+            <button onClick={() => { setSearchQuery(""); setSelectedCategory("all"); setSelectedYear("all"); }} className={styles.clearFiltersButton}>
+              <FaFilter className={styles.clearIcon} aria-hidden="true" />
+              Clear Filters
+            </button>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
-    <section className={`${styles.certifications} ${styles.fadeUp}`}>
+    <section className={`${styles.certifications} ${styles.fadeUp} ${inView ? styles.animate : ""}`} ref={scrollRef} aria-labelledby="certifications-title">
       <div className={styles.container}>
-        <h2 className={styles.title}>Certifications & Continuing Education</h2>
-        <p className={styles.subtitle}>
-          Official certifications, badges, and ongoing learning pursuits
-        </p>
+        <div className={styles.header}>
+          <div className={styles.headerContent}>
+            <span className={styles.sectionLabel}>
+              <span className={styles.sectionLabelIcon} role="img" aria-label="certifications">📜</span>
+              Certifications & Education
+            </span>
+            <h2 id="certifications-title" className={styles.title}>
+              Professional Credentials
+            </h2>
+            <p className={styles.subtitle}>
+              Official certifications, badges, and ongoing learning pursuits
+            </p>
+          </div>
 
-        {/* Certifications Section */}
-        {certifications.length > 0 && (
-          <div className={styles.certificationsSection}>
-            <h3 className={styles.sectionTitle}>Professional Certifications</h3>
-            <div className={styles.timeline}>
-              {certifications.map((cert, index) => (
-                <div key={cert.id} className={styles.timelineItem}>
-                  <div className={styles.timelineIndicator}>
-                    <div className={styles.timelineDot} />
-                    <div className={styles.timelineLine} />
-                  </div>
-                  <div className={styles.timelineContent}>
-                    <CertificationCard certification={cert} />
-                  </div>
-                </div>
-              ))}
+          {(allItems.length > 0) && (
+            <div className={styles.filters}>
+              <div className={styles.searchWrapper}>
+                <FaSearch className={styles.searchIcon} aria-hidden="true" />
+                <input
+                  type="search"
+                  className={styles.searchInput}
+                  placeholder="Search certifications..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label="Search certifications"
+                />
+              </div>
+              <div className={styles.filterGroup}>
+                <FaFilter className={styles.filterIcon} aria-hidden="true" />
+                <select className={styles.filterSelect} value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} aria-label="Filter by category">
+                  <option value="all">All Categories</option>
+                  {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                </select>
+                <select className={styles.filterSelect} value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} aria-label="Filter by year">
+                  <option value="all">All Years</option>
+                  {years.map(yr => <option key={yr} value={yr}>{yr}</option>)}
+                </select>
+              </div>
             </div>
+          )}
+        </div>
+
+        <div className={`${styles.timeline} ${styles.staggerUp}`} role="list" aria-label="Certifications timeline">
+          {filteredItems.map((item, index) => (
+            <div
+              key={item.id}
+              className={styles.timelineItem}
+              style={{
+                "--stagger-delay": `${Math.min(index * 80, 600)}ms`,
+              } as React.CSSProperties}
+              role="listitem"
+            >
+              <CertificationCard
+                ref={(el) => { cardRefs.current[index] = el; }}
+                item={item}
+                isExpanded={expandedItems.has(item.id)}
+                onToggle={() => toggleExpand(item.id)}
+                onKeyDown={(e) => handleKeyDown(e, index)}
+              />
+            </div>
+          ))}
+        </div>
+
+        {filteredItems.length === 0 && allItems.length === 0 && (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateIcon}>
+              <div className={styles.emptyStateBadge}>
+                <div className={styles.emptyStateCircle} />
+                <FaCheckCircle className={styles.emptyStateCheckIcon} aria-hidden="true" />
+              </div>
+            </div>
+            <p className={styles.emptyStateText}>
+              No certifications or continuing education records found.
+            </p>
           </div>
         )}
 
-        {/* Continuing Education Section */}
-        {continuingEducation.length > 0 && (
-          <div className={styles.educationSection}>
-            <h3 className={styles.sectionTitle}>Continuing Education</h3>
-            <div className={styles.timeline}>
-              {continuingEducation.map((edu, index) => (
-                <div key={edu.id} className={styles.timelineItem}>
-                  <div className={styles.timelineIndicator}>
-                    <div className={styles.timelineDot} />
-                    <div className={styles.timelineLine} />
-                  </div>
-                  <div className={styles.timelineContent}>
-                    <EducationCard education={edu} />
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div className={styles.legend} aria-label="Expiry status legend">
+          <div className={styles.legendItem}>
+            <FaCheckCircle className={`${styles.legendIcon} ${styles.legendActive}`} aria-hidden="true" />
+            <span>Active</span>
           </div>
-        )}
+          <div className={styles.legendItem}>
+            <FaExclamationTriangle className={`${styles.legendIcon} ${styles.legendExpiring}`} aria-hidden="true" />
+            <span>Expiring Soon</span>
+          </div>
+          <div className={styles.legendItem}>
+            <FaTimesCircle className={`${styles.legendIcon} ${styles.legendExpired}`} aria-hidden="true" />
+            <span>Expired</span>
+          </div>
+        </div>
       </div>
     </section>
-  );
-}
-
-interface CertificationCardProps {
-  certification: Certification;
-}
-
-function CertificationCard({ certification }: CertificationCardProps) {
-  const isExpired = certification.expirationDate
-    ? new Date(certification.expirationDate) < new Date()
-    : false;
-  const expiresSoon = certification.expirationDate
-    ? (new Date(certification.expirationDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24 * 30) <= 3 // Less than 3 months
-    : false;
-
-  return (
-    <div className={styles.certificationCard}>
-      <div className={styles.certificationBadge}>
-        {/* Logo */}
-        {certification.logoUrl ? (
-          <img
-            src={certification.logoUrl}
-            alt={`${certification.issuingOrganization} logo`}
-            className={styles.badgeLogo}
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = "/logos/default.png";
-            }}
-          />
-        ) : (
-          <div className={styles.badgeLogoPlaceholder} />
-        )}
-
-        {/* Content */}
-        <div className={styles.badgeContent}>
-          <h3 className={styles.badgeName}>{certification.name}</h3>
-          <p className={styles.badgeOrg}>{certification.issuingOrganization}</p>
-
-          {/* Dates */}
-          <div className={styles.badgeDates}>
-            <span className={styles.issueDate}>
-              <span>📅</span> Issued: {new Date(certification.issueDate).toLocaleDateString()}
-            </span>
-            {certification.expirationDate && (
-              <span className={styles.expiryDate}>
-                <span>⏳</span> Expires: {new Date(certification.expirationDate).toLocaleDateString()}
-                {isExpired && (
-                  <span className={styles.expiredBadge}>EXPIRED</span>
-                )}
-                {!isExpired && expiresSoon && (
-                  <span className={styles.expiresSoonBadge}>EXPIRING SOON</span>
-                )}
-              </span>
-            )}
-          </div>
-
-          {/* Credential ID */}
-          {certification.credentialId && (
-            <div className={styles.badgeCredential}>
-              <span>ID: </span> {certification.credentialId}
-            </div>
-          )}
-
-          {/* Skills */}
-          {certification.skills && certification.skills.length > 0 && (
-            <div className={styles.badgeSkills}>
-              <span>Skills: </span>
-              {certification.skills.map((skill, index) => (
-                <span key={index} className={styles.skillTag}>
-                  {skill}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Description */}
-          {certification.description && (
-            <p className={styles.badgeDescription}>{certification.description}</p>
-          )}
-
-          {/* Verify Button */}
-          {certification.credentialUrl && (
-            <a
-              href={certification.credentialUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.verifyButton}
-            >
-              Verify Credential
-            </a>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-interface EducationCardProps {
-  education: ContinuingEducation;
-}
-
-function EducationCard({ education }: EducationCardProps) {
-  return (
-    <div className={styles.educationCard}>
-      <div className={styles.educationBadge}>
-        {/* Logo */}
-        {education.logoUrl ? (
-          <img
-            src={education.logoUrl}
-            alt={`${education.provider} logo`}
-            className={styles.educationLogo}
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = "/logos/default.png";
-            }}
-          />
-        ) : (
-          <div className={styles.educationLogoPlaceholder} />
-        )}
-
-        {/* Content */}
-        <div className={styles.educationContent}>
-          <h3 className={styles.educationName}>{education.name}</h3>
-          <p className={styles.educationProvider}>{education.provider}</p>
-
-          {/* Date */}
-          <div className={styles.educationDate}>
-            <span>📅</span> Completed: {new Date(education.completionDate).toLocaleDateString()}
-          </div>
-
-          {/* Hours */}
-          {education.hours && (
-            <div className={styles.educationHours}>
-              <span>⏱️</span> {education.hours} hours
-            </div>
-          )}
-
-          {/* Skills */}
-          {education.skills && education.skills.length > 0 && (
-            <div className={styles.educationSkills}>
-              <span>Skills: </span>
-              {education.skills.map((skill, index) => (
-                <span key={index} className={styles.educationSkillTag}>
-                  {skill}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Description */}
-          {education.description && (
-            <p className={styles.educationDescription}>{education.description}</p>
-          )}
-
-          {/*
-          {education.certificateUrl && (
-            <a
-              href={education.certificateUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.certificateButton}
-            >
-              View Certificate
-            </a>
-          )}
-          */}
-        </div>
-      </div>
-    </div>
   );
 }

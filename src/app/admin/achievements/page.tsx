@@ -283,7 +283,7 @@ export default function AdminAchievementsPage() {
                 placeholder="Enter date (YYYY or YYYY-MM-DD)"
                 required
               />
-              <p className={styles.helpText>Use formats like 2023 or 2023-06-15</p>
+              <p className={styles.helpText}>Use formats like 2023 or 2023-06-15</p>
             </div>
 
             <div className={styles.formGroup}>

@@ -19,12 +19,14 @@ export async function GET(request: NextRequest) {
     // Cache for 30 minutes (in seconds)
     const thirtyMinutesInSeconds = 30 * 60;
 
+    const etag = `"${projectsPlain.length}-${Date.now()}"`;
+
     return NextResponse.json(projectsPlain, {
       headers: {
         "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
-        "ETag": `"${projectsPlain.length}-${Date.now()}"`,
+        ETag: etag,
       },
-    );
+    });
   } catch (error) {
     console.error("Error fetching projects:", error);
     return NextResponse.json(

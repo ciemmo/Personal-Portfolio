@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import styles from "./WorkExperience.module.css";
 import { useRouter } from "next/navigation";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 // Types
 interface WorkExperience {
@@ -62,7 +63,7 @@ export default function AdminWorkExperiencePage() {
   };
 
   // Handle form input change
-  const handleInputChange = (
+  const handleInputChange = useCallback((
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const target = e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
@@ -95,10 +96,10 @@ export default function AdminWorkExperiencePage() {
         [name]: value,
       }));
     }
-  };
+  }, []);
 
   // Handle form submit
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -174,10 +175,10 @@ export default function AdminWorkExperiencePage() {
       setError(err.message || "An error occurred");
       console.error("Error saving work experience:", err);
     }
-  };
+  }, [formData, editingWorkExperienceId, fetchWorkExperiences]);
 
   // Handle delete work experience
-  const handleDelete = async (id: string) => {
+  const handleDelete = useCallback(async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this work experience entry?")) {
       return;
     }
@@ -196,10 +197,10 @@ export default function AdminWorkExperiencePage() {
       setError("Failed to delete work experience");
       console.error("Error deleting work experience:", err);
     }
-  };
+  }, [fetchWorkExperiences]);
 
   // Handle edit work experience
-  const handleEdit = (workExperience: WorkExperience) => {
+  const handleEdit = useCallback((workExperience: WorkExperience) => {
     setEditingWorkExperienceId(workExperience._id);
     setFormData({
       company: workExperience.company,
@@ -214,7 +215,7 @@ export default function AdminWorkExperiencePage() {
       url: workExperience.url || "",
       logo: workExperience.logo || "",
     });
-  };
+  }, []);
 
   // Load work experiences on mount
   useEffect(() => {
@@ -575,10 +576,12 @@ export default function AdminWorkExperiencePage() {
 
                 {exp.logo && (
                   <div className={styles.workExperienceLogo}>
-                    <img
+                    <OptimizedImage
                       src={exp.logo}
                       alt={`${exp.company} logo`}
                       className={styles.logoImage}
+                      width={100}
+                      height={60}
                     />
                   </div>
                 )}
