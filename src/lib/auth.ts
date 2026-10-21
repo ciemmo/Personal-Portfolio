@@ -1,5 +1,6 @@
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 // JWT Configuration
 const JWT_SECRET = new TextEncoder().encode(

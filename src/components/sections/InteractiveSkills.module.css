@@ -9,30 +9,6 @@
   overflow: hidden;
 }
 
-/* Background orbs for depth */
-.backgroundOrbs {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.bgOrb {
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary-light), var(--color-secondary-light));
-  opacity: 0.15;
-  filter: blur(60px);
-  animation: orbFloat 20s ease-in-out infinite;
-}
-
-.bgOrb:nth-child(1) { animation-delay: 0s; }
-.bgOrb:nth-child(2) { animation-delay: -5s; }
-.bgOrb:nth-child(3) { animation-delay: -10s; }
-.bgOrb:nth-child(4) { animation-delay: -15s; }
-
 /* Subtle background */
 .interactiveSkills::before {
   content: '';
@@ -104,7 +80,7 @@
   padding-left: var(--space-12);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   font-size: var(--font-body);
   color: var(--color-text);
   transition:
@@ -222,11 +198,11 @@
 
 .skillsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-8);
 }
 
-/* Skill Card - 3D Tilt Effect */
+/* Skill Card */
 .skillCard {
   position: relative;
   padding: var(--space-5);
@@ -239,13 +215,11 @@
     transform var(--duration-normal) var(--ease-spring),
     box-shadow var(--duration-normal) var(--ease-out),
     border-color var(--duration-fast) var(--ease-out);
-  transform-style: preserve-3d;
-  perspective: 1000px;
   will-change: transform, box-shadow;
 }
 
 .skillCard:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-8px);
   box-shadow: var(--shadow-xl);
   border-color: var(--color-primary);
   z-index: 10;
@@ -254,33 +228,6 @@
 .skillCard:focus-visible {
   outline: var(--focus-ring);
   outline-offset: var(--focus-ring-offset);
-}
-
-/* 3D Tilt Effect */
-.skillCardInner {
-  transform-style: preserve-3d;
-  transition: transform var(--duration-fast) var(--ease-out);
-}
-
-.skillCard:hover .skillCardInner {
-  /* Tilt handled via JS */
-}
-
-/* Glow effect on hover */
-.skillCard::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-  border-radius: var(--radius-xl);
-  opacity: 0;
-  filter: blur(8px);
-  transition: opacity var(--duration-normal) var(--ease-out);
-  z-index: -1;
-}
-
-.skillCard:hover::before {
-  opacity: 0.3;
 }
 
 /* Skill Icon */
@@ -639,12 +586,6 @@
   100% { background-position: 200% 0; }
 }
 
-@keyframes orbFloat {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(30px, -20px) scale(1.05); }
-  50% { transform: translate(-20px, 30px) scale(0.95); }
-  75% { transform: translate(-30px, -30px) scale(1.02); }
-}
 
 /* Visually hidden utility for accessibility */
 .visuallyHidden {
@@ -671,7 +612,6 @@
   .skillCard,
   .skillCard:hover,
   .skillCard:hover .skillIconWrapper,
-  .skillCard:hover::before,
   .proficiencyRingProgress,
   .skeletonIcon,
   .skeletonTitle,
@@ -788,9 +728,7 @@
   .searchWrapper,
   .tabsContainer,
   .actionButton,
-  .skillCard:hover,
-  .skillCard:hover .skillIconWrapper,
-  .skillCard:hover::before {
+  .skillCard:hover {
     display: none !important;
     transform: none !important;
   }

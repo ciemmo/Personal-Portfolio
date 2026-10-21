@@ -121,7 +121,7 @@ export async function DELETE(
     await connectDB();
 
     const { id } = await params;
-    const deletedEducation = await Education.findByIdAndDelete(id);
+    const deletedEducation = await ContinuingEducation.findByIdAndDelete(id);
 
     if (!deletedEducation) {
       return NextResponse.json(

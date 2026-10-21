@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import ProjectCard from "@/components/projects/ProjectCard";
 import styles from "./ProjectsGrid.module.css";
-import { useRef as useReactRef, useEffect as useReactEffect, useState as useReactState } from "react";
+import ProjectCard from "@/components/projects/ProjectCard";
+import useScrollAnimation from "@/hooks/useScrollAnimation";
 
 interface Project {
   slug: string;
@@ -23,14 +23,17 @@ interface ProjectsGridProps {
 }
 
 export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: ProjectsGridProps) {
-  const [fetchedProjects, setFetchedProjects] = useReactState<Project[]>([]);
-  const [isLoading, setIsLoading] = useReactState(true);
-  const [error, setError] = useReactState<string | null>(null);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useReactState(false);
-  const cardRefs = useReactRef<(HTMLArticleElement | null)[]>([]);
-  const [focusedIndex, setFocusedIndex] = useReactState(0);
+  const [fetchedProjects, setFetchedProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const cardRefs = useRef<(HTMLElement | null)[]>([]);
+  const [focusedIndex, setFocusedIndex] = useState(0);
 
-  useReactEffect(() => {
+  // Scroll animation for section entrance
+  useScrollAnimation();
+
+  useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     setPrefersReducedMotion(mediaQuery.matches);
     const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
@@ -39,7 +42,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
   }, []);
 
   // Fetch projects data
-  useReactEffect(() => {
+  useEffect(() => {
     if (providedProjects && providedProjects.length > 0) {
       setFetchedProjects(providedProjects);
       setIsLoading(false);
@@ -75,8 +78,8 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
   }, [providedProjects, fetchedProjects, limit]);
 
   // Keyboard navigation
-  const handleKeyDown = useCallback((e: KeyboardEvent, index: number) => {
-    const cards = cardRefs.current.filter((ref): ref is HTMLArticleElement => ref !== null);
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLElement>, index: number) => {
+    const cards = cardRefs.current.filter((ref): ref is HTMLElement => ref !== null);
     const maxIndex = cards.length - 1;
 
     switch (e.key) {
@@ -115,7 +118,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
 
   if (isLoading && displayProjects.length === 0) {
     return (
-      <section className={`${styles.projects} ${styles.fadeUp}`} aria-labelledby="projects-title">
+      <section className={`${styles.projects} ${styles.fadeUp} fade-up`} aria-labelledby="projects-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <span className={styles.sectionLabel}>
@@ -132,7 +135,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
 
           <div className={styles.grid} role="list" aria-label="Projects grid">
             {[1, 2, 3].map((i) => (
-              <article key={i} className={styles.skeletonCard} role="listitem" aria-hidden="true" style={{ "--stagger-delay": `${i * 100}ms` }}>
+              <article key={i} className={styles.skeletonCard} role="listitem" aria-hidden="true">
                 <div className={styles.skeletonCardInner}>
                   <div className={styles.skeletonImage} />
                   <div className={styles.skeletonContent}>
@@ -156,7 +159,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
 
   if (error) {
     return (
-      <section className={`${styles.projects} ${styles.fadeUp}`} aria-labelledby="projects-title">
+      <section className={`${styles.projects} ${styles.fadeUp} fade-up`} aria-labelledby="projects-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <span className={styles.sectionLabel}>
@@ -183,7 +186,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
 
   if (displayProjects.length === 0) {
     return (
-      <section className={`${styles.projects} ${styles.fadeUp}`} aria-labelledby="projects-title">
+      <section className={`${styles.projects} ${styles.fadeUp} fade-up`} aria-labelledby="projects-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <span className={styles.sectionLabel}>
@@ -220,7 +223,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
   }
 
   return (
-    <section className={`${styles.projects} ${styles.fadeUp}`} aria-labelledby="projects-title">
+    <section className={`${styles.projects} ${styles.fadeUp} fade-up`} aria-labelledby="projects-title">
       <div className={styles.container}>
         <div className={styles.header}>
           <span className={styles.sectionLabel}>
@@ -244,7 +247,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
               onKeyDown={(e) => handleKeyDown(e, index)}
               index={index}
               isFeatured={project.featured}
-              style={{ "--stagger-delay": `${Math.min(index * 80, 400)}ms` } as React.CSSProperties}
+              style={{ "--stagger-delay": (Math.min(index * 80, 400)) + "ms" } as React.CSSProperties}
             />
           ))}
         </div>

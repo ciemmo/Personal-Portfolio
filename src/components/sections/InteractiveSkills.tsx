@@ -13,6 +13,7 @@ import {
 } from "react-icons/si";
 import { TbBrandNextjs, TbBrandCSharp, TbBrandCpp } from "react-icons/tb";
 import styles from "./InteractiveSkills.module.css";
+import useScrollAnimation from "@/hooks/useScrollAnimation";
 
 // Skill to icon mapping
 const skillIcons = {
@@ -179,10 +180,11 @@ export default function InteractiveSkills() {
   const [searchQuery, setSearchQuery] = useState("");
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [focusedIndex, setFocusedIndex] = useState(-1);
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-  const [tiltStates, setTiltStates] = useState<Record<string, { x: number; y: number }>>({});
   const { skills: allSkills, loading, error } = useSkills();
   const prefersReducedMotion = useRef(false);
+
+  // Scroll animation for section entrance
+  useScrollAnimation();
 
   // Check for reduced motion preference
   useEffect(() => {
@@ -245,36 +247,6 @@ export default function InteractiveSkills() {
   // Debounced search for better performance
   const debouncedSearch = useDebounce(searchQuery, 150);
 
-  // Handle mouse move for tilt effect
-  const handleMouseMove = useCallback((e: MouseEvent<HTMLButtonElement>, skillId: string) => {
-    if (prefersReducedMotion.current) return;
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left; // x position within the element
-    const y = e.clientY - rect.top;  // y position within the element
-
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    // Calculate tilt: max 5 degrees
-    const maxTilt = 5;
-    const tiltX = ((y - centerY) / centerY) * maxTilt * -1; // Invert Y
-    const tiltY = ((x - centerX) / centerX) * maxTilt;
-
-    setTiltStates(prev => ({
-      ...prev,
-      [skillId]: { x: tiltX, y: tiltY }
-    }));
-  }, []);
-
-  const handleMouseLeave = useCallback((_e: MouseEvent<HTMLButtonElement>, skillId: string) => {
-    setTiltStates(prev => {
-      const next = { ...prev };
-      delete next[skillId];
-      return next;
-    });
-  }, []);
-
   // Keyboard navigation
   const handleKeyDown = useCallback((e: KeyboardEvent<HTMLButtonElement>, index: number, skillId: string) => {
     const cards = cardRefs.current.filter((ref): ref is HTMLButtonElement => ref !== null);
@@ -327,7 +299,7 @@ export default function InteractiveSkills() {
     setFocusedIndex(-1);
     // Focus first card when category changes
     setTimeout(() => {
-      const firstCard = cardRefs[0];
+      const firstCard = cardRefs.current[0];
       if (firstCard) {
         firstCard.focus();
         setFocusedIndex(0);
@@ -338,7 +310,7 @@ export default function InteractiveSkills() {
   // Loading state
   if (loading) {
     return (
-      <section className={styles.interactiveSkills} aria-labelledby="skills-title">
+      <section className={`${styles.interactiveSkills} fade-up`} aria-labelledby="skills-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <h2 id="skills-title" className={styles.title}>Technical Skills</h2>
@@ -354,7 +326,8 @@ export default function InteractiveSkills() {
               className={styles.searchInput}
               placeholder="Search skills..."
               aria-label="Search skills"
-              disabled
+              value=""
+              disabled={true}
             />
           </div>
           <div className={styles.tabsContainer} role="tablist" aria-label="Skill categories">
@@ -367,7 +340,7 @@ export default function InteractiveSkills() {
                 id={`tab-${cat}`}
                 className={`${styles.tab} ${selectedCategory === cat ? styles.active : ""}`}
                 onClick={() => setSelectedCategory(cat)}
-                disabled
+                disabled={true}
               >
                 {cat}
                 <span className={styles.tabCount}>{(groupedSkills[cat] || []).length}</span>
@@ -394,7 +367,7 @@ export default function InteractiveSkills() {
   // Error state
   if (error) {
     return (
-      <section className={styles.interactiveSkills} aria-labelledby="skills-title">
+      <section className={`${styles.interactiveSkills} fade-up`} aria-labelledby="skills-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <h2 id="skills-title" className={styles.title}>Technical Skills</h2>
@@ -427,7 +400,7 @@ export default function InteractiveSkills() {
   // Empty state
   if (!allSkills || allSkills.length === 0) {
     return (
-      <section className={styles.interactiveSkills} aria-labelledby="skills-title">
+      <section className={`${styles.interactiveSkills} fade-up`} aria-labelledby="skills-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <h2 id="skills-title" className={styles.title}>Technical Skills</h2>
@@ -522,15 +495,7 @@ export default function InteractiveSkills() {
   };
 
   return (
-    <section className={styles.interactiveSkills} aria-labelledby="skills-title">
-      {/* Subtle background orbs */}
-      <div className={styles.backgroundOrbs} aria-hidden="true">
-        <div className={styles.bgOrb} style={{ top: "10%", left: "5%" }} />
-        <div className={styles.bgOrb} style={{ top: "20%", right: "5%" }} />
-        <div className={styles.bgOrb} style={{ bottom: "15%", left: "10%" }} />
-        <div className={styles.bgOrb} style={{ bottom: "10%", right: "10%" }} />
-      </div>
-
+    <section className={`${styles.interactiveSkills} fade-up`} aria-labelledby="skills-title">
       <div className={styles.container}>
         {/* Header */}
         <header className={styles.header}>
@@ -609,8 +574,6 @@ export default function InteractiveSkills() {
             >
               {filteredSkills.map((skill, index) => {
                 const proficiencyLevel = skill.proficiency ?? 0;
-                const skillId = `${selectedCategory}-${skill._id}-${index}`;
-                const tilt = tiltStates[skillId] || { x: 0, y: 0 };
 
                 // Ref callback - store in ref array (not state) to avoid re-renders
                 const cardRef = (node: HTMLButtonElement | null) => {
@@ -622,30 +585,19 @@ export default function InteractiveSkills() {
 
                 return (
                   <button
-                    key={skillId}
+                    key={skill._id}
                     ref={cardRef}
                     className={styles.skillCard}
-                    onMouseMove={(e) => handleMouseMove(e, skillId)}
-                    onMouseLeave={(e) => handleMouseLeave(e, skillId)}
                     onKeyDown={(e) => handleKeyDown(e, index, skill._id)}
                     onFocus={() => setFocusedIndex(index)}
                     onClick={() => {
                       window.location.href = `/projects?skill=${encodeURIComponent(skill.name)}`;
                     }}
-                    style={{
-                      transform: prefersReducedMotion.current
-                        ? undefined
-                        : `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`
-                    }}
                     tabIndex={0}
                     data-skill-index={index}
                     aria-label={`${skill.name}, ${["Beginner", "Intermediate", "Advanced", "Expert"][proficiencyLevel] ?? "Unknown"} proficiency. Press Enter to view related projects.`}
                   >
-                    <div className={styles.skillCardInner} style={{
-                      transform: prefersReducedMotion.current
-                        ? undefined
-                        : `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`
-                    }}>
+                    <div className={styles.skillCardInner}>
                       <div className={styles.skillIconWrapper}>
                         {getSkillIcon(skill.name)}
                       </div>

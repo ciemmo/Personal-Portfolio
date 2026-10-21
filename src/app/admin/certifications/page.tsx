@@ -21,19 +21,33 @@ interface Certification {
   updatedAt: string;
 }
 
+// Form data type - skills stored as comma-separated string for input handling
+interface CertificationFormData {
+  name: string;
+  issuingOrganization: string;
+  issueDate: string;
+  expirationDate: string;
+  credentialId: string;
+  credentialUrl: string;
+  skills: string;
+  description: string;
+  logoUrl: string;
+  color: string;
+}
+
 export default function AdminCertificationsPage() {
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [editingCertificationId, setEditingCertificationId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Partial<Certification>>({
+  const [formData, setFormData] = useState<CertificationFormData>({
     name: "",
     issuingOrganization: "",
     issueDate: "",
     expirationDate: "",
     credentialId: "",
     credentialUrl: "",
-    skills: [],
+    skills: "",
     description: "",
     logoUrl: "",
     color: "",
@@ -77,22 +91,21 @@ export default function AdminCertificationsPage() {
         ...prev,
         [name]: value,
       }));
-    } else if (name === "skills") {
-      // Handle comma-separated values for arrays
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-          .split(",")
-          .map(item => item.trim())
-          .filter(item => item.length > 0),
-      }));
     } else {
-      // For text inputs and textarea
+      // For text inputs and textarea - keep as string, parse on submit
       setFormData(prev => ({
         ...prev,
         [name]: value,
       }));
     }
+  };
+
+  // Parse comma-separated skills string to array
+  const parseSkills = (skillsString: string): string[] => {
+    return skillsString
+      .split(",")
+      .map(item => item.trim())
+      .filter(item => item.length > 0);
   };
 
   // Handle form submit
@@ -106,6 +119,12 @@ export default function AdminCertificationsPage() {
       return;
     }
 
+    // Prepare data with parsed skills array
+    const submitData = {
+      ...formData,
+      skills: typeof formData.skills === "string" ? parseSkills(formData.skills) : formData.skills,
+    };
+
     try {
       if (editingCertificationId && editingCertificationId !== "ADD_MODE") {
         // Update existing certification
@@ -114,7 +133,7 @@ export default function AdminCertificationsPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(submitData),
         });
 
         if (!response.ok) {
@@ -129,7 +148,7 @@ export default function AdminCertificationsPage() {
           expirationDate: "",
           credentialId: "",
           credentialUrl: "",
-          skills: [],
+          skills: "",
           description: "",
           logoUrl: "",
           color: "",
@@ -141,7 +160,7 @@ export default function AdminCertificationsPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(submitData),
         });
 
         if (!response.ok) {
@@ -157,7 +176,7 @@ export default function AdminCertificationsPage() {
           expirationDate: "",
           credentialId: "",
           credentialUrl: "",
-          skills: [],
+          skills: "",
           description: "",
           logoUrl: "",
           color: "",
@@ -204,7 +223,7 @@ export default function AdminCertificationsPage() {
       expirationDate: certification.expirationDate || "",
       credentialId: certification.credentialId || "",
       credentialUrl: certification.credentialUrl || "",
-      skills: Array.isArray(certification.skills) ? certification.skills : [],
+      skills: Array.isArray(certification.skills) ? certification.skills.join(", ") : "",
       description: certification.description || "",
       logoUrl: certification.logoUrl || "",
       color: certification.color || "",
@@ -254,7 +273,7 @@ export default function AdminCertificationsPage() {
                 expirationDate: "",
                 credentialId: "",
                 credentialUrl: "",
-                skills: [],
+                skills: "",
                 description: "",
                 logoUrl: "",
                 color: "",
@@ -392,7 +411,7 @@ export default function AdminCertificationsPage() {
                 onChange={handleInputChange}
                 className={styles.textarea}
                 placeholder="Enter description of what the certification covers"
-                rows="3"
+                rows={3}
               />
             </div>
 
@@ -445,7 +464,7 @@ export default function AdminCertificationsPage() {
                     expirationDate: "",
                     credentialId: "",
                     credentialUrl: "",
-                    skills: [],
+                    skills: "",
                     description: "",
                     logoUrl: "",
                     color: "",

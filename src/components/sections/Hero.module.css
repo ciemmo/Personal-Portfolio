@@ -1,10 +1,9 @@
 /* ========================================
-   HERO - Modern Animated Design
+   HERO - Clean, Simple Design
    ======================================== */
 
 .hero {
   position: relative;
-  min-height: 100vh;
   display: flex;
   align-items: center;
   padding: var(--space-section-xl) 0;
@@ -12,70 +11,31 @@
   overflow: hidden;
 }
 
-/* Animated background elements */
-.hero::before,
-.hero::after {
+/* Subtle background gradient */
+.hero::before {
   content: '';
   position: absolute;
-  border-radius: var(--radius-full);
-  filter: blur(80px);
-  opacity: 0.4;
-  animation: float 20s ease-in-out infinite;
+  inset: 0;
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, transparent 50%),
+              linear-gradient(225deg, var(--color-secondary-light) 0%, transparent 50%);
+  opacity: 0.3;
   pointer-events: none;
 }
 
-.hero::before {
-  width: 400px;
-  height: 400px;
-  background: var(--color-primary);
-  top: 10%;
-  right: 10%;
-  animation-delay: 0s;
-}
-
-.hero::after {
-  width: 300px;
-  height: 300px;
-  background: var(--color-secondary);
-  bottom: 20%;
-  left: 5%;
-  animation-delay: -10s;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-  }
-  25% {
-    transform: translate(30px, -30px) scale(1.1);
-  }
-  50% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-  75% {
-    transform: translate(-30px, -20px) scale(1.05);
-  }
+.dark .hero::before {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+              linear-gradient(225deg, rgba(217, 70, 239, 0.08) 0%, transparent 50%);
 }
 
 /* Grid pattern overlay */
-.hero::after {
-  content: none;
-}
-
-.hero .gridOverlay {
+.gridOverlay {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(var(--color-primary-rgb), 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(var(--color-primary-rgb), 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
-  animation: gridMove 20s linear infinite;
+    linear-gradient(rgba(var(--color-primary-rgb), 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--color-primary-rgb), 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
   pointer-events: none;
-}
-
-@keyframes gridMove {
-  0% { background-position: 0 0; }
-  100% { background-position: 60px 60px; }
 }
 
 .container {
@@ -211,26 +171,13 @@
   box-shadow: var(--shadow-primary);
 }
 
-.primaryButton::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, var(--color-secondary), var(--color-accent));
-  opacity: 0;
-  transition: opacity var(--duration-normal) var(--ease-out);
-}
-
 .primaryButton:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-primary-lg);
 }
 
-.primaryButton:hover::before {
-  opacity: 1;
-}
-
 .primaryButton:active {
-  transform: translateY(-2px);
+  transform: translateY(0);
 }
 
 .primaryButton:focus-visible {
@@ -254,12 +201,12 @@
   background: var(--color-primary);
   border-color: var(--color-primary);
   color: var(--color-text-on-primary);
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-primary);
 }
 
 .secondaryButton:active {
-  transform: translateY(-2px);
+  transform: translateY(0);
 }
 
 .secondaryButton:focus-visible {
@@ -323,23 +270,6 @@
   transform: translateY(30px);
 }
 
-.imageWrapper::before {
-  content: '';
-  position: absolute;
-  inset: -20px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-  border-radius: var(--radius-3xl);
-  opacity: 0.15;
-  filter: blur(40px);
-  z-index: -1;
-  animation: pulseGlow 4s ease-in-out infinite;
-}
-
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.15; transform: scale(1); }
-  50% { opacity: 0.25; transform: scale(1.05); }
-}
-
 .imageFrame {
   position: relative;
   width: 380px;
@@ -348,7 +278,7 @@
   overflow: hidden;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-2xl);
+  box-shadow: var(--shadow-xl);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -362,75 +292,12 @@
   justify-content: center;
   color: var(--color-primary);
   opacity: 0.6;
-  transition: opacity var(--duration-normal) var(--ease-out);
-}
-
-.imageFrame:hover .profilePlaceholder {
-  opacity: 1;
-}
-
-/* Floating badges around image */
-.floatingBadges {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.badge {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  font-size: var(--font-body-xs);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-  box-shadow: var(--shadow-lg);
-  animation: badgeFloat 3s ease-in-out infinite;
-}
-
-.badge svg {
-  width: 16px;
-  height: 16px;
-  color: var(--color-primary);
-}
-
-.badge1 {
-  top: 10%;
-  right: -10%;
-  animation-delay: 0s;
-}
-
-.badge2 {
-  top: 40%;
-  right: -15%;
-  animation-delay: -0.75s;
-}
-
-.badge3 {
-  bottom: 30%;
-  right: -12%;
-  animation-delay: -1.5s;
-}
-
-.badge4 {
-  bottom: 10%;
-  left: -15%;
-  animation-delay: -2.25s;
-}
-
-@keyframes badgeFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
 }
 
 /* Stats Bar */
 .statsBar {
   display: flex;
-  gap: var(--space-8);
+  gap: var(--space-10);
   margin-top: var(--space-4);
   padding-top: var(--space-6);
   border-top: 1px solid var(--color-border);
@@ -474,7 +341,6 @@
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .hero::before,
-  .hero::after,
   .hero .gridOverlay,
   .greeting,
   .title,
@@ -482,25 +348,13 @@
   .buttons,
   .scrollIndicator,
   .imageWrapper,
-  .imageWrapper::before,
   .statsBar,
-  .badge {
+  .greetingIcon,
+  .scrollArrow,
+  .name::after {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
-  }
-
-  .name::after {
-    animation: none !important;
-    transform: scaleX(1) !important;
-  }
-
-  .greetingIcon {
-    animation: none !important;
-  }
-
-  .scrollArrow {
-    animation: none !important;
   }
 
   .primaryButton:hover,
@@ -539,10 +393,6 @@
     order: -1;
   }
 
-  .floatingBadges {
-    display: none;
-  }
-
   .imageFrame {
     width: 320px;
     height: 320px;
@@ -551,7 +401,6 @@
 
 @media (max-width: 768px) {
   .hero {
-    min-height: auto;
     padding: var(--space-section-lg) 0;
   }
 
@@ -581,7 +430,7 @@
   .statsBar {
     flex-wrap: wrap;
     justify-content: center;
-    gap: var(--space-6);
+    gap: var(--space-8);
   }
 }
 
@@ -618,19 +467,13 @@
    ======================================== */
 @media print {
   .hero {
-    min-height: auto;
     padding: var(--space-8) 0;
   }
 
   .hero::before,
-  .hero::after,
   .hero .gridOverlay,
   .scrollIndicator,
-  .floatingBadges,
-  .imageWrapper::before {
-    display: none;
-  }
-
+  .imageWrapper::before,
   .buttons {
     display: none;
   }

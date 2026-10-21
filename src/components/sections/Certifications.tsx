@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo, useRef, memo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef, memo, forwardRef } from "react";
 import styles from "./Certifications.module.css";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
 import OptimizedImage from "@/components/ui/OptimizedImage";
@@ -78,15 +78,18 @@ function getYear(dateString: string) {
   return new Date(dateString).getFullYear();
 }
 
-const CertificationCardComponent = memo(function CertificationCard({
-  item,
-  isExpanded,
-  onToggle,
-}: {
+interface CertificationCardProps {
   item: UnifiedItem;
   isExpanded: boolean;
   onToggle: () => void;
-}) {
+  onKeyDown: React.KeyboardEventHandler<HTMLElement>;
+}
+
+const CertificationCardComponent = memo(forwardRef<HTMLElement, CertificationCardProps>(function CertificationCard({
+  item,
+  isExpanded,
+  onToggle,
+}: CertificationCardProps, ref) {
   const isCert = item.type === "certification";
   const status = isCert ? getExpiryStatus(item.expirationDate) : EXPIRY_STATUS.active;
   const categoryColor = item.category ? CATEGORY_COLORS[item.category.toLowerCase()] : "var(--color-primary)";
@@ -94,6 +97,7 @@ const CertificationCardComponent = memo(function CertificationCard({
 
   return (
     <article
+      ref={ref}
       className={`${styles.card} ${isExpanded ? styles.expanded : ""} ${isCert ? styles.certification : styles.education}`}
       style={{ "--category-color": categoryColor } as React.CSSProperties}
     >
@@ -218,7 +222,8 @@ const CertificationCardComponent = memo(function CertificationCard({
       </div>
     </article>
   );
-});
+}));
+
 export const CertificationCard = CertificationCardComponent;
 
 export default function Certifications() {
@@ -234,7 +239,7 @@ export default function Certifications() {
   const [selectedYear, setSelectedYear] = useState<string>("all");
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [focusedIndex, setFocusedIndex] = useState(0);
-  const cardRefs = useRef<(HTMLArticleElement | null)[]>([]);
+  const cardRefs = useRef<(HTMLElement | null)[]>([]);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   // Scroll animation observer
@@ -392,8 +397,8 @@ export default function Certifications() {
   }, []);
 
   // Keyboard navigation
-  const handleKeyDown = useCallback((e: KeyboardEvent, index: number) => {
-    const cards = cardRefs.current.filter((ref): ref is HTMLArticleElement => ref !== null);
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLElement>, index: number) => {
+    const cards = cardRefs.current.filter((ref): ref is HTMLElement => ref !== null);
     const maxIndex = cards.length - 1;
 
     switch (e.key) {
@@ -612,7 +617,7 @@ export default function Certifications() {
         <div className={`${styles.timeline} ${styles.staggerUp}`} role="list" aria-label="Certifications timeline">
           {filteredItems.map((item, index) => (
             <div
-              key={item.id}
+              key={`${item.type}-${item.id}`}
               className={styles.timelineItem}
               style={{
                 "--stagger-delay": `${Math.min(index * 80, 600)}ms`,

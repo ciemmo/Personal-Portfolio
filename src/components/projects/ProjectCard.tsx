@@ -1,4 +1,4 @@
-import { memo, useRef, useEffect, useState, useCallback } from "react";
+import { memo, useRef, useEffect, useState, useCallback, forwardRef } from "react";
 import Link from "next/link";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 
@@ -14,14 +14,14 @@ interface Project {
   category?: string;
 }
 
-interface ProjectCardProps extends React.HTMLAttributes<HTMLArticleElement> {
+interface ProjectCardProps extends React.HTMLAttributes<HTMLElement> {
   project: Project;
-  onKeyDown?: (e: KeyboardEvent) => void;
+  onKeyDown?: React.KeyboardEventHandler<HTMLElement>;
   index?: number;
   isFeatured?: boolean;
 }
 
-const ProjectCardComponent = memo(function ProjectCard({
+const ProjectCardComponent = memo(forwardRef<HTMLElement, ProjectCardProps>(function ProjectCard({
   project,
   onKeyDown,
   index = 0,
@@ -29,17 +29,9 @@ const ProjectCardComponent = memo(function ProjectCard({
   style,
   className = "",
   ...props
-}: ProjectCardProps) {
+}: ProjectCardProps, ref) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const cardRef = useRef<HTMLArticleElement>(null);
-
-  // Forward ref to parent for keyboard navigation
-  useEffect(() => {
-    if (cardRef.current) {
-      // The ref is already set by parent via callback ref
-    }
-  }, []);
 
   const handleClick = useCallback(() => {
     window.location.href = `/projects/${project.slug}`;
@@ -61,7 +53,7 @@ const ProjectCardComponent = memo(function ProjectCard({
 
   return (
     <article
-      ref={cardRef}
+      ref={ref}
       className={`project-card ${isFeatured ? "featured" : ""} ${className}`}
       style={style}
       onClick={handleClick}
@@ -195,6 +187,6 @@ const ProjectCardComponent = memo(function ProjectCard({
       )}
     </article>
   );
-});
+}));
 
 export default ProjectCardComponent;

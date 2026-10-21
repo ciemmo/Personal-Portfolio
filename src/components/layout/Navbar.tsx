@@ -15,7 +15,7 @@ export default function Navbar() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const lastScrollY = useRef(0);
   const pathname = usePathname();
-  const navbarRef = useRef<HTMLNavElement>(null);
+  const navbarRef = useRef<HTMLElement>(null);
 
   // Hydration and theme initialization
   useEffect(() => {

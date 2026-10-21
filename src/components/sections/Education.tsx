@@ -136,7 +136,7 @@ export default function Education() {
   // Show empty state if no education data
   if (educations.length === 0) {
     return (
-      <section className={`${styles.education} ${styles.fadeUp}`}>
+      <section className={`${styles.education} ${styles.fadeUp} fade-up`}>
         <div className={styles.container}>
           <h2 className={styles.title}>Education</h2>
           <p className={styles.subtitle}>
@@ -157,7 +157,7 @@ export default function Education() {
   }
 
   return (
-    <section className={`${styles.education} ${styles.fadeUp}`}>
+    <section className={`${styles.education} ${styles.fadeUp} fade-up`}>
       <div className={styles.container}>
         <h2 className={styles.title}>Education</h2>
         <p className={styles.subtitle}>

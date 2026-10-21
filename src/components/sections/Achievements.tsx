@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo, useRef, memo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef, memo, forwardRef } from "react";
 import { Achievement } from "@/data/achievements";
 import styles from "./Achievements.module.css";
 import { FaFilter, FaTrophy, FaAward, FaMedal, FaStar, FaCheckCircle, FaExternalLinkAlt } from "react-icons/fa";
+import useScrollAnimation from "@/hooks/useScrollAnimation";
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   award: <FaAward aria-hidden="true" />,
@@ -30,7 +31,7 @@ export default function Achievements() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const cardRefs = useRef<(HTMLArticleElement | null)[]>([]);
+  const cardRefs = useRef<(HTMLElement | null)[]>([]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -102,8 +103,8 @@ export default function Achievements() {
   }, []);
 
   // Keyboard navigation
-  const handleKeyDown = useCallback((e: KeyboardEvent, index: number) => {
-    const cards = cardRefs.current.filter((ref): ref is HTMLArticleElement => ref !== null);
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLElement>, index: number) => {
+    const cards = cardRefs.current.filter((ref): ref is HTMLElement => ref !== null);
     const maxIndex = cards.length - 1;
 
     switch (e.key) {
@@ -151,9 +152,12 @@ export default function Achievements() {
 
   const [focusedIndex, setFocusedIndex] = useState(0);
 
+  // Scroll animation for section entrance
+  useScrollAnimation();
+
   if (loading) {
     return (
-      <section className={`${styles.achievements} ${styles.fadeUp}`} aria-labelledby="achievements-title">
+      <section className={`${styles.achievements} ${styles.fadeUp} fade-up`} aria-labelledby="achievements-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <span className={styles.sectionLabel}>
@@ -169,21 +173,23 @@ export default function Achievements() {
           </div>
 
           <div className={styles.masonryGrid} role="list" aria-label="Achievements grid">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <article key={i} className={styles.skeletonCard} role="listitem" aria-hidden="true" style={{ "--stagger-delay": `${i * 100}ms` }}>
-                <div className={styles.skeletonCardInner}>
-                  <div className={styles.skeletonIcon} />
-                  <div className={styles.skeletonContent}>
-                    <div className={styles.skeletonTitle} />
-                    <div className={styles.skeletonTitle} style={{ width: "70%" }} />
-                    <div className={styles.skeletonDescription} />
-                    <div className={styles.skeletonDescription} style={{ width: "60%" }} />
-                    <div className={styles.skeletonDescription} style={{ width: "40%" }} />
-                    <div className={styles.skeletonDate} />
+            {[1, 2, 3, 4, 5].map((i) => {
+              return (
+                <article key={i} className={styles.skeletonCard} role="listitem" aria-hidden="true">
+                  <div className={styles.skeletonCardInner}>
+                    <div className={styles.skeletonIcon} />
+                    <div className={styles.skeletonContent}>
+                      <div className={styles.skeletonTitle} />
+                      <div className={styles.skeletonTitle} style={{ width: "70%" }} />
+                      <div className={styles.skeletonDescription} />
+                      <div className={styles.skeletonDescription} style={{ width: "60%" }} />
+                      <div className={styles.skeletonDescription} style={{ width: "40%" }} />
+                      <div className={styles.skeletonDate} />
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -192,7 +198,7 @@ export default function Achievements() {
 
   if (error) {
     return (
-      <section className={`${styles.achievements} ${styles.fadeUp}`} aria-labelledby="achievements-title">
+      <section className={`${styles.achievements} ${styles.fadeUp} fade-up`} aria-labelledby="achievements-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <span className={styles.sectionLabel}>
@@ -219,7 +225,7 @@ export default function Achievements() {
 
   if (achievementsData.length === 0) {
     return (
-      <section className={`${styles.achievements} ${styles.fadeUp}`} aria-labelledby="achievements-title">
+      <section className={`${styles.achievements} ${styles.fadeUp} fade-up`} aria-labelledby="achievements-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <span className={styles.sectionLabel}>
@@ -249,7 +255,7 @@ export default function Achievements() {
   }
 
   return (
-    <section className={`${styles.achievements} ${styles.fadeUp}`} aria-labelledby="achievements-title">
+    <section className={`${styles.achievements} ${styles.fadeUp} fade-up`} aria-labelledby="achievements-title">
       <div className={styles.container}>
         <div className={styles.header}>
           <div className={styles.headerContent}>
@@ -288,9 +294,16 @@ export default function Achievements() {
         {selectedCategory === "all" && groupedAchievements ? (
           <>
             {Object.entries(groupedAchievements).map(([category, achievements], catIndex) => (
-              <div key={category} className={styles.categorySection} style={{ "--stagger-delay": `${catIndex * 150}ms` }}>
+              <div
+                key={category}
+                className={styles.categorySection}
+                style={{ "--stagger-delay": (catIndex * 150) + "ms" } as React.CSSProperties}
+              >
                 <h3 className={styles.categoryTitle}>
-                  <span className={styles.categoryIcon} style={{ "--category-color": CATEGORY_COLORS[category] }}>
+                  <span
+                    className={styles.categoryIcon}
+                    style={{ "--category-color": CATEGORY_COLORS[category] } as React.CSSProperties}
+                  >
                     {CATEGORY_ICONS[category] || <FaStar aria-hidden="true" />}
                   </span>
                   {formatCategoryTitle(category)}
@@ -352,24 +365,27 @@ interface AchievementCardProps {
   achievement: Achievement;
   isExpanded: boolean;
   onToggle: () => void;
-  onKeyDown: (e: KeyboardEvent) => void;
+  onKeyDown: React.KeyboardEventHandler<HTMLElement>;
   index: number;
 }
 
-const AchievementCardComponent = memo(function AchievementCard({
+const AchievementCardComponent = memo(forwardRef<HTMLElement, AchievementCardProps>(function AchievementCard({
   achievement,
   isExpanded,
   onToggle,
   onKeyDown,
-}: AchievementCardProps) {
+}: AchievementCardProps, ref) {
   const category = achievement.category || "other";
   const categoryColor = CATEGORY_COLORS[category] || "#6366F1";
   const categoryIcon = CATEGORY_ICONS[category] || <FaStar aria-hidden="true" />;
 
+  const cardStyle = { "--category-color": categoryColor } as React.CSSProperties;
+
   return (
     <article
+      ref={ref}
       className={`${styles.achievementCard} ${isExpanded ? styles.expanded : ""}`}
-      style={{ "--category-color": categoryColor } as React.CSSProperties}
+      style={cardStyle}
       onClick={onToggle}
       onKeyDown={onKeyDown}
       role="button"
@@ -415,6 +431,6 @@ const AchievementCardComponent = memo(function AchievementCard({
       <div className={styles.cardGlow} aria-hidden="true" />
     </article>
   );
-});
+}));
 
-export const AchievementCard = memo(AchievementCardComponent);
+export const AchievementCard = AchievementCardComponent;

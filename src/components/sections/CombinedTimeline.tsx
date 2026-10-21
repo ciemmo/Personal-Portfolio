@@ -65,7 +65,7 @@ const parseDateForSorting = (dateString: string): number => {
 };
 
 export default function CombinedTimeline() {
-  useScrollAnimation(".fadeUp, .staggerUp > *", "animate");
+  useScrollAnimation(".fade-up, .stagger-up > *", "animate");
   const [timelineItems, setTimelineItems] = useState<TimelineItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

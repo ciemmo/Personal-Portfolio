@@ -132,7 +132,7 @@ export default function WorkExperience() {
   // Show empty state if no work experience data
   if (workExperiences.length === 0) {
     return (
-      <section className={`${styles.workExperience} ${styles.fadeUp}`}>
+      <section className={`${styles.workExperience} ${styles.fadeUp} fade-up`}>
         <div className={styles.container}>
           <h2 className={styles.title}>Work Experience</h2>
           <p className={styles.subtitle}>
@@ -153,7 +153,7 @@ export default function WorkExperience() {
   }
 
   return (
-    <section className={`${styles.workExperience} ${styles.fadeUp}`}>
+    <section className={`${styles.workExperience} ${styles.fadeUp} fade-up`}>
       <div className={styles.container}>
         <h2 className={styles.title}>Work Experience</h2>
         <p className={styles.subtitle}>

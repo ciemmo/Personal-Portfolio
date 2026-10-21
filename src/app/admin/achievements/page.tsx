@@ -265,7 +265,7 @@ export default function AdminAchievementsPage() {
                 onChange={handleInputChange}
                 className={styles.textarea}
                 placeholder="Enter description or details"
-                rows="3"
+                rows={3}
               />
             </div>
 

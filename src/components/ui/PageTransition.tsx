@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { usePathname } from "next/navigation";
+import styles from "./PageTransition.module.css";
 
 export default function PageTransitionWrapper({
     children,
@@ -37,6 +38,7 @@ export default function PageTransitionWrapper({
                 initial="initial"
                 animate="animate"
                 exit="exit"
+                className={styles.pageWrapper}
             >
                 {children}
             </motion.div>

@@ -1,5 +1,3 @@
-"use client";
-
 import "@/styles/globals.css";
 import "@/styles/variables.css";
 import "@/styles/layout.css";
@@ -8,25 +6,15 @@ import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import PageTransitionWrapper from "@/components/ui/PageTransition";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Breadcrumb from "@/components/layout/Breadcrumb";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-    const pathname = usePathname();
-
-    // Only show breadcrumbs for nested routes (not home, not api routes)
-    const pathSegments = pathname.split("/").filter(Boolean);
-    const showBreadcrumbs =
-      pathname !== "/" &&
-      !pathname.startsWith("/api") &&
-      pathSegments.length > 0;
-
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <body>
                 <a href="#main-content" className="skip-to-content">Skip to main content</a>
                 <Navbar />
-                {showBreadcrumbs && <Breadcrumb pathname={pathname} />}
+                <Breadcrumb />
                 <main id="main-content">
                     <PageTransitionWrapper>
                         {children}
@@ -36,43 +24,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Footer />
             </body>
         </html>
-    );
-}
-
-// Breadcrumb component
-function Breadcrumb({ pathname }: { pathname: string }) {
-    const pathParts = pathname.split("/").filter(Boolean);
-    const items = [];
-    let currentPath = "";
-
-    for (let i = 0; i < pathParts.length; i++) {
-      const segment = pathParts[i];
-      currentPath += `/${segment}`;
-
-      items.push(
-        <li
-          key={segment}
-          className={i === pathParts.length - 1 ? "active" : ""}
-        >
-          {i === pathParts.length - 1 ? (
-            <span aria-current="page">{segment}</span>
-          ) : (
-            <Link href={currentPath}>
-              {segment}
-            </Link>
-          )}
-        </li>
-      );
-    }
-
-    return (
-      <nav className="breadcrumb" aria-label="breadcrumb">
-        <ol>
-          <li>
-            <Link href="/">Home</Link>
-          </li>
-          {items}
-        </ol>
-      </nav>
     );
 }

@@ -9,58 +9,14 @@ export default function Hero() {
   useScrollAnimation(".fade-up, .stagger-up > *", "animate");
 
   const stats = [
-    { value: "5+", label: "Years Experience" },
-    { value: "30+", label: "Projects Built" },
+    { value: "0", label: "Years of Experience" },
+    { value: "5", label: "Projects Built" },
     { value: "15+", label: "Technologies" },
-    { value: "10+", label: "Certifications" },
-  ];
-
-  const badges = [
-    {
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-          <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon>
-          <line x1="12" y1="22" x2="12" y2="15.5"></line>
-          <line x1="22" y1="8.5" x2="12" y2="15.5"></line>
-          <line x1="2" y1="8.5" x2="12" y2="15.5"></line>
-        </svg>
-      ),
-      text: "Full Stack"
-    },
-    {
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="6" x2="12" y2="18"></line>
-          <line x1="6" y1="12" x2="18" y2="12"></line>
-        </svg>
-      ),
-      text: "Cloud Native"
-    },
-    {
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-          <rect x="2" y="3" width="20" height="14" rx="2"></rect>
-          <path d="M8 21h8"></path>
-          <path d="M12 17v4"></path>
-        </svg>
-      ),
-      text: "TypeScript"
-    },
-    {
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-          <line x1="12" y1="22.08" x2="12" y2="12"></line>
-        </svg>
-      ),
-      text: "DevOps"
-    },
+    { value: "4+", label: "Certifications" },
   ];
 
   return (
-    <section className={`${styles.hero} ${styles.fadeUp}`} aria-labelledby="hero-title">
+    <section className={`${styles.hero} ${styles.fadeUp} fade-up`} aria-labelledby="hero-title">
       {/* Grid overlay for subtle texture */}
       <div className={styles.gridOverlay} aria-hidden="true" />
 
@@ -114,24 +70,15 @@ export default function Hero() {
           </div>
         </div>
 
+        {/* Profile Visual */}
         <div className={styles.imageWrapper}>
           <div className={styles.imageFrame}>
             <div className={styles.profilePlaceholder} aria-hidden="true">
               <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="120" height="120">
-                <circle cx="60" cy="40" r="20" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M20 110c0-30 25-45 40-45s40 15 40 45" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <circle cx="60" cy="40" r="20" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M20 110c0-30 25-45 40-45s40 15 40 45" stroke="currentColor" strokeWidth="1.5" fill="none" />
               </svg>
             </div>
-          </div>
-
-          {/* Floating badges around the image */}
-          <div className={styles.floatingBadges} aria-hidden="true">
-            {badges.map((badge, index) => (
-              <div key={index} className={`${styles.badge} ${styles[`badge${index + 1}`]}`}>
-                {badge.icon}
-                <span>{badge.text}</span>
-              </div>
-            ))}
           </div>
         </div>
       </div>

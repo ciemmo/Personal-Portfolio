@@ -45,7 +45,7 @@ export default function AdminSkillsPage() {
       }
       const data = await response.json();
       // Ensure proficiency values are numbers (handle case where DB stores them as strings)
-      const skillsWithNumericProficiency = data.map(skill => ({
+      const skillsWithNumericProficiency = data.map((skill: typeof data[0]) => ({
         ...skill,
         proficiency: typeof skill.proficiency === 'number'
           ? skill.proficiency

@@ -298,7 +298,7 @@
   padding: var(--space-4) var(--space-4);
   background: var(--color-bg);
   border: 2px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   font-size: var(--font-body);
   font-family: inherit;
   color: var(--color-text);
