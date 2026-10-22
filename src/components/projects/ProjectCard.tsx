@@ -1,6 +1,7 @@
-import { memo, useRef, useEffect, useState, useCallback, forwardRef } from "react";
+import { memo, useState, useCallback, forwardRef } from "react";
 import Link from "next/link";
 import OptimizedImage from "@/components/ui/OptimizedImage";
+import styles from "./ProjectCard.module.css";
 
 interface Project {
   slug: string;
@@ -51,10 +52,16 @@ const ProjectCardComponent = memo(forwardRef<HTMLElement, ProjectCardProps>(func
     }
   }, [project.github]);
 
+  const cardClasses = [
+    styles.projectCard,
+    isFeatured ? styles.featured : "",
+    className
+  ].filter(Boolean).join(" ");
+
   return (
     <article
       ref={ref}
-      className={`project-card ${isFeatured ? "featured" : ""} ${className}`}
+      className={cardClasses}
       style={style}
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
@@ -67,20 +74,20 @@ const ProjectCardComponent = memo(forwardRef<HTMLElement, ProjectCardProps>(func
     >
       {/* Image/Thumbnail */}
       {project.image && !imageError && (
-        <div className="project-card-image" aria-hidden="true">
+        <div className={styles.projectCardImage} aria-hidden="true">
           <OptimizedImage
             src={project.image}
             alt={project.title}
-            className="project-card-image-img"
+            className={styles.projectCardImageImg}
             width={400}
             height={225}
             onError={() => setImageError(true)}
           />
-          <div className="project-card-image-overlay">
-            <div className="project-card-image-overlay-content">
+          <div className={styles.projectCardImageOverlay}>
+            <div className={styles.projectCardImageOverlayContent}>
               {project.demo && (
                 <button
-                  className="overlay-btn demo-btn"
+                  className={`${styles.overlayBtn} ${styles.demoBtn}`}
                   onClick={handleDemoClick}
                   aria-label="View live demo"
                 >
@@ -93,7 +100,7 @@ const ProjectCardComponent = memo(forwardRef<HTMLElement, ProjectCardProps>(func
               )}
               {project.github && (
                 <button
-                  className="overlay-btn github-btn"
+                  className={`${styles.overlayBtn} ${styles.githubBtn}`}
                   onClick={handleGithubClick}
                   aria-label="View source code"
                 >
@@ -110,7 +117,7 @@ const ProjectCardComponent = memo(forwardRef<HTMLElement, ProjectCardProps>(func
 
       {/* Fallback when no image or image error */}
       {!project.image || imageError ? (
-        <div className="project-card-image-placeholder" aria-hidden="true">
+        <div className={styles.projectCardImagePlaceholder} aria-hidden="true">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <rect x="2" y="3" width="20" height="14" rx="2"></rect>
             <path d="M8 21h8"></path>
@@ -123,33 +130,33 @@ const ProjectCardComponent = memo(forwardRef<HTMLElement, ProjectCardProps>(func
       ) : null}
 
       {/* Content */}
-      <div className="project-card-content">
+      <div className={styles.projectCardContent}>
         {project.category && (
-          <span className="project-card-category">{project.category}</span>
+          <span className={styles.projectCardCategory}>{project.category}</span>
         )}
 
-        <h3 className="project-title">{project.title}</h3>
+        <h3 className={styles.projectTitle}>{project.title}</h3>
 
-        <p className="project-description">{project.description}</p>
+        <p className={styles.projectDescription}>{project.description}</p>
 
         {project.techStack && project.techStack.length > 0 && (
-          <div className="project-tech-stack" aria-label="Technologies used">
+          <div className={styles.projectTechStack} aria-label="Technologies used">
             {project.techStack.slice(0, 6).map((tech, i) => (
-              <span key={i} className="tech-tag">{tech}</span>
+              <span key={i} className={styles.techTag}>{tech}</span>
             ))}
             {project.techStack.length > 6 && (
-              <span className="tech-tag more">+{project.techStack.length - 6}</span>
+              <span className={`${styles.techTag} ${styles.more}`}>+{project.techStack.length - 6}</span>
             )}
           </div>
         )}
 
-        <div className="project-card-actions">
+        <div className={styles.projectCardActions}>
           {project.demo && (
             <Link
               href={project.demo}
               target="_blank"
               rel="noopener noreferrer"
-              className="action-link demo-link"
+              className={`${styles.actionLink} ${styles.demoLink}`}
               aria-label={`View live demo for ${project.title}`}
               onClick={(e) => e.stopPropagation()}
             >
@@ -166,7 +173,7 @@ const ProjectCardComponent = memo(forwardRef<HTMLElement, ProjectCardProps>(func
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="action-link github-link"
+              className={`${styles.actionLink} ${styles.githubLink}`}
               aria-label={`View source code for ${project.title}`}
               onClick={(e) => e.stopPropagation()}
             >
@@ -181,7 +188,7 @@ const ProjectCardComponent = memo(forwardRef<HTMLElement, ProjectCardProps>(func
 
       {/* Featured badge */}
       {isFeatured && (
-        <div className="featured-badge" aria-label="Featured project">
+        <div className={styles.featuredBadge} aria-label="Featured project">
           <span>Featured</span>
         </div>
       )}

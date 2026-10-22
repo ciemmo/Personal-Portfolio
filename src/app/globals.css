@@ -445,26 +445,8 @@ img,
   padding: 0 var(--space-4);
 }
 
-.container-sm {
-  width: min(var(--container-lg), 92%);
-  margin: 0 auto;
-  padding: 0 var(--space-4);
-}
-
-.container-lg {
-  width: min(var(--container-2xl), 92%);
-  margin: 0 auto;
-  padding: 0 var(--space-4);
-}
-
 .section {
   padding: var(--space-section-md) 0;
-}
-
-@media (max-width: 600px) {
-  .section {
-    padding: var(--space-section-sm) 0;
-  }
 }
 
 /* ========================================
@@ -520,11 +502,6 @@ img,
   to { opacity: 1; }
 }
 
-@keyframes fade-out {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-
 @keyframes slide-up {
   from {
     opacity: 0;
@@ -544,28 +521,6 @@ img,
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes slide-left {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide-right {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
   }
 }
 
@@ -595,6 +550,29 @@ img,
   100% { background-position: 200% 0; }
 }
 
+/* Fade-up & Stagger-up (used globally via animations.css) */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-up.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stagger-up > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.stagger-up > *.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .animate-fade-in {
   animation: fade-in var(--duration-normal) var(--ease-out) forwards;
 }
@@ -605,14 +583,6 @@ img,
 
 .animate-slide-down {
   animation: slide-down var(--duration-slow) var(--ease-out) forwards;
-}
-
-.animate-slide-left {
-  animation: slide-left var(--duration-slow) var(--ease-out) forwards;
-}
-
-.animate-slide-right {
-  animation: slide-right var(--duration-slow) var(--ease-out) forwards;
 }
 
 .animate-scale-in {
@@ -649,37 +619,50 @@ img,
 .stagger-8 { animation-delay: calc(var(--stagger-5) + var(--stagger-3)); }
 
 /* ========================================
-   RESPONSIVE TYPOGRAPHY
+   BREADCRUMB (from layout.css)
    ======================================== */
-@media (max-width: 600px) {
-  :root {
-    --font-display: clamp(2rem, 8vw + 0.5rem, 3rem);
-    --font-display-lg: clamp(2.5rem, 10vw + 0.5rem, 3.5rem);
-    --font-h1: clamp(1.75rem, 6vw + 0.5rem, 2.5rem);
-    --font-h2: clamp(1.5rem, 5vw + 0.5rem, 2rem);
-    --font-h3: clamp(1.25rem, 4vw + 0.5rem, 1.5rem);
-    --font-h4: clamp(1.125rem, 3vw + 0.5rem, 1.25rem);
-  }
-
-  section {
-    padding: var(--space-4) !important;
-  }
-
-  .container {
-    width: 95%;
-  }
-
-  h1, h2, h3 {
-    line-height: 1.2;
-  }
+.breadcrumb {
+  padding: var(--space-sm) 0;
+  font-size: 0.9rem;
 }
 
-@media (min-width: 601px) and (max-width: 1024px) {
-  :root {
-    --font-display: clamp(2.5rem, 5vw + 1rem, 4rem);
-    --font-h1: clamp(2rem, 4vw + 0.5rem, 3rem);
-    --font-h2: clamp(1.75rem, 3vw + 0.5rem, 2.5rem);
-  }
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.breadcrumb li {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb li::after {
+  content: "/";
+  margin: 0 var(--space-xs);
+  color: var(--color-text-tertiary);
+}
+
+.breadcrumb li.active::after {
+  display: none;
+}
+
+.breadcrumb a {
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb li.active span {
+  color: var(--color-primary);
+  font-weight: 500;
 }
 
 /* ========================================

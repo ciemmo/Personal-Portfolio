@@ -118,7 +118,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
 
   if (isLoading && displayProjects.length === 0) {
     return (
-      <section className={`${styles.projects} ${styles.fadeUp} fade-up`} aria-labelledby="projects-title">
+      <section className={`${styles.projects} fade-up`} aria-labelledby="projects-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <span className={styles.sectionLabel}>
@@ -159,7 +159,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
 
   if (error) {
     return (
-      <section className={`${styles.projects} ${styles.fadeUp} fade-up`} aria-labelledby="projects-title">
+      <section className={`${styles.projects} fade-up`} aria-labelledby="projects-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <span className={styles.sectionLabel}>
@@ -186,7 +186,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
 
   if (displayProjects.length === 0) {
     return (
-      <section className={`${styles.projects} ${styles.fadeUp} fade-up`} aria-labelledby="projects-title">
+      <section className={`${styles.projects} fade-up`} aria-labelledby="projects-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <span className={styles.sectionLabel}>
@@ -223,7 +223,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
   }
 
   return (
-    <section className={`${styles.projects} ${styles.fadeUp} fade-up`} aria-labelledby="projects-title">
+    <section className={`${styles.projects} fade-up`} aria-labelledby="projects-title">
       <div className={styles.container}>
         <div className={styles.header}>
           <span className={styles.sectionLabel}>
@@ -238,7 +238,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
           </p>
         </div>
 
-        <div className={`${styles.grid} ${styles.staggerUp} stagger-up`} role="list" aria-label="Projects grid">
+        <div className={`${styles.grid} stagger-up`} role="list" aria-label="Projects grid">
           {displayProjects.map((project, index) => (
             <ProjectCard
               key={project.slug}

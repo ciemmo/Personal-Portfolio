@@ -157,7 +157,7 @@ export default function Achievements() {
 
   if (loading) {
     return (
-      <section className={`${styles.achievements} ${styles.fadeUp} fade-up`} aria-labelledby="achievements-title">
+      <section className={`${styles.achievements} fade-up`} aria-labelledby="achievements-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <span className={styles.sectionLabel}>
@@ -198,7 +198,7 @@ export default function Achievements() {
 
   if (error) {
     return (
-      <section className={`${styles.achievements} ${styles.fadeUp} fade-up`} aria-labelledby="achievements-title">
+      <section className={`${styles.achievements} fade-up`} aria-labelledby="achievements-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <span className={styles.sectionLabel}>
@@ -225,7 +225,7 @@ export default function Achievements() {
 
   if (achievementsData.length === 0) {
     return (
-      <section className={`${styles.achievements} ${styles.fadeUp} fade-up`} aria-labelledby="achievements-title">
+      <section className={`${styles.achievements} fade-up`} aria-labelledby="achievements-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <span className={styles.sectionLabel}>
@@ -255,7 +255,7 @@ export default function Achievements() {
   }
 
   return (
-    <section className={`${styles.achievements} ${styles.fadeUp} fade-up`} aria-labelledby="achievements-title">
+    <section className={`${styles.achievements} fade-up`} aria-labelledby="achievements-title">
       <div className={styles.container}>
         <div className={styles.header}>
           <div className={styles.headerContent}>
@@ -278,7 +278,7 @@ export default function Achievements() {
                 {categories.map(cat => (
                   <button
                     key={cat}
-                    className={`${styles.filterButton} ${selectedCategory === cat ? styles.active : ""}`}
+                    className={`${styles.filterButton} ${selectedCategory === cat ? "active" : ""}`}
                     onClick={() => setSelectedCategory(cat)}
                     aria-pressed={selectedCategory === cat}
                   >
@@ -308,7 +308,7 @@ export default function Achievements() {
                   </span>
                   {formatCategoryTitle(category)}
                 </h3>
-                <div className={`${styles.masonryGrid} ${styles.staggerUp} stagger-up`} role="list" aria-label={`${formatCategoryTitle(category)} achievements`}>
+                <div className={`${styles.masonryGrid} stagger-up`} role="list" aria-label={`${formatCategoryTitle(category)} achievements`}>
                   {achievements.map((achievement, index) => (
                     <AchievementCard
                       key={achievement.id}
@@ -325,7 +325,7 @@ export default function Achievements() {
             ))}
           </>
         ) : (
-          <div className={`${styles.masonryGrid} ${styles.staggerUp} stagger-up`} role="list" aria-label={`${selectedCategory === "all" ? "All" : formatCategoryTitle(selectedCategory)} achievements`}>
+          <div className={`${styles.masonryGrid} stagger-up`} role="list" aria-label={`${selectedCategory === "all" ? "All" : formatCategoryTitle(selectedCategory)} achievements`}>
             {filteredAchievements.map((achievement, index) => (
               <AchievementCard
                 key={achievement.id}
@@ -384,7 +384,7 @@ const AchievementCardComponent = memo(forwardRef<HTMLElement, AchievementCardPro
   return (
     <article
       ref={ref}
-      className={`${styles.achievementCard} ${isExpanded ? styles.expanded : ""}`}
+      className={`${styles.achievementCard} ${isExpanded ? "expanded" : ""}`}
       style={cardStyle}
       onClick={onToggle}
       onKeyDown={onKeyDown}

@@ -1,47 +1,439 @@
-.project-card-link {
+/* ========================================
+   ProjectCard Component Styles
+   ======================================== */
+
+.projectCardLink {
   text-decoration: none;
   color: inherit;
   display: block;
 }
 
-.project-card {
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.projectCard {
   background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
   border: 1px solid var(--color-border);
-  padding: var(--space-md);
+  overflow: hidden;
+  transition:
+    transform var(--transition-md),
+    box-shadow var(--transition-md),
+    border-color var(--transition-md);
+  cursor: pointer;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
 }
 
-.project-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: var(--shadow-lg);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.projectCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  opacity: 0;
+  transition: opacity var(--transition-md);
 }
 
-.project-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: var(--space-xs);
-  color: var(--color-text);
+.projectCard:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    0 24px 50px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(var(--color-primary-rgb), 0.15);
+  border-color: var(--color-primary);
 }
 
-.project-description {
-  font-size: 0.9rem;
-  color: var(--color-text-light);
-  line-height: 1.5;
-  margin-bottom: var(--space-sm);
-  flex-grow: 1;
+.projectCard:hover::before {
+  opacity: 1;
 }
 
-.demo-indicator {
-  display: inline-block;
-  background-color: var(--color-success);
+.projectCard:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 0 0 3px rgba(var(--color-primary-rgb), 0.25);
+}
+
+.projectCard.featured {
+  border-color: rgba(var(--color-primary-rgb), 0.3);
+}
+
+/* Featured Badge */
+.featuredBadge {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  background: linear-gradient(135deg, var(--color-warning), #f59e0b);
   color: var(--color-bg);
   padding: var(--space-xxs) var(--space-sm);
+  border-radius: var(--radius-full);
+  font-size: var(--font-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 8px rgba(var(--color-warning-rgb), 0.3);
+  z-index: 10;
+}
+
+/* ========================================
+   Card Image
+   ======================================== */
+
+.projectCardImage {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background-color: var(--color-bg-tertiary);
+}
+
+.projectCardImageImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-lg);
+}
+
+.projectCard:hover .projectCardImageImg {
+  transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projectCardImageImg {
+    transition: none;
+  }
+  .projectCard:hover .projectCardImageImg {
+    transform: none;
+  }
+}
+
+/* Image Overlay */
+.projectCardImageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.85) 100%);
+  opacity: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-lg);
+  transition: opacity var(--transition-md);
+}
+
+.projectCard:hover .projectCardImageOverlay {
+  opacity: 1;
+}
+
+.projectCardImageOverlayContent {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.overlayBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background-color: rgba(255, 255, 255, 0.95);
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-sm);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.overlayBtn:hover {
+  background-color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.overlayBtn:active {
+  transform: translateY(0);
+}
+
+.overlayBtn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.demoBtn {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  color: var(--color-bg);
+}
+
+.demoBtn:hover {
+  background: linear-gradient(135deg, var(--color-primary-hover), var(--color-primary));
+}
+
+.githubBtn {
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-hover));
+  color: var(--color-bg);
+}
+
+.githubBtn:hover {
+  background: linear-gradient(135deg, var(--color-secondary-hover), var(--color-secondary));
+}
+
+/* Image Placeholder */
+.projectCardImagePlaceholder {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-bg-tertiary), var(--color-border));
+  color: var(--color-text-muted);
+}
+
+/* ========================================
+   Card Content
+   ======================================== */
+
+.projectCardContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-lg);
+  gap: var(--space-md);
+}
+
+.projectCardCategory {
+  display: inline-block;
+  width: fit-content;
+  padding: var(--space-xxs) var(--space-sm);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: var(--color-bg);
+  border-radius: var(--radius-full);
+  font-size: var(--font-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.projectTitle {
+  font-size: var(--font-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin: 0;
+  line-height: var(--line-height-tight);
+  transition: color var(--transition-sm);
+}
+
+.projectCard:hover .projectTitle {
+  color: var(--color-primary);
+}
+
+.projectDescription {
+  font-size: var(--font-sm);
+  color: var(--color-text-light);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Tech Stack */
+.projectTechStack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: auto;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-border);
+}
+
+.techTag {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text);
+  padding: var(--space-xxs) var(--space-sm);
   border-radius: var(--radius-sm);
-  font-size: 0.75rem;
-  font-weight: 500;
-  margin-top: var(--space-xs);
+  font-size: var(--font-xs);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-sm);
+}
+
+.techTag:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.techTag.more {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border-color: var(--color-primary);
+}
+
+/* Action Links */
+.projectCardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.actionLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  transition: all var(--transition-sm);
+  flex: 1;
+  justify-content: center;
+  min-width: 120px;
+}
+
+.demoLink {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  color: var(--color-bg);
+  box-shadow:
+    0 2px 8px rgba(var(--color-primary-rgb), 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.demoLink:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 20px rgba(var(--color-primary-rgb), 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.demoLink:active {
+  transform: translateY(0);
+}
+
+.demoLink:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.githubLink {
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-hover));
+  color: var(--color-bg);
+  box-shadow:
+    0 2px 8px rgba(var(--color-secondary-rgb), 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.githubLink:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 20px rgba(var(--color-secondary-rgb), 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.githubLink:active {
+  transform: translateY(0);
+}
+
+.githubLink:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+
+@media (max-width: 768px) {
+  .projectCard {
+    min-height: auto;
+  }
+
+  .projectCardImage {
+    height: 180px;
+  }
+
+  .projectCardContent {
+    padding: var(--space-md);
+  }
+
+  .actionLink {
+    min-width: 0;
+    padding: var(--space-sm);
+    font-size: var(--font-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .projectCardImageOverlayContent {
+    flex-direction: column;
+  }
+
+  .overlayBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ========================================
+   Reduced Motion
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .projectCard,
+  .projectCard::before,
+  .projectCardImage,
+  .projectCardImageImg,
+  .projectCardImageOverlay,
+  .projectCardImageOverlayContent,
+  .overlayBtn,
+  .projectCardContent,
+  .projectCardCategory,
+  .projectTitle,
+  .projectDescription,
+  .projectTechStack,
+  .techTag,
+  .projectCardActions,
+  .actionLink,
+  .featuredBadge {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+
+@media print {
+  .projectCardImageOverlay,
+  .actionLink,
+  .featuredBadge {
+    display: none !important;
+  }
+
+  .projectCard {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    min-height: auto;
+  }
+
+  .projectCardImage {
+    height: 150px;
+  }
 }

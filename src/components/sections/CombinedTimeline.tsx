@@ -578,8 +578,7 @@ const TimelineCardComponent = ({ item, index, isExpanded, onToggleExpand, prefer
         </div>
       </div>
 
-      {/* Timeline Dot on connector line */}
-      <div className={styles.timelineDot} aria-hidden="true" />
+      {/* Timeline Dot on connector line - rendered via CSS ::after pseudo-element */}
     </div>
   );
 };

@@ -185,7 +185,7 @@ const CertificationCardComponent = memo(forwardRef<HTMLElement, CertificationCar
               href={item.credentialUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={styles.verifyButton}
+              className={`${styles.actionButton} ${styles.primary}`}
               onClick={(e) => e.stopPropagation()}
             >
               Verify Credential
@@ -202,7 +202,7 @@ const CertificationCardComponent = memo(forwardRef<HTMLElement, CertificationCar
               href={item.certificateUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={styles.certificateButton}
+              className={`${styles.actionButton} ${styles.secondary}`}
               onClick={(e) => e.stopPropagation()}
             >
               View Certificate

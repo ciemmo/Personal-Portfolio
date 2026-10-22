@@ -226,9 +226,6 @@
   padding: var(--space-md) 0;
 }
 
-.timelineItem:last-child .cardConnector {
-  display: none;
-}
 
 /* ========================================
    Card
@@ -588,13 +585,11 @@
 }
 
 /* Buttons */
-.verifyButton,
-.certificateButton {
+.actionButton {
   display: inline-flex;
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-md);
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
   color: var(--color-bg);
   border: none;
   border-radius: var(--radius-md);
@@ -603,49 +598,53 @@
   text-decoration: none;
   cursor: pointer;
   transition: all var(--transition-sm);
+  margin-top: var(--space-sm);
   box-shadow:
     0 2px 8px rgba(var(--color-primary-rgb), 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  margin-top: var(--space-sm);
 }
 
-.verifyButton:hover,
-.certificateButton:hover {
+.actionButton:hover {
   transform: translateY(-2px);
   box-shadow:
     0 6px 20px rgba(var(--color-primary-rgb), 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-.verifyButton:active,
-.certificateButton:active {
+.actionButton:active {
   transform: translateY(0);
 }
 
-.verifyButton:focus-visible,
-.certificateButton:focus-visible {
+.actionButton:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-.certificateButton {
+.actionButton.primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  box-shadow:
+    0 2px 8px rgba(var(--color-primary-rgb), 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.actionButton.primary:hover {
+  box-shadow:
+    0 6px 20px rgba(var(--color-primary-rgb), 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.actionButton.secondary {
   background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-hover));
   box-shadow:
     0 2px 8px rgba(var(--color-secondary-rgb), 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-.certificateButton:hover {
+.actionButton.secondary:hover {
   box-shadow:
     0 6px 20px rgba(var(--color-secondary-rgb), 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
-
-/* ========================================
-   Card Connector - REMOVED per user request
-   ======================================== */
-
-/* .cardConnector removed - no connector lines between cards */
 
 /* ========================================
    Skeleton Loading
@@ -737,23 +736,6 @@
   height: 12px;
   border-radius: var(--radius-sm);
   width: 100%;
-}
-
-.skeletonConnector {
-  position: absolute;
-  left: 50%;
-  top: 100%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: var(--space-xl);
-  pointer-events: none;
-}
-
-.skeletonConnector .connectorDot,
-.skeletonConnector .connectorLine {
-  opacity: 0.3;
 }
 
 /* Skeleton wave animation */

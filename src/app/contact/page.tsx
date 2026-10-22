@@ -277,7 +277,7 @@ export default function ContactPage() {
   }, []);
 
   return (
-    <section className={`${styles.contactPage} ${styles.fadeUp}`} aria-labelledby="contact-title">
+    <section className={`${styles.contactPage} fade-up`} aria-labelledby="contact-title">
       <div className={styles.container}>
         {/* Header */}
         <header className={styles.header}>
@@ -331,7 +331,7 @@ export default function ContactPage() {
             {submitStatus === "success" && showSuccessAnimation ? (
               <div
                 ref={successRef}
-                className={`${styles.successCard} ${prefersReducedMotion ? styles.reducedMotion : ""}`}
+                className={`${styles.successCard} ${prefersReducedMotion ? "reducedMotion" : ""}`}
                 role="status"
                 aria-live="polite"
                 onAnimationEnd={handleAnimationEnd}
@@ -384,7 +384,7 @@ export default function ContactPage() {
               >
                 {/* Name Field */}
                 <div className={styles.fieldWrapper}>
-                  <label htmlFor="name" className={`${styles.label} ${formData.name ? styles.hasValue : ""} ${errors.name && touched.name ? styles.hasError : ""}`}>
+                  <label htmlFor="name" className={`${styles.label} ${formData.name ? "hasValue" : ""} ${errors.name && touched.name ? "hasError" : ""}`}>
                     <span className={styles.labelText}>Your Name</span>
                     {errors.name && touched.name && (
                       <span className={styles.labelError} aria-live="polite">{errors.name}</span>
@@ -398,7 +398,7 @@ export default function ContactPage() {
                       value={formData.name}
                       onChange={handleChange}
                       onBlur={() => handleBlur("name")}
-                      className={`${styles.input} ${errors.name && touched.name ? styles.error : ""}`}
+                      className={`${styles.input} ${errors.name && touched.name ? "error" : ""}`}
                       placeholder=" "
                       autoComplete="name"
                       aria-invalid={errors.name && touched.name ? "true" : "false"}
@@ -416,7 +416,7 @@ export default function ContactPage() {
 
                 {/* Email Field */}
                 <div className={styles.fieldWrapper}>
-                  <label htmlFor="email" className={`${styles.label} ${formData.email ? styles.hasValue : ""} ${errors.email && touched.email ? styles.hasError : ""}`}>
+                  <label htmlFor="email" className={`${styles.label} ${formData.email ? "hasValue" : ""} ${errors.email && touched.email ? "hasError" : ""}`}>
                     <span className={styles.labelText}>Email Address</span>
                     {errors.email && touched.email && (
                       <span className={styles.labelError} aria-live="polite">{errors.email}</span>
@@ -430,7 +430,7 @@ export default function ContactPage() {
                       value={formData.email}
                       onChange={handleChange}
                       onBlur={() => handleBlur("email")}
-                      className={`${styles.input} ${errors.email && touched.email ? styles.error : ""}`}
+                      className={`${styles.input} ${errors.email && touched.email ? "error" : ""}`}
                       placeholder=" "
                       autoComplete="email"
                       aria-invalid={errors.email && touched.email ? "true" : "false"}
@@ -448,7 +448,7 @@ export default function ContactPage() {
 
                 {/* Message Field */}
                 <div className={styles.fieldWrapper}>
-                  <label htmlFor="message" className={`${styles.label} ${formData.message ? styles.hasValue : ""} ${errors.message && touched.message ? styles.hasError : ""}`}>
+                  <label htmlFor="message" className={`${styles.label} ${formData.message ? "hasValue" : ""} ${errors.message && touched.message ? "hasError" : ""}`}>
                     <span className={styles.labelText}>Message</span>
                     <span className={styles.charCount}>
                       {formData.message.length}/{MAX_MESSAGE_LENGTH}
@@ -461,7 +461,7 @@ export default function ContactPage() {
                       value={formData.message}
                       onChange={handleChange}
                       onBlur={() => handleBlur("message")}
-                      className={`${styles.textarea} ${errors.message && touched.message ? styles.error : ""}`}
+                      className={`${styles.textarea} ${errors.message && touched.message ? "error" : ""}`}
                       placeholder=" "
                       rows={5}
                       aria-invalid={errors.message && touched.message ? "true" : "false"}
@@ -485,7 +485,7 @@ export default function ContactPage() {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className={`${styles.submitButton} ${isSubmitting ? styles.submitting : ""}`}
+                  className={`${styles.submitButton} ${isSubmitting ? "submitting" : ""}`}
                   disabled={isSubmitting}
                   aria-busy={isSubmitting}
                 >

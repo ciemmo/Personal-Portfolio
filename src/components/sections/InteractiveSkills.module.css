@@ -39,9 +39,6 @@
 .header {
   text-align: center;
   margin-bottom: var(--space-10);
-  animation: fadeInUp var(--duration-slower) var(--ease-out) forwards;
-  opacity: 0;
-  transform: translateY(20px);
 }
 
 .title {
@@ -67,11 +64,9 @@
 
 /* Search Bar */
 .searchWrapper {
+  position: relative;
   max-width: 500px;
   margin: 0 auto var(--space-8);
-  animation: fadeInUp var(--duration-slower) var(--ease-out) var(--stagger-1) forwards;
-  opacity: 0;
-  transform: translateY(20px);
 }
 
 .searchInput {
@@ -118,9 +113,6 @@
   justify-content: center;
   gap: var(--space-2);
   margin-bottom: var(--space-8);
-  animation: fadeInUp var(--duration-slower) var(--ease-out) var(--stagger-2) forwards;
-  opacity: 0;
-  transform: translateY(20px);
 }
 
 .tab {
@@ -191,9 +183,7 @@
 
 /* Skills Grid */
 .skillsContainer {
-  animation: fadeInUp var(--duration-slower) var(--ease-out) var(--stagger-3) forwards;
-  opacity: 0;
-  transform: translateY(20px);
+  margin-bottom: var(--space-10);
 }
 
 .skillsGrid {
@@ -306,7 +296,7 @@
   stroke: var(--color-primary);
   stroke-width: 4;
   stroke-linecap: round;
-  stroke-dasharray: 188.5; /* 2 * PI * 30 */
+  stroke-dasharray: 188.5;
   stroke-dashoffset: 188.5;
   transition: stroke-dashoffset var(--duration-slowest) var(--ease-spring);
 }
@@ -356,9 +346,6 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
-  animation: fadeInUp var(--duration-slower) var(--ease-out) var(--stagger-4) forwards;
-  opacity: 0;
-  transform: translateY(20px);
 }
 
 .legendTitle {
@@ -418,7 +405,7 @@
   fill: none;
   stroke-width: 3;
   stroke-linecap: round;
-  stroke-dasharray: 56.5; /* 2 * PI * 9 */
+  stroke-dasharray: 56.5;
   stroke-dashoffset: 56.5;
 }
 
@@ -430,17 +417,17 @@
 
 .legendItem[data-level="1"] .legendRingProgress {
   stroke: var(--color-warning);
-  stroke-dashoffset: 42.4; /* 75% */
+  stroke-dashoffset: 42.4;
 }
 
 .legendItem[data-level="2"] .legendRingProgress {
   stroke: var(--color-info);
-  stroke-dashoffset: 28.3; /* 50% */
+  stroke-dashoffset: 28.3;
 }
 
 .legendItem[data-level="3"] .legendRingProgress {
   stroke: var(--color-success);
-  stroke-dashoffset: 0; /* 100% */
+  stroke-dashoffset: 0;
 }
 
 /* Action Button */
@@ -460,9 +447,6 @@
   transition:
     transform var(--duration-fast) var(--ease-spring),
     box-shadow var(--duration-fast) var(--ease-out);
-  animation: fadeInUp var(--duration-slower) var(--ease-out) var(--stagger-5) forwards;
-  opacity: 0;
-  transform: translateY(20px);
 }
 
 .actionButton:hover {
@@ -586,7 +570,6 @@
   100% { background-position: 200% 0; }
 }
 
-
 /* Visually hidden utility for accessibility */
 .visuallyHidden {
   position: absolute;
@@ -632,6 +615,7 @@
 /* ========================================
    RESPONSIVE
    ======================================== */
+
 @media (max-width: 1024px) {
   .skillsGrid {
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -719,6 +703,7 @@
 /* ========================================
    PRINT
    ======================================== */
+
 @media print {
   .interactiveSkills {
     padding: var(--space-8) 0;
