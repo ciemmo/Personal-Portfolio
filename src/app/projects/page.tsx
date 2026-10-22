@@ -2,10 +2,28 @@ import { Suspense } from "react";
 import ProjectsPageClient from "./ProjectsPageClient";
 import ProjectSkeleton from "@/components/ui/ProjectSkeleton";
 import styles from "./ProjectPage.module.css";
+import { connectDB } from "@/lib/db";
+import Project from "@/models/Project";
+
+interface ProjectData {
+  slug: string;
+  title: string;
+  description: string;
+  longDescription: string;
+  tech: string[];
+  skillRoles: string[];
+  github?: string;
+  demo?: string;
+  image?: string;
+  _id?: string;
+  createdAt?: string;
+  featured?: boolean;
+  category?: string;
+}
 
 function ProjectsPageSkeleton() {
   return (
-    <section className={`${styles.projectsPage} ${styles.fadeUp}`} aria-labelledby="projects-title">
+    <section className={`${styles.projectsPage} ${styles.fadeUp} fade-up`} aria-labelledby="projects-title">
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.headerContent}>
@@ -24,10 +42,27 @@ function ProjectsPageSkeleton() {
   );
 }
 
-export default function ProjectsPage() {
+// Force dynamic rendering to avoid build-time API calls
+export const dynamic = 'force-dynamic';
+
+export default async function ProjectsPage() {
+  let projects: ProjectData[] = [];
+  try {
+    await connectDB();
+    const projectsData = await Project.find({}).sort({ createdAt: -1 }).lean();
+    projects = projectsData.map(p => ({
+      ...p,
+      _id: p._id?.toString(),
+      createdAt: p.createdAt?.toISOString(),
+    })) as ProjectData[];
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    projects = [];
+  }
+
   return (
     <Suspense fallback={<ProjectsPageSkeleton />}>
-      <ProjectsPageClient />
+      <ProjectsPageClient initialProjects={projects} />
     </Suspense>
   );
 }

@@ -60,21 +60,20 @@
 .greeting {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  font-size: var(--font-body-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-  width: fit-content;
+  gap: var(--space-xs);
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-sm);
   animation: fadeInUp var(--duration-slower) var(--ease-out) forwards;
   opacity: 0;
   transform: translateY(20px);
 }
 
 .greetingIcon {
+  font-size: var(--font-base);
   animation: wave 2s ease-in-out infinite;
   transform-origin: 70% 70%;
   display: inline-block;

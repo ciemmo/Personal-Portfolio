@@ -308,7 +308,7 @@ export default function Achievements() {
                   </span>
                   {formatCategoryTitle(category)}
                 </h3>
-                <div className={`${styles.masonryGrid} ${styles.staggerUp}`} role="list" aria-label={`${formatCategoryTitle(category)} achievements`}>
+                <div className={`${styles.masonryGrid} ${styles.staggerUp} stagger-up`} role="list" aria-label={`${formatCategoryTitle(category)} achievements`}>
                   {achievements.map((achievement, index) => (
                     <AchievementCard
                       key={achievement.id}
@@ -325,7 +325,7 @@ export default function Achievements() {
             ))}
           </>
         ) : (
-          <div className={`${styles.masonryGrid} ${styles.staggerUp}`} role="list" aria-label={`${selectedCategory === "all" ? "All" : formatCategoryTitle(selectedCategory)} achievements`}>
+          <div className={`${styles.masonryGrid} ${styles.staggerUp} stagger-up`} role="list" aria-label={`${selectedCategory === "all" ? "All" : formatCategoryTitle(selectedCategory)} achievements`}>
             {filteredAchievements.map((achievement, index) => (
               <AchievementCard
                 key={achievement.id}

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
-import Education from "@/models/Education";
+import ContinuingEducation from "@/models/ContinuingEducation";
 import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     await connectDB();
 
     // Fetch all continuing education records from database
-    const continuingEducation = await Education.find({}).sort({ startDate: -1 });
+    const continuingEducation = await ContinuingEducation.find({}).sort({ startDate: -1 });
 
     // Convert to plain objects for JSON serialization
     const continuingEducationPlain = continuingEducation.map(ce => ce.toObject ? ce.toObject() : ce);
@@ -54,8 +54,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create new continuing education (as Education record) with explicitly controlled fields
-    const newEducation = await Education.create({
+    // Create new continuing education (as ContinuingEducation record) with explicitly controlled fields
+    const newEducation = await ContinuingEducation.create({
       institution: typeof body.institution === 'string' ? body.institution : "",
       degree: typeof body.degree === 'string' ? body.degree : "",
       fieldOfStudy: typeof body.fieldOfStudy === 'string' ? body.fieldOfStudy : "",

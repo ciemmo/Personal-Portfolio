@@ -13,9 +13,9 @@ export default async function Home() {
     let projects = [];
     try {
         // Fetch projects data for immediate loading on homepage
-        const res = await fetch("http://localhost:3000/api/projects", {
+        // Use relative URL to work both in SSR and client-side
+        const res = await fetch("/api/projects", {
             // Use cache for better performance on subsequent visits
-            // force-cache on first visit, then fallback to cache
             cache: "force-cache"
         });
         projects = await res.json();

@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import SearchBar from "./SearchBar";
+import { usePathname, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
@@ -13,8 +13,10 @@ export default function Navbar() {
   const [isVisible, setIsVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
   const lastScrollY = useRef(0);
   const pathname = usePathname();
+  const router = useRouter();
   const navbarRef = useRef<HTMLElement>(null);
 
   // Hydration and theme initialization
@@ -85,6 +87,15 @@ export default function Navbar() {
     return "";
   };
 
+  // Handle search submit
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/projects?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+    }
+  };
+
   // Apply scroll progress as CSS custom property
   const navbarStyle = {
     '--scroll-progress': scrollProgress
@@ -100,7 +111,7 @@ export default function Navbar() {
     >
       <div className={styles.container}>
         <Link href="/" className={styles.logo} aria-label="Go to homepage">
-          Emmanuel
+          <span className={styles.logoMark}>Emmanuel</span>
         </Link>
 
         <div className={styles.links}>
@@ -133,6 +144,13 @@ export default function Navbar() {
             Certifications
           </Link>
           <Link
+            href="/education"
+            className={`${styles.link} ${getActiveClass("/education")}`}
+            aria-current={pathname === "/education" ? "page" : undefined}
+          >
+            Education
+          </Link>
+          <Link
             href="/contact"
             className={`${styles.link} ${getActiveClass("/contact")}`}
             aria-current={pathname === "/contact" ? "page" : undefined}
@@ -141,22 +159,48 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Search Bar - Desktop only */}
-        <div className={styles.searchContainer}>
-          <SearchBar />
-        </div>
+        {/* Right-side group: Search + Theme Toggle */}
+        <div className={styles.rightGroup}>
+          {/* Search Bar - Always visible on desktop */}
+          <div className={styles.searchContainer}>
+            <div className={styles.searchWrapper}>
+              <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+                <input
+                  type="search"
+                  className={styles.searchInput}
+                  placeholder="Search projects..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label="Search projects"
+                  autoComplete="off"
+                />
+                <span className={styles.searchIcon} aria-hidden="true">🔍</span>
+                {searchQuery && (
+                  <button
+                    type="button"
+                    className={styles.searchClear}
+                    onClick={() => setSearchQuery("")}
+                    aria-label="Clear search"
+                  >
+                    ✕
+                  </button>
+                )}
+              </form>
+            </div>
+          </div>
 
-        {/* Theme Toggle */}
-        <button
-          className={styles.themeToggle}
-          onClick={toggleTheme}
-          aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-          aria-pressed={isDark}
-        >
-          <span suppressHydrationWarning aria-hidden="true">
-            {hydrated && (isDark ? "☀️" : "🌙")}
-          </span>
-        </button>
+          {/* Theme Toggle - Far right on desktop */}
+          <button
+            className={styles.themeToggle}
+            onClick={toggleTheme}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            aria-pressed={isDark}
+          >
+            <span suppressHydrationWarning aria-hidden="true">
+              {hydrated && (isDark ? "☀️" : "🌙")}
+            </span>
+          </button>
+        </div>
 
         {/* Mobile Menu Toggle */}
         <button
@@ -209,6 +253,14 @@ export default function Navbar() {
             aria-current={pathname === "/certifications" ? "page" : undefined}
           >
             Certifications
+          </Link>
+          <Link
+            href="/education"
+            className={`${styles.mobileLink} ${getActiveClass("/education")}`}
+            onClick={() => setOpen(false)}
+            aria-current={pathname === "/education" ? "page" : undefined}
+          >
+            Education
           </Link>
           <Link
             href="/contact"

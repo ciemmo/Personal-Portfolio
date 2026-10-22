@@ -84,16 +84,7 @@
   padding: var(--space-lg) 0;
 }
 
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--color-primary);
-  transform: translateX(-50%);
-}
+/* Central timeline line removed - using card connectors only */
 
 .timelineItem {
   position: relative;
@@ -187,13 +178,7 @@
   display: none; /* Hide the blue dot as requested */
 }
 
-.timelineLine {
-  width: 2px;
-  height: calc(100% - 16px);
-  background-color: var(--color-primary);
-  margin-top: 8px;
-  flex-shrink: 0;
-}
+/* Timeline lines removed - clean card-only layout */
 
 /* Adjust timeline indicator position based on item parity */
 .timelineItem:nth-child(odd) .timelineIndicator {
@@ -464,11 +449,6 @@ html.dark .educationSkeletonLine {
     font-size: var(--font-h4);
   }
 
-  .timeline::before {
-    left: 20px;
-    width: 2px;
-  }
-
   .timelineItem {
     padding-left: 20px;
     padding-right: 20px;
@@ -496,10 +476,6 @@ html.dark .educationSkeletonLine {
     width: 12px;
     height: 12px;
   }
-
-  .timelineLine {
-    width: 2px;
-  }
 }
 
 /* Reduced motion support for accessibility */
@@ -519,42 +495,3 @@ html.dark .educationSkeletonLine {
   }
 }
 
-/* Fade up animation */
-.fadeUp {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.fadeUp.animate {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Stagger up animation */
-.staggerUp > * {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.staggerUp > *.animate {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.staggerUp > *:nth-child(1) {
-  transition-delay: 0.1s;
-}
-
-.staggerUp > *:nth-child(2) {
-  transition-delay: 0.2s;
-}
-
-.staggerUp > *:nth-child(3) {
-  transition-delay: 0.3s;
-}
-
-.staggerUp > *:nth-child(4) {
-  transition-delay: 0.4s;
-}

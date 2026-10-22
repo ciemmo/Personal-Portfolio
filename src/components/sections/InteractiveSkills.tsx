@@ -182,6 +182,11 @@ export default function InteractiveSkills() {
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const { skills: allSkills, loading, error } = useSkills();
   const prefersReducedMotion = useRef(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Scroll animation for section entrance
   useScrollAnimation();
@@ -307,8 +312,9 @@ export default function InteractiveSkills() {
     }, 100);
   }, [selectedCategory, filteredSkills.length]);
 
-  // Loading state
-  if (loading) {
+  // Loading state - only show during SSR and initial client render
+  // After hydration, isMounted becomes true and we show the actual content
+  if (loading || !isMounted) {
     return (
       <section className={`${styles.interactiveSkills} fade-up`} aria-labelledby="skills-title">
         <div className={styles.container}>
@@ -327,7 +333,7 @@ export default function InteractiveSkills() {
               placeholder="Search skills..."
               aria-label="Search skills"
               value=""
-              disabled={true}
+              disabled
             />
           </div>
           <div className={styles.tabsContainer} role="tablist" aria-label="Skill categories">
@@ -340,7 +346,7 @@ export default function InteractiveSkills() {
                 id={`tab-${cat}`}
                 className={`${styles.tab} ${selectedCategory === cat ? styles.active : ""}`}
                 onClick={() => setSelectedCategory(cat)}
-                disabled={true}
+                disabled
               >
                 {cat}
                 <span className={styles.tabCount}>{(groupedSkills[cat] || []).length}</span>

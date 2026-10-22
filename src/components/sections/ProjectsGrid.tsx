@@ -238,7 +238,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
           </p>
         </div>
 
-        <div className={`${styles.grid} ${styles.staggerUp}`} role="list" aria-label="Projects grid">
+        <div className={`${styles.grid} ${styles.staggerUp} stagger-up`} role="list" aria-label="Projects grid">
           {displayProjects.map((project, index) => (
             <ProjectCard
               key={project.slug}

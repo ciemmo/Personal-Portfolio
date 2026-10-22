@@ -26,6 +26,11 @@ export default function WorkExperience() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [fetchStatus, setFetchStatus] = useState<string>("idle");
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Fetch work experience data
   useEffect(() => {
@@ -75,9 +80,11 @@ export default function WorkExperience() {
     // Trigger refetch
   }, []);
 
-  if (loading) {
+  // Show loading state during SSR and initial client render (before hydration)
+  if (loading || !isMounted) {
     return (
-      <div className={styles.loading}>
+      <section className={`${styles.workExperience} ${styles.fadeUp} fade-up`}>
+        <div className={styles.loading}>
         {/* Debug: Show fetch status */}
         <div style={{ padding: "1rem", background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "0.5rem", marginBottom: "1rem", fontSize: "0.875rem", fontFamily: "monospace" }}>
           <strong>Debug:</strong> Fetch status: {fetchStatus}
@@ -115,17 +122,20 @@ export default function WorkExperience() {
           ))}
         </div>
       </div>
+      </section>
     );
   }
 
   if (error) {
     return (
-      <div className={styles.error}>
-        <p>{error}</p>
-        <button onClick={handleRetry}>
-          Try Again
-        </button>
-      </div>
+      <section className={`${styles.workExperience} ${styles.fadeUp} fade-up`}>
+        <div className={styles.error}>
+          <p>{error}</p>
+          <button onClick={handleRetry}>
+            Try Again
+          </button>
+        </div>
+      </section>
     );
   }
 
@@ -160,7 +170,7 @@ export default function WorkExperience() {
           Professional journey and technical expertise gained through various roles
         </p>
 
-        <div className={`${styles.timeline} ${styles.staggerUp}`}>
+        <div className={`${styles.timeline} ${styles.staggerUp} stagger-up`}>
           {workExperiences.map((experience) => (
             <ExperienceCard
               key={experience._id}

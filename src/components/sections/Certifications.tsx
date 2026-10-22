@@ -8,6 +8,7 @@ import { FaAngleDown, FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaSea
 
 interface Certification {
   id: string;
+  _id?: string;
   name: string;
   issuingOrganization: string;
   issueDate: string;
@@ -23,6 +24,7 @@ interface Certification {
 
 interface ContinuingEducation {
   id: string;
+  _id?: string;
   name: string;
   provider: string;
   completionDate: string;
@@ -216,10 +218,7 @@ const CertificationCardComponent = memo(forwardRef<HTMLElement, CertificationCar
         </div>
       </div>
 
-      <div className={styles.cardConnector} aria-hidden="true">
-        <div className={styles.connectorDot} />
-        <div className={styles.connectorLine} />
-      </div>
+      {/* Card connector removed - no lines between cards */}
     </article>
   );
 }));
@@ -345,8 +344,16 @@ export default function Certifications() {
 
   // Combine and filter items
   const allItems = useMemo((): UnifiedItem[] => {
-    const certs: UnifiedItem[] = certifications.map(c => ({ ...c, type: "certification" as const }));
-    const edu: UnifiedItem[] = continuingEducation.map(e => ({ ...e, type: "education" as const }));
+    const certs: UnifiedItem[] = certifications.map((c, idx) => ({
+      ...c,
+      id: c._id ?? c.id ?? `cert-${idx}`,
+      type: "certification" as const
+    }));
+    const edu: UnifiedItem[] = continuingEducation.map((e, idx) => ({
+      ...e,
+      id: e._id ?? e.id ?? `edu-${idx}`,
+      type: "education" as const
+    }));
     return [...certs, ...edu].sort((a, b) => {
       const dateA = a.type === "certification" ? a.issueDate : a.completionDate;
       const dateB = b.type === "certification" ? b.issueDate : b.completionDate;
@@ -483,7 +490,6 @@ export default function Certifications() {
                     </div>
                   </div>
                 </div>
-                <div className={styles.skeletonConnector} />
               </div>
             ))}
           </div>
@@ -614,7 +620,7 @@ export default function Certifications() {
           )}
         </div>
 
-        <div className={`${styles.timeline} ${styles.staggerUp}`} role="list" aria-label="Certifications timeline">
+        <div className={`${styles.timeline} ${styles.staggerUp} stagger-up`} role="list" aria-label="Certifications timeline">
           {filteredItems.map((item, index) => (
             <div
               key={`${item.type}-${item.id}`}

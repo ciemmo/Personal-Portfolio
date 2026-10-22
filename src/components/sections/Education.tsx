@@ -25,6 +25,11 @@ export default function Education() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [fetchStatus, setFetchStatus] = useState<string>("idle");
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Fetch education data
   useEffect(() => {
@@ -74,9 +79,11 @@ export default function Education() {
     // Trigger refetch
   }, []);
 
-  if (loading) {
+  // Show loading state during SSR and initial client render (before hydration)
+  if (loading || !isMounted) {
     return (
-      <div className={styles.loading}>
+      <section className={`${styles.education} ${styles.fadeUp} fade-up`}>
+        <div className={styles.loading}>
         {/* Debug: Show fetch status */}
         <div style={{ padding: "1rem", background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "0.5rem", marginBottom: "1rem", fontSize: "0.875rem", fontFamily: "monospace" }}>
           <strong>Debug:</strong> Fetch status: {fetchStatus}
@@ -119,17 +126,20 @@ export default function Education() {
           ))}
         </div>
       </div>
+      </section>
     );
   }
 
   if (error) {
     return (
-      <div className={styles.error}>
-        <p>{error}</p>
-        <button onClick={handleRetry}>
-          Try Again
-        </button>
-      </div>
+      <section className={`${styles.education} ${styles.fadeUp} fade-up`}>
+        <div className={styles.error}>
+          <p>{error}</p>
+          <button onClick={handleRetry}>
+            Try Again
+          </button>
+        </div>
+      </section>
     );
   }
 
@@ -164,7 +174,7 @@ export default function Education() {
           Academic background and educational achievements
         </p>
 
-        <div className={`${styles.timeline} ${styles.staggerUp}`}>
+        <div className={`${styles.timeline} ${styles.staggerUp} stagger-up`}>
           {educations.map((education) => (
             <EducationCard
               key={education._id}
@@ -185,12 +195,6 @@ const EducationCardComponent = ({ education }: EducationCardProps) => {
   return (
     <div className={styles.timelineItem}>
       <div className={styles.educationCard}>
-        {/* Timeline indicator */}
-        <div className={styles.timelineIndicator}>
-          <div className={styles.timelineDot} />
-          <div className={styles.timelineLine} />
-        </div>
-
         {/* Education content */}
         <div className={styles.educationContent}>
           {/* Institution and degree */}

@@ -82,12 +82,6 @@ export default function Hero() {
           </div>
         </div>
       </div>
-
-      {/* Scroll Indicator */}
-      <div className={styles.scrollIndicator} aria-hidden="true">
-        <span>Scroll to explore</span>
-        <div className={styles.scrollArrow} />
-      </div>
     </section>
   );
 }

@@ -51,6 +51,7 @@ export default function Footer() {
           <Link href="/" className={styles.navLink}>Home</Link>
           <Link href="/projects" className={styles.navLink}>Projects</Link>
           <Link href="/workExperience" className={styles.navLink}>Experience</Link>
+          <Link href="/education" className={styles.navLink}>Education</Link>
           <Link href="/certifications" className={styles.navLink}>Certifications</Link>
           <Link href="/contact" className={styles.navLink}>Contact</Link>
         </nav>
@@ -58,10 +59,7 @@ export default function Footer() {
         {/* Navigation - Resources */}
         <nav className={styles.navColumn} aria-label="Resources">
           <h3 className={styles.navTitle}>Resources</h3>
-          <Link href="/projects" className={styles.navLink}>Open Source</Link>
           <Link href="/achievements" className={styles.navLink}>Achievements</Link>
-          <Link href="/skills" className={styles.navLink}>Skills</Link>
-          <Link href="/blog" className={styles.navLink}>Blog</Link>
         </nav>
 
         {/* Contact & Newsletter */}

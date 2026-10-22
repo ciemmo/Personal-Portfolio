@@ -35,10 +35,11 @@ export default function PageTransitionWrapper({
             <motion.div
                 key={pathname}
                 variants={variants}
-                initial="initial"
+                initial={false}
                 animate="animate"
                 exit="exit"
                 className={styles.pageWrapper}
+                style={{ opacity: 1, transform: "none" }}
             >
                 {children}
             </motion.div>
