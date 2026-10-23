@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import Certification from "@/models/Certification";
 import { authenticateRequest } from "@/lib/auth";
+import { generateETag, checkETagMatch, createCacheHeaders } from "@/lib/etag";
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,15 +16,26 @@ export async function GET(request: NextRequest) {
     // Convert to plain objects for JSON serialization
     const certificationsPlain = certifications.map(cert => cert.toObject ? cert.toObject() : cert);
 
+    // Generate content-based ETag
+    const etag = generateETag(certificationsPlain);
+
+    // Check conditional request (If-None-Match)
+    if (checkETagMatch(request, etag)) {
+      return new NextResponse(null, {
+        status: 304,
+        headers: {
+          ETag: etag,
+          "Cache-Control": "public, max-age=0, must-revalidate",
+        },
+      });
+    }
+
     // Set cache headers for better performance
     // Cache for 30 minutes (in seconds)
     const thirtyMinutesInSeconds = 30 * 60;
 
     return NextResponse.json(certificationsPlain, {
-      headers: {
-        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
-        "ETag": `"${certificationsPlain.length}-${Date.now()}"`,
-      },
+      headers: createCacheHeaders(certificationsPlain, { maxAge: thirtyMinutesInSeconds, staleWhileRevalidate: 86400 }),
     });
   } catch (error) {
     console.error("Error fetching certifications:", error);

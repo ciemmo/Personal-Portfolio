@@ -225,12 +225,20 @@ const CertificationCardComponent = memo(forwardRef<HTMLElement, CertificationCar
 
 export const CertificationCard = CertificationCardComponent;
 
-export default function Certifications() {
+interface CertificationsProps {
+  initialCertifications?: Certification[];
+  initialContinuingEducation?: ContinuingEducation[];
+}
+
+export default function Certifications({
+  initialCertifications = [],
+  initialContinuingEducation = []
+}: CertificationsProps) {
   const scrollRef = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
-  const [certifications, setCertifications] = useState<Certification[]>([]);
-  const [continuingEducation, setContinuingEducation] = useState<ContinuingEducation[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [certifications, setCertifications] = useState<Certification[]>(initialCertifications);
+  const [continuingEducation, setContinuingEducation] = useState<ContinuingEducation[]>(initialContinuingEducation);
+  const [loading, setLoading] = useState(!initialCertifications.length || !initialContinuingEducation.length);
   const [error, setError] = useState<string | null>(null);
   const [fetchStatus, setFetchStatus] = useState<string>("idle");
   const [searchQuery, setSearchQuery] = useState("");
@@ -273,11 +281,48 @@ export default function Certifications() {
     return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
-  // Fetch certifications data
+  // Combine certifications and continuing education into unified items
+  const allItems = useMemo((): UnifiedItem[] => {
+    const certItems: CertificationItem[] = certifications.map(c => ({ ...c, type: "certification" as const, id: c._id || c.id }));
+    const eduItems: EducationItem[] = continuingEducation.map(e => ({ ...e, type: "education" as const, id: e._id || e.id }));
+    return [...certItems, ...eduItems].sort((a, b) => {
+      const dateA = a.type === "certification" ? new Date(a.issueDate).getTime() : new Date(a.completionDate).getTime();
+      const dateB = b.type === "certification" ? new Date(b.issueDate).getTime() : new Date(b.completionDate).getTime();
+      return dateB - dateA;
+    });
+  }, [certifications, continuingEducation]);
+
+  // Extract unique categories
+  const categories = useMemo(() => {
+    const cats = new Set<string>();
+    allItems.forEach(item => {
+      if (item.category) cats.add(item.category);
+    });
+    return Array.from(cats).sort();
+  }, [allItems]);
+
+  // Extract unique years
+  const years = useMemo(() => {
+    const yrs = new Set<string>();
+    allItems.forEach(item => {
+      const year = item.type === "certification" ? getYear(item.issueDate) : getYear(item.completionDate);
+      yrs.add(year.toString());
+    });
+    return Array.from(yrs).sort((a, b) => parseInt(b) - parseInt(a));
+  }, [allItems]);
+
+  // Fetch certifications data only if not provided via props
   useEffect(() => {
+    if (initialCertifications.length > 0 && initialContinuingEducation.length > 0) return;
+
     let mounted = true;
 
     const fetchCertifications = async () => {
+      if (initialCertifications.length > 0) {
+        setFetchStatus("certifications success");
+        return;
+      }
+
       setLoading(true);
       setError(null);
       setFetchStatus("fetching certifications");
@@ -307,6 +352,11 @@ export default function Certifications() {
     };
 
     const fetchContinuingEducation = async () => {
+      if (initialContinuingEducation.length > 0) {
+        setFetchStatus(prev => prev + "; continuing education success");
+        return;
+      }
+
       try {
         console.log("[Certifications] Starting fetch to /api/continuingEducation");
         const res = await fetch("/api/continuingEducation");
@@ -333,7 +383,7 @@ export default function Certifications() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [initialCertifications.length, initialContinuingEducation.length]);
 
   const handleRetry = useCallback(() => {
     setLoading(true);
@@ -341,42 +391,6 @@ export default function Certifications() {
     // The fetch effects will re-run due to loading state change
     window.location.reload();
   }, []);
-
-  // Combine and filter items
-  const allItems = useMemo((): UnifiedItem[] => {
-    const certs: UnifiedItem[] = certifications.map((c, idx) => ({
-      ...c,
-      id: c._id ?? c.id ?? `cert-${idx}`,
-      type: "certification" as const
-    }));
-    const edu: UnifiedItem[] = continuingEducation.map((e, idx) => ({
-      ...e,
-      id: e._id ?? e.id ?? `edu-${idx}`,
-      type: "education" as const
-    }));
-    return [...certs, ...edu].sort((a, b) => {
-      const dateA = a.type === "certification" ? a.issueDate : a.completionDate;
-      const dateB = b.type === "certification" ? b.issueDate : b.completionDate;
-      return new Date(dateB).getTime() - new Date(dateA).getTime();
-    });
-  }, [certifications, continuingEducation]);
-
-  const categories = useMemo(() => {
-    const cats = new Set<string>();
-    allItems.forEach(item => {
-      if (item.category) cats.add(item.category);
-    });
-    return Array.from(cats).sort();
-  }, [allItems]);
-
-  const years = useMemo(() => {
-    const yrs = new Set<string>();
-    allItems.forEach(item => {
-      const year = item.type === "certification" ? getYear(item.issueDate) : getYear(item.completionDate);
-      yrs.add(year.toString());
-    });
-    return Array.from(yrs).sort((a, b) => parseInt(b) - parseInt(a));
-  }, [allItems]);
 
   const filteredItems = useMemo(() => {
     return allItems.filter(item => {

@@ -127,7 +127,7 @@ const TOOL_KEYWORDS = [
 ];
 
 // Helper to determine display category from skill
-const getDisplayCategory = (skill: Skill): Category => {
+const getDisplayCategory = (skill: { category: string; name: string }): Category => {
   const apiCategory = skill.category.toLowerCase();
   if (categoryMap[apiCategory]) {
     return categoryMap[apiCategory];
@@ -259,12 +259,36 @@ function SkillSkeleton() {
   );
 }
 
-export default function InteractiveSkills() {
+export interface InteractiveSkill {
+  _id: string;
+  id?: string;
+  name: string;
+  category: string;
+  proficiency: number; // 0-3
+  description?: string;
+  icon?: string;
+  color?: string;
+  isFeatured?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface InteractiveSkillsProps {
+  initialData?: InteractiveSkill[];
+}
+
+export default function InteractiveSkills({ initialData = [] }: InteractiveSkillsProps) {
   const [selectedCategory, setSelectedCategory] = useState<Category>("Languages");
   const [searchQuery, setSearchQuery] = useState("");
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [focusedIndex, setFocusedIndex] = useState(-1);
-  const { skills: allSkills, loading, error } = useSkills();
+
+  // Use initialData if provided, otherwise use the hook for client-side fetching
+  const { skills: hookSkills, loading: hookLoading, error: hookError } = useSkills();
+  const allSkills = initialData.length > 0 ? initialData : hookSkills;
+  const loading = initialData.length > 0 ? false : hookLoading;
+  const error = initialData.length > 0 ? null : hookError;
+
   const prefersReducedMotion = useRef(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -283,12 +307,12 @@ export default function InteractiveSkills() {
   }, []);
 
   // Group skills by category using display category mapping
-  const groupedSkills = useMemo((): Record<string, Skill[]> => {
+  const groupedSkills = useMemo((): Record<string, InteractiveSkill[]> => {
     if (!allSkills?.length) {
       return { Languages: [], Frameworks: [], "DevOps and Cloud": [], "Developer Tools": [] };
     }
 
-    const grouped: Record<string, Skill[]> = {
+    const grouped: Record<string, InteractiveSkill[]> = {
       Languages: [],
       Frameworks: [],
       "DevOps and Cloud": [],

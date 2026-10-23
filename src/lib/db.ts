@@ -29,7 +29,18 @@ export async function connectDB() {
 
     if (!cached.promise) {
         cached.promise = mongoose.connect(uri, {
-            serverSelectionTimeoutMS: 10000,
+            // Connection pooling for better performance under load
+            maxPoolSize: 10,
+            minPoolSize: 2,
+            // Timeouts
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
+            // Connection settings
+            family: 4, // Use IPv4, skip trying IPv6
+            // Performance
+            maxIdleTimeMS: 30000,
+            // Retry
+            retryWrites: true,
         });
     }
 

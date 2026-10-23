@@ -2,8 +2,7 @@ import { Suspense } from "react";
 import ProjectsPageClient from "./ProjectsPageClient";
 import ProjectSkeleton from "@/components/ui/ProjectSkeleton";
 import styles from "./ProjectPage.module.css";
-import { connectDB } from "@/lib/db";
-import Project from "@/models/Project";
+import { fetchProjectsData } from "@/lib/fetchHomepageData";
 
 interface ProjectData {
   slug: string;
@@ -45,21 +44,10 @@ function ProjectsPageSkeleton() {
 // Force dynamic rendering to avoid build-time API calls
 export const dynamic = 'force-dynamic';
 
-export default async function ProjectsPage() {
-  let projects: ProjectData[] = [];
-  try {
-    await connectDB();
-    const projectsData = await Project.find({}).sort({ createdAt: -1 }).lean();
-    projects = projectsData.map(p => ({
-      ...p,
-      _id: p._id?.toString(),
-      createdAt: p.createdAt?.toISOString(),
-    })) as ProjectData[];
-  } catch (error) {
-    console.error("Error fetching projects:", error);
-    projects = [];
-  }
+// Fetch projects data server-side
+const projects = await fetchProjectsData();
 
+export default async function ProjectsPage() {
   return (
     <Suspense fallback={<ProjectsPageSkeleton />}>
       <ProjectsPageClient initialProjects={projects} />

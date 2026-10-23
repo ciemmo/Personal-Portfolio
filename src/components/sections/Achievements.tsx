@@ -24,9 +24,39 @@ const CATEGORY_COLORS: Record<string, string> = {
   other: "#6366F1",
 };
 
-export default function Achievements() {
-  const [achievementsData, setAchievementsData] = useState<Achievement[]>([]);
-  const [loading, setLoading] = useState(true);
+// Unified achievement type that handles both server and client data
+interface UnifiedAchievement {
+  id: string;
+  _id?: string;
+  title: string;
+  description?: string;
+  date: string;
+  category?: string;
+  icon?: string;
+  url?: string;
+}
+
+function normalizeAchievement(a: UnifiedAchievement): Achievement {
+  return {
+    id: a._id || a.id,
+    title: a.title,
+    description: a.description || "",
+    date: a.date,
+    category: a.category,
+    icon: a.icon,
+    url: a.url,
+  };
+}
+
+interface AchievementsProps {
+  initialData?: UnifiedAchievement[];
+}
+
+export default function Achievements({ initialData = [] }: AchievementsProps) {
+  const [achievementsData, setAchievementsData] = useState<Achievement[]>(() =>
+    initialData.map(normalizeAchievement)
+  );
+  const [loading, setLoading] = useState(!initialData.length);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
@@ -41,8 +71,10 @@ export default function Achievements() {
     return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
-  // Fetch achievements data
+  // Fetch achievements data only if not provided via props
   useEffect(() => {
+    if (initialData.length > 0) return;
+
     const fetchAchievements = async () => {
       setLoading(true);
       setError(null);
@@ -50,7 +82,7 @@ export default function Achievements() {
         const res = await fetch("/api/achievements");
         if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
         const data = await res.json();
-        setAchievementsData(data);
+        setAchievementsData(data.map(normalizeAchievement));
       } catch (err) {
         console.error("Error fetching achievements:", err);
         setError("Failed to load achievements. Please try again later.");
@@ -61,7 +93,7 @@ export default function Achievements() {
     };
 
     fetchAchievements();
-  }, []);
+  }, [initialData.length]);
 
   const handleRetry = useCallback(() => {
     setLoading(true);

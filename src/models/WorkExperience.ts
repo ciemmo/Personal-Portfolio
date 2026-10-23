@@ -54,7 +54,8 @@ const WorkExperienceSchema = new Schema(
   }
 );
 
-// Index for faster querying by company and role
+// Indexes for faster querying
 WorkExperienceSchema.index({ company: 1, role: 1 });
+WorkExperienceSchema.index({ startDate: -1 });
 
 export default models.WorkExperience || mongoose.model("WorkExperience", WorkExperienceSchema);

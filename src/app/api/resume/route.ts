@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import Resume from "@/models/Resume";
 import { authenticateRequest } from "@/lib/auth";
+import { generateETag, checkETagMatch, createCacheHeaders } from "@/lib/etag";
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,15 +16,26 @@ export async function GET(request: NextRequest) {
     // Convert to plain object for JSON serialization
     const resumePlain = resume ? resume.toObject() : null;
 
+    // Generate content-based ETag
+    const etag = generateETag(resumePlain || {});
+
+    // Check conditional request (If-None-Match)
+    if (checkETagMatch(request, etag)) {
+      return new NextResponse(null, {
+        status: 304,
+        headers: {
+          ETag: etag,
+          "Cache-Control": "public, max-age=0, must-revalidate",
+        },
+      });
+    }
+
     // Set cache headers for better performance
     // Cache for 30 minutes (in seconds)
     const thirtyMinutesInSeconds = 30 * 60;
 
     return NextResponse.json(resumePlain || {}, {
-      headers: {
-        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
-        "ETag": `"${resumePlain?._id || 'resume'}-${Date.now()}"`,
-      },
+      headers: createCacheHeaders(resumePlain || {}, { maxAge: thirtyMinutesInSeconds, staleWhileRevalidate: 86400 }),
     });
   } catch (error) {
     console.error("Error fetching resume:", error);
@@ -58,16 +70,16 @@ export async function POST(request: NextRequest) {
     // Convert to plain object for JSON serialization
     const resumePlain = updatedResume.toObject ? updatedResume.toObject() : updatedResume;
 
+    // Generate content-based ETag
+    const etag = generateETag(resumePlain);
+
     // Set cache headers for better performance
     // Cache for 30 minutes (in seconds)
     const thirtyMinutesInSeconds = 30 * 60;
 
     return NextResponse.json(resumePlain, {
       status: 200,
-      headers: {
-        "Cache-Control": `public, max-age=${thirtyMinutesInSeconds}, stale-while-revalidate=86400`,
-        "ETag": `"${resumePlain._id}-${Date.now()}"`,
-      },
+      headers: createCacheHeaders(resumePlain, { maxAge: thirtyMinutesInSeconds, staleWhileRevalidate: 86400 }),
     });
   } catch (error) {
     console.error("Error updating resume:", error);

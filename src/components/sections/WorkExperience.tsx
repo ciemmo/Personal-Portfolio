@@ -7,11 +7,12 @@ import OptimizedImage from "@/components/ui/OptimizedImage";
 
 interface WorkExperience {
   _id: string;
+  id?: string;
   company: string;
   role: string;
   location?: string;
   startDate: string;
-  endDate?: string;
+  endDate?: string | null;
   duration: string;
   responsibilities: string[];
   technologies: string[];
@@ -20,10 +21,14 @@ interface WorkExperience {
   logo?: string;
 }
 
-export default function WorkExperience() {
+interface WorkExperienceProps {
+  initialData?: WorkExperience[];
+}
+
+export default function WorkExperience({ initialData = [] }: WorkExperienceProps) {
   useScrollAnimation();
-  const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>(initialData);
+  const [loading, setLoading] = useState<boolean>(!initialData.length);
   const [error, setError] = useState<string | null>(null);
   const [fetchStatus, setFetchStatus] = useState<string>("idle");
   const [isMounted, setIsMounted] = useState(false);
@@ -32,8 +37,10 @@ export default function WorkExperience() {
     setIsMounted(true);
   }, []);
 
-  // Fetch work experience data
+  // Fetch work experience data only if not provided via props
   useEffect(() => {
+    if (initialData.length > 0) return;
+
     let mounted = true;
 
     const fetchWorkExperience = async () => {
@@ -72,7 +79,7 @@ export default function WorkExperience() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [initialData.length]);
 
   const handleRetry = useCallback(() => {
     setLoading(true);

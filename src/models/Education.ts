@@ -53,7 +53,8 @@ const EducationSchema = new Schema(
   }
 );
 
-// Index for faster querying by institution and degree
+// Indexes for faster querying
 EducationSchema.index({ institution: 1, degree: 1 });
+EducationSchema.index({ startDate: -1 });
 
 export default models.Education || mongoose.model("Education", EducationSchema);

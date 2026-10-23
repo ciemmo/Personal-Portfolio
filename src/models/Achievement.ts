@@ -32,7 +32,8 @@ const AchievementSchema = new Schema(
   }
 );
 
-// Index for faster querying by category and title
+// Indexes for faster querying
 AchievementSchema.index({ category: 1, title: 1 });
+AchievementSchema.index({ date: -1 }); // For sorting by date
 
 export default models.Achievement || mongoose.model("Achievement", AchievementSchema);

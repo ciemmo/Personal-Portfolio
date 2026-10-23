@@ -49,7 +49,9 @@ const CertificationSchema = new Schema(
   }
 );
 
-// Index for faster querying by name and issuing organization
+// Indexes for faster querying
 CertificationSchema.index({ name: 1, issuingOrganization: 1 });
+CertificationSchema.index({ issueDate: -1 });
+CertificationSchema.index({ expirationDate: 1 });
 
 export default models.Certification || mongoose.model("Certification", CertificationSchema);

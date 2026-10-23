@@ -15,4 +15,9 @@ const ProjectSchema = new Schema(
     { timestamps: true }
 );
 
+// Indexes for common query patterns
+ProjectSchema.index({ featured: 1 });
+ProjectSchema.index({ category: 1 });
+ProjectSchema.index({ createdAt: -1 });
+
 export default models.Project || mongoose.model("Project", ProjectSchema);

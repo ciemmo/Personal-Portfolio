@@ -6,6 +6,7 @@ import useScrollAnimation from "@/hooks/useScrollAnimation";
 
 interface Education {
   _id: string;
+  id?: string;
   institution: string;
   degree: string;
   fieldOfStudy?: string;
@@ -19,10 +20,14 @@ interface Education {
   certificateUrl?: string;
 }
 
-export default function Education() {
+interface EducationProps {
+  initialData?: Education[];
+}
+
+export default function Education({ initialData = [] }: EducationProps) {
   useScrollAnimation();
-  const [educations, setEducations] = useState<Education[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [educations, setEducations] = useState<Education[]>(initialData);
+  const [loading, setLoading] = useState<boolean>(!initialData.length);
   const [error, setError] = useState<string | null>(null);
   const [fetchStatus, setFetchStatus] = useState<string>("idle");
   const [isMounted, setIsMounted] = useState(false);
@@ -31,8 +36,10 @@ export default function Education() {
     setIsMounted(true);
   }, []);
 
-  // Fetch education data
+  // Fetch education data only if not provided via props
   useEffect(() => {
+    if (initialData.length > 0) return;
+
     let mounted = true;
 
     const fetchEducations = async () => {
@@ -71,7 +78,7 @@ export default function Education() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [initialData.length]);
 
   const handleRetry = useCallback(() => {
     setLoading(true);

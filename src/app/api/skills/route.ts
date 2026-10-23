@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import Skill from "@/models/Skill";
 import { authenticateRequest } from "@/lib/auth";
+import { generateETag, checkETagMatch, createCacheHeaders } from "@/lib/etag";
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,14 +16,26 @@ export async function GET(request: NextRequest) {
     // Convert to plain objects for JSON serialization
     const skillsPlain = skills.map(skill => skill.toObject ? skill.toObject() : skill);
 
-    // Set cache headers for better performance
-    // No caching for skills data as it can change frequently due to user actions
+    // Generate content-based ETag
+    const etag = generateETag(skillsPlain);
+
+    // Check conditional request (If-None-Match)
+    if (checkETagMatch(request, etag)) {
+      return new NextResponse(null, {
+        status: 304,
+        headers: {
+          ETag: etag,
+          "Cache-Control": "public, max-age=0, must-revalidate",
+        },
+      });
+    }
+
+    // Set cache headers - cache for 5 minutes, stale-while-revalidate for 1 hour
+    // This is much better than no-store for a portfolio site where skills don't change often
     return NextResponse.json(
       skillsPlain,
       {
-        headers: {
-          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-        },
+        headers: createCacheHeaders(skillsPlain, { maxAge: 300, staleWhileRevalidate: 3600 }),
       }
     );
   } catch (error) {

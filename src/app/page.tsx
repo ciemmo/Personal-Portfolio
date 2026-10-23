@@ -8,32 +8,22 @@ import ProjectsGrid from "@/components/sections/ProjectsGrid";
 import WorkExperience from "@/components/sections/WorkExperience";
 import Link from "next/link";
 import styles from "./page.module.css";
+import { fetchHomepageData } from "@/lib/fetchHomepageData";
+
+// Fetch all homepage data in parallel (server-side) to eliminate waterfall
+const homepageData = await fetchHomepageData();
 
 export default async function Home() {
-    let projects = [];
-    try {
-        // Fetch projects data for immediate loading on homepage
-        // Use relative URL to work both in SSR and client-side
-        const res = await fetch("/api/projects", {
-            // Use cache for better performance on subsequent visits
-            cache: "force-cache"
-        });
-        projects = await res.json();
-    } catch (error) {
-        // If API fails (e.g., during build), use empty array
-        projects = [];
-    }
-
     return (
         <>
             <Hero />
             <About />
-            <Achievements />
-            <WorkExperience />
-            <Education />
-            <Certifications />
-            <InteractiveSkills />
-            <ProjectsGrid projects={projects} />
+            <Achievements initialData={homepageData.achievements} />
+            <WorkExperience initialData={homepageData.workExperience} />
+            <Education initialData={homepageData.education} />
+            <Certifications initialCertifications={homepageData.certifications} initialContinuingEducation={homepageData.continuingEducation} />
+            <InteractiveSkills initialData={homepageData.skills} />
+            <ProjectsGrid projects={homepageData.projects} />
         </>
     );
 }
