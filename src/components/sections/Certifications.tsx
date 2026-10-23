@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useMemo, useRef, memo, forwardRef } f
 import styles from "./Certifications.module.css";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
 import OptimizedImage from "@/components/ui/OptimizedImage";
-import { FaAngleDown, FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaSearch, FaFilter } from "react-icons/fa";
+import { FaAngleDown, FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaSearch, FaFilter } from "@/components/sections/skillIcons";
 
 interface Certification {
   id: string;
@@ -132,7 +132,7 @@ const CertificationCardComponent = memo(forwardRef<HTMLElement, CertificationCar
               </span>
               {isCert && item.expirationDate && (
                 <span className={`${styles.expiryBadge} ${styles[status.class]}`}>
-                  <status.icon className={styles.expiryIcon} aria-hidden="true" />
+                  <status.icon className={styles.expiryIcon} aria-hidden={true} />
                   {status.label}
                 </span>
               )}
@@ -150,7 +150,7 @@ const CertificationCardComponent = memo(forwardRef<HTMLElement, CertificationCar
             aria-label={isExpanded ? "Collapse details" : "Expand details"}
             aria-expanded={isExpanded}
           >
-            <FaAngleDown className={`${styles.expandIcon} ${isExpanded ? styles.rotated : ""}`} aria-hidden="true" />
+            <FaAngleDown className={`${styles.expandIcon} ${isExpanded ? styles.rotated : ""}`} aria-hidden={true} />
           </button>
         </div>
 
@@ -546,7 +546,7 @@ export default function Certifications({
             </div>
             <div className={styles.filters}>
               <div className={styles.searchWrapper}>
-                <FaSearch className={styles.searchIcon} aria-hidden="true" />
+                <FaSearch className={styles.searchIcon} aria-hidden={true} />
                 <input
                   type="search"
                   className={styles.searchInput}
@@ -573,14 +573,14 @@ export default function Certifications({
             <div className={styles.emptyStateIcon}>
               <div className={styles.emptyStateBadge}>
                 <div className={styles.emptyStateCircle} />
-                <FaSearch className={styles.emptyStateSearchIcon} aria-hidden="true" />
+                <FaSearch className={styles.emptyStateSearchIcon} aria-hidden={true} />
               </div>
             </div>
             <p className={styles.emptyStateText}>
               No certifications match your current filters.
             </p>
             <button onClick={() => { setSearchQuery(""); setSelectedCategory("all"); setSelectedYear("all"); }} className={styles.clearFiltersButton}>
-              <FaFilter className={styles.clearIcon} aria-hidden="true" />
+              <FaFilter className={styles.clearIcon} aria-hidden={true} />
               Clear Filters
             </button>
           </div>
@@ -609,7 +609,7 @@ export default function Certifications({
           {(allItems.length > 0) && (
             <div className={styles.filters}>
               <div className={styles.searchWrapper}>
-                <FaSearch className={styles.searchIcon} aria-hidden="true" />
+                <FaSearch className={styles.searchIcon} aria-hidden={true} />
                 <input
                   type="search"
                   className={styles.searchInput}
@@ -620,7 +620,7 @@ export default function Certifications({
                 />
               </div>
               <div className={styles.filterGroup}>
-                <FaFilter className={styles.filterIcon} aria-hidden="true" />
+                <FaFilter className={styles.filterIcon} aria-hidden={true} />
                 <select className={styles.filterSelect} value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} aria-label="Filter by category">
                   <option value="all">All Categories</option>
                   {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
@@ -660,7 +660,7 @@ export default function Certifications({
             <div className={styles.emptyStateIcon}>
               <div className={styles.emptyStateBadge}>
                 <div className={styles.emptyStateCircle} />
-                <FaCheckCircle className={styles.emptyStateCheckIcon} aria-hidden="true" />
+                <FaCheckCircle className={styles.emptyStateCheckIcon} aria-hidden={true} />
               </div>
             </div>
             <p className={styles.emptyStateText}>
@@ -671,15 +671,15 @@ export default function Certifications({
 
         <div className={styles.legend} aria-label="Expiry status legend">
           <div className={styles.legendItem}>
-            <FaCheckCircle className={`${styles.legendIcon} ${styles.legendActive}`} aria-hidden="true" />
+            <FaCheckCircle className={`${styles.legendIcon} ${styles.legendActive}`} aria-hidden={true} />
             <span>Active</span>
           </div>
           <div className={styles.legendItem}>
-            <FaExclamationTriangle className={`${styles.legendIcon} ${styles.legendExpiring}`} aria-hidden="true" />
+            <FaExclamationTriangle className={`${styles.legendIcon} ${styles.legendExpiring}`} aria-hidden={true} />
             <span>Expiring Soon</span>
           </div>
           <div className={styles.legendItem}>
-            <FaTimesCircle className={`${styles.legendIcon} ${styles.legendExpired}`} aria-hidden="true" />
+            <FaTimesCircle className={`${styles.legendIcon} ${styles.legendExpired}`} aria-hidden={true} />
             <span>Expired</span>
           </div>
         </div>

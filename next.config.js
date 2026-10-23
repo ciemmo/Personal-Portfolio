@@ -69,8 +69,7 @@ const nextConfig = {
     ];
   },
 
-  // Output standalone for smaller Docker images (optional, uncomment for container deployment)
-  // output: 'standalone',
+  output: 'standalone',
 };
 
 module.exports = withMDX(nextConfig);

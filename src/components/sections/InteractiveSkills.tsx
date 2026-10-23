@@ -3,53 +3,9 @@
 import * as React from "react";
 import { useState, useEffect, useMemo, useCallback, useRef, KeyboardEvent } from "react";
 import { useSkills, Skill } from "@/lib/skillData";
-import {
-  FaHtml5, FaCss3Alt, FaJsSquare, FaReact, FaNodeJs, FaPython, FaJava,
-  FaDatabase, FaGitAlt, FaLinux, FaAndroid, FaFigma, FaCloud, FaCode
-} from "react-icons/fa";
-import {
-  SiTypescript, SiMongodb, SiExpress, SiDocker, SiKubernetes, SiSpring,
-  SiDotnet, SiRubyonrails, SiLaravel, SiWordpress, SiShopify, SiFigma
-} from "react-icons/si";
-import { TbBrandNextjs, TbBrandCSharp, TbBrandCpp } from "react-icons/tb";
+import { skillIcons } from "./skillIcons";
 import styles from "./InteractiveSkills.module.css";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
-
-// Skill to icon mapping
-const skillIcons = {
-  // Programming Languages
-  "JavaScript": FaJsSquare,
-  "TypeScript": SiTypescript,
-  "Python": FaPython,
-  "Java": FaJava,
-  "C#": TbBrandCSharp,
-  "C++": TbBrandCpp,
-  "HTML": FaHtml5,
-  "CSS": FaCss3Alt,
-  "SQL": FaDatabase,
-
-  // Frameworks & Libraries
-  "React": FaReact,
-  "Next.js": TbBrandNextjs,
-  "Node.js": FaNodeJs,
-  "Express": SiExpress,
-  "MongoDB": SiMongodb,
-  "Spring": SiSpring,
-  ".NET": SiDotnet,
-  "Ruby on Rails": SiRubyonrails,
-  "Laravel": SiLaravel,
-  "WordPress": SiWordpress,
-  "Shopify": SiShopify,
-
-  // Tools & Platforms
-  "Git": FaGitAlt,
-  "Docker": SiDocker,
-  "Kubernetes": SiKubernetes,
-  "Linux": FaLinux,
-  "Android": FaAndroid,
-  "Figma": SiFigma,
-  "AWS": FaCloud,
-} as const;
 
 // Memoized icon component
 const SkillIcon = React.memo(({ skillName }: { skillName: string }) => {
@@ -57,7 +13,24 @@ const SkillIcon = React.memo(({ skillName }: { skillName: string }) => {
   if (IconComponent) {
     return <IconComponent size={28} className={styles.skillIcon} />;
   }
-  return <FaCode size={28} className={styles.skillIcon} />;
+  // Fallback icon
+  return (
+    <svg
+      width={28}
+      height={28}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={styles.skillIcon}
+      aria-hidden="true"
+    >
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
+    </svg>
+  );
 });
 
 // Category order for tabs

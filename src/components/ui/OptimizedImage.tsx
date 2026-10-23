@@ -1,21 +1,40 @@
 import Image from "next/image";
 
-interface OptimizedImageProps extends Omit<React.ComponentProps<typeof Image>, 'width' | 'height'> {
+// Default blur data URL - 1x1px transparent PNG
+const DEFAULT_BLUR_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+
+interface OptimizedImageProps {
+  src: string;
+  alt: string;
   className?: string;
   priority?: boolean;
-  blurPlaceholder?: boolean;
+  blurDataURL?: string;
+  placeholder?: "blur" | "empty" | "data:image/...";
   width: number;
   height: number;
+  sizes?: string;
+  quality?: number;
+  loading?: "eager" | "lazy";
+  onLoad?: () => void;
+  onError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void;
+  style?: React.CSSProperties;
+  unoptimized?: boolean;
 }
 
 export default function OptimizedImage({
   className,
   priority,
-  blurPlaceholder,
+  blurDataURL,
+  placeholder,
   width,
   height,
   ...props
 }: OptimizedImageProps) {
+  // Use blurDataURL if provided, otherwise use default for images that should blur
+  const shouldBlur = blurDataURL !== undefined || placeholder === "blur";
+  const finalBlurDataURL = blurDataURL || (shouldBlur ? DEFAULT_BLUR_DATA_URL : undefined);
+  const finalPlaceholder = shouldBlur ? "blur" : placeholder ?? "empty";
+
   return (
     <Image
       {...props}
@@ -23,12 +42,8 @@ export default function OptimizedImage({
       priority={priority ?? false}
       width={width}
       height={height}
-    // Only add blurPlaceholder if it's explicitly set to true
-    // and we have a blur data URL (would normally come from a placeholder)
-    // For simplicity, we're not implementing actual blur placeholder here
-    // but keeping the prop for compatibility
-    // Note: Next.js Image component doesn't have a direct blurPlaceholder prop
-    // This would typically be handled by providing a blurDataURL
+      placeholder={finalPlaceholder}
+      blurDataURL={finalBlurDataURL}
     />
   );
 }

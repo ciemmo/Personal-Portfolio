@@ -3,10 +3,8 @@ import Achievements from "@/components/sections/Achievements";
 import Certifications from "@/components/sections/Certifications";
 import Education from "@/components/sections/Education";
 import Hero from "@/components/sections/Hero";
-import InteractiveSkills from "@/components/sections/InteractiveSkills";
-import ProjectsGrid from "@/components/sections/ProjectsGrid";
 import WorkExperience from "@/components/sections/WorkExperience";
-import Link from "next/link";
+import ClientComponentsWrapper from "@/components/sections/ClientComponentsWrapper";
 import styles from "./page.module.css";
 import { fetchHomepageData } from "@/lib/fetchHomepageData";
 
@@ -22,8 +20,7 @@ export default async function Home() {
             <WorkExperience initialData={homepageData.workExperience} />
             <Education initialData={homepageData.education} />
             <Certifications initialCertifications={homepageData.certifications} initialContinuingEducation={homepageData.continuingEducation} />
-            <InteractiveSkills initialData={homepageData.skills} />
-            <ProjectsGrid projects={homepageData.projects} />
+            <ClientComponentsWrapper skillsData={homepageData.skills} projectsData={homepageData.projects} />
         </>
     );
 }
