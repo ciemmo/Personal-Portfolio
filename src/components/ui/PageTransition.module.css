@@ -1,0 +1,23 @@
+/* ========================================
+   PAGE TRANSITION WRAPPER
+   ======================================== */
+
+.pageWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+/* Ensure proper layout for page transitions */
+.pageWrapper > * {
+  width: 100%;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pageWrapper {
+    animation: none !important;
+  }
+}
