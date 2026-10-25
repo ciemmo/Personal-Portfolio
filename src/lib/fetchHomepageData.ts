@@ -171,7 +171,22 @@ function toPlainObject<T extends { _id?: unknown; createdAt?: Date | string; upd
  */
 export async function fetchHomepageData(): Promise<HomepageData> {
   try {
-    await connectDB();
+    const db = await connectDB();
+
+    // If no database connection (build time without MONGODB_URI), return empty data
+    if (!db) {
+      console.warn("No database connection - returning empty data for static generation");
+      return {
+        projects: [],
+        skills: [],
+        achievements: [],
+        certifications: [],
+        workExperience: [],
+        education: [],
+        continuingEducation: [],
+        stats: [],
+      };
+    }
 
     const [
       projectsData,
@@ -223,7 +238,13 @@ export async function fetchHomepageData(): Promise<HomepageData> {
  */
 export async function fetchProjectsData(): Promise<ProjectData[]> {
   try {
-    await connectDB();
+    const db = await connectDB();
+
+    if (!db) {
+      console.warn("No database connection - returning empty data for static generation");
+      return [];
+    }
+
     const projectsData = await Project.find({}).sort({ createdAt: -1 }).lean();
     return projectsData.map(toPlainObject) as ProjectData[];
   } catch (error) {
@@ -237,7 +258,13 @@ export async function fetchProjectsData(): Promise<ProjectData[]> {
  */
 export async function fetchProjectBySlug(slug: string): Promise<ProjectData | null> {
   try {
-    await connectDB();
+    const db = await connectDB();
+
+    if (!db) {
+      console.warn("No database connection - returning null for static generation");
+      return null;
+    }
+
     const project = await Project.findOne({ slug }).lean();
     if (!project) return null;
     return toPlainObject(project) as ProjectData;

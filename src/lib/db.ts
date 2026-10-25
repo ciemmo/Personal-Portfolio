@@ -19,8 +19,11 @@ if (!global.mongooseCache) {
 export async function connectDB() {
     const uri = process.env.MONGODB_URI;
 
+    // During build time (Vercel), MONGODB_URI may not be available
+    // Return early with a mock to allow static generation to proceed
     if (!uri) {
-        throw new Error("Missing MONGODB_URI in environment variables");
+        console.warn("MONGODB_URI not set - skipping database connection (build mode)");
+        return null as any;
     }
 
     if (cached.conn) {
