@@ -14,8 +14,8 @@ const homepageData = await fetchHomepageData();
 export default async function Home() {
     return (
         <>
-            <Hero />
-            <About />
+            <Hero stats={homepageData.stats} />
+            <About stats={homepageData.stats} />
             <Achievements initialData={homepageData.achievements} />
             <WorkExperience initialData={homepageData.workExperience} />
             <Education initialData={homepageData.education} />

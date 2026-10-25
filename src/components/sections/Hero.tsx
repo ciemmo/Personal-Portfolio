@@ -5,15 +5,37 @@ import styles from "./Hero.module.css";
 import Link from "next/link";
 import useScrollAnimation from "../../hooks/useScrollAnimation";
 
-export default function Hero() {
+interface Stat {
+  _id: string;
+  key: string;
+  label: string;
+  value: string;
+  section: "hero" | "about" | "both";
+  displayOrder: number;
+  isVisible: boolean;
+}
+
+interface HeroProps {
+  stats?: Stat[];
+}
+
+export default function Hero({ stats = [] }: HeroProps) {
   useScrollAnimation(".fade-up, .stagger-up > *", "animate");
 
-  const stats = [
-    { value: "0", label: "Years of Experience" },
-    { value: "5", label: "Projects Built" },
-    { value: "15+", label: "Technologies" },
-    { value: "4+", label: "Certifications" },
+  // Filter stats for hero section and sort by displayOrder
+  const heroStats = stats
+    .filter((stat) => stat.isVisible && (stat.section === "hero" || stat.section === "both"))
+    .sort((a, b) => a.displayOrder - b.displayOrder);
+
+  // Fallback stats if none configured
+  const fallbackStats: Stat[] = [
+    { _id: "fallback-1", key: "yearsExperience", label: "Years of Experience", value: "0", section: "hero", displayOrder: 0, isVisible: true },
+    { _id: "fallback-2", key: "projectsBuilt", label: "Projects Built", value: "5", section: "hero", displayOrder: 1, isVisible: true },
+    { _id: "fallback-3", key: "technologies", label: "Technologies", value: "15+", section: "hero", displayOrder: 2, isVisible: true },
+    { _id: "fallback-4", key: "certifications", label: "Certifications", value: "4+", section: "hero", displayOrder: 3, isVisible: true },
   ];
+
+  const displayStats = heroStats.length > 0 ? heroStats : fallbackStats;
 
   return (
     <section className={`${styles.hero} ${styles.fadeUp} fade-up`} aria-labelledby="hero-title">
@@ -61,8 +83,8 @@ export default function Hero() {
 
           {/* Stats Bar */}
           <div className={styles.statsBar} role="list" aria-label="Key statistics">
-            {stats.map((stat, index) => (
-              <div key={stat.label} className={styles.stat} role="listitem">
+            {displayStats.map((stat, index) => (
+              <div key={stat._id || stat.label || index} className={styles.stat} role="listitem">
                 <span className={styles.statValue}>{stat.value}</span>
                 <span className={styles.statLabel}>{stat.label}</span>
               </div>

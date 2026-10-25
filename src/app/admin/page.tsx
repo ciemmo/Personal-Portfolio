@@ -15,6 +15,10 @@ export default function AdminHub() {
           <div className="admin-section">
             <h2 className="sectionTitle">Content Management</h2>
             <div className="admin-links">
+              <Link href="/admin/stats" className="adminLink">
+                <span className="adminLinkIcon">📊</span>
+                <span>Site Stats</span>
+              </Link>
               <Link href="/admin/skills" className="adminLink">
                 <span className="adminLinkIcon">🎯</span>
                 <span>Skills</span>
