@@ -8,6 +8,9 @@ import ClientComponentsWrapper from "@/components/sections/ClientComponentsWrapp
 import styles from "./page.module.css";
 import { fetchHomepageData } from "@/lib/fetchHomepageData";
 
+// Force dynamic rendering so admin-updated stats reflect immediately
+export const dynamic = 'force-dynamic';
+
 // Fetch all homepage data in parallel (server-side) to eliminate waterfall
 const homepageData = await fetchHomepageData();
 
