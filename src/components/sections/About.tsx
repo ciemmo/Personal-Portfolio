@@ -5,37 +5,12 @@ import styles from "./About.module.css";
 import Link from "next/link";
 import useScrollAnimation from "../../hooks/useScrollAnimation";
 
-interface Stat {
-  _id: string;
-  key: string;
-  label: string;
-  value: string;
-  section: "hero" | "about" | "both";
-  displayOrder: number;
-  isVisible: boolean;
-}
-
 interface AboutProps {
-  stats?: Stat[];
+  // Stats removed from About section to avoid redundancy with Hero section
 }
 
-export default function About({ stats = [] }: AboutProps) {
+export default function About({ }: AboutProps) {
   useScrollAnimation(".fade-up, .stagger-up > *", "animate");
-
-  // Filter stats for about section and sort by displayOrder
-  const aboutStats = stats
-    .filter((stat) => stat.isVisible && (stat.section === "about" || stat.section === "both"))
-    .sort((a, b) => a.displayOrder - b.displayOrder);
-
-  // Fallback stats if none configured
-  const fallbackStats: Stat[] = [
-    { _id: "fallback-1", key: "yearsExperience", label: "Years Experience", value: "5+", section: "about", displayOrder: 0, isVisible: true },
-    { _id: "fallback-2", key: "projectsBuilt", label: "Projects Built", value: "30+", section: "about", displayOrder: 1, isVisible: true },
-    { _id: "fallback-3", key: "technologies", label: "Technologies", value: "15+", section: "about", displayOrder: 2, isVisible: true },
-    { _id: "fallback-4", key: "certifications", label: "Certifications", value: "10+", section: "about", displayOrder: 3, isVisible: true },
-  ];
-
-  const displayStats = aboutStats.length > 0 ? aboutStats : fallbackStats;
 
   return (
     <section className={`${styles.about} ${styles["fade-up"]}`} aria-labelledby="about-title">
@@ -65,16 +40,6 @@ export default function About({ stats = [] }: AboutProps) {
             useful applications. I&apos;m always learning, always improving, and
             always excited to take on new challenges.
           </p>
-
-          {/* Stats Cards */}
-          <div className={styles.statsGrid} role="list" aria-label="Key statistics">
-            {displayStats.map((stat, index) => (
-              <div key={stat._id || stat.label || index} className={styles.statCard} role="listitem">
-                <span className={styles.statValue}>{stat.value}</span>
-                <span className={styles.statLabel}>{stat.label}</span>
-              </div>
-            ))}
-          </div>
 
           {/* CTA Buttons */}
           <div className={styles.ctaContainer}>
