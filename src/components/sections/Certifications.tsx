@@ -238,9 +238,15 @@ export default function Certifications({
   const [inView, setInView] = useState(false);
   const [certifications, setCertifications] = useState<Certification[]>(initialCertifications);
   const [continuingEducation, setContinuingEducation] = useState<ContinuingEducation[]>(initialContinuingEducation);
-  const [loading, setLoading] = useState(!initialCertifications.length || !initialContinuingEducation.length);
+  // Only show loading if NO data at all (both empty)
+  const [loading, setLoading] = useState(!initialCertifications.length && !initialContinuingEducation.length);
   const [error, setError] = useState<string | null>(null);
   const [fetchStatus, setFetchStatus] = useState<string>("idle");
+  const [certsLoaded, setCertsLoaded] = useState(false);
+  const [eduLoaded, setEduLoaded] = useState(false);
+  // Track if we're actively fetching (only for data we don't have initially)
+  const [fetchingCerts, setFetchingCerts] = useState(false);
+  const [fetchingEdu, setFetchingEdu] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedYear, setSelectedYear] = useState<string>("all");
@@ -313,17 +319,22 @@ export default function Certifications({
 
   // Fetch certifications data only if not provided via props
   useEffect(() => {
-    if (initialCertifications.length > 0 && initialContinuingEducation.length > 0) return;
+    // If we have both, no fetching needed
+    if (initialCertifications.length > 0 && initialContinuingEducation.length > 0) {
+      setCertsLoaded(true);
+      setEduLoaded(true);
+      return;
+    }
 
     let mounted = true;
 
     const fetchCertifications = async () => {
       if (initialCertifications.length > 0) {
-        setFetchStatus("certifications success");
+        setCertsLoaded(true);
         return;
       }
 
-      setLoading(true);
+      setFetchingCerts(true);
       setError(null);
       setFetchStatus("fetching certifications");
       try {
@@ -346,17 +357,19 @@ export default function Certifications({
         }
       } finally {
         if (mounted) {
-          setLoading(false);
+          setCertsLoaded(true);
+          setFetchingCerts(false);
         }
       }
     };
 
     const fetchContinuingEducation = async () => {
       if (initialContinuingEducation.length > 0) {
-        setFetchStatus(prev => prev + "; continuing education success");
+        setEduLoaded(true);
         return;
       }
 
+      setFetchingEdu(true);
       try {
         console.log("[Certifications] Starting fetch to /api/continuingEducation");
         const res = await fetch("/api/continuingEducation");
@@ -366,13 +379,18 @@ export default function Certifications({
         console.log("[Certifications] Continuing education data received:", data.length, "items");
         if (mounted) {
           setContinuingEducation(data);
-          setFetchStatus("all success");
+          setFetchStatus(prev => prev === "certifications success" ? "all success" : prev + "; continuing education success");
         }
       } catch (err) {
         console.error("[Certifications] Error fetching continuing education:", err);
         if (mounted) {
           setContinuingEducation([]);
           setFetchStatus(prev => prev + "; continuing education error: " + (err instanceof Error ? err.message : String(err)));
+        }
+      } finally {
+        if (mounted) {
+          setEduLoaded(true);
+          setFetchingEdu(false);
         }
       }
     };
@@ -384,6 +402,11 @@ export default function Certifications({
       mounted = false;
     };
   }, [initialCertifications.length, initialContinuingEducation.length]);
+
+  // Loading state: only true if actively fetching data we don't have
+  useEffect(() => {
+    setLoading(fetchingCerts || fetchingEdu);
+  }, [fetchingCerts, fetchingEdu]);
 
   const handleRetry = useCallback(() => {
     setLoading(true);
@@ -472,11 +495,6 @@ export default function Certifications({
             </div>
           </div>
 
-          {/* Debug: Show fetch status */}
-          <div style={{ padding: "1rem", background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "0.5rem", marginBottom: "1rem", fontSize: "0.875rem", fontFamily: "monospace", margin: "0 1rem 1rem" }}>
-            <strong>Debug:</strong> Fetch status: {fetchStatus}
-          </div>
-
           <div className={styles.timeline} role="list" aria-label="Certifications timeline">
             {[1, 2, 3].map((i) => (
               <div key={i} className={styles.skeletonCard} role="listitem" aria-hidden="true">
@@ -527,9 +545,15 @@ export default function Certifications({
     );
   }
 
-  if (filteredItems.length === 0 && allItems.length > 0) {
+  // If no data at all (not just filtered), don't render anything
+  if (allItems.length === 0) {
+    return null;
+  }
+
+  // Show empty state when filters result in no matches
+  if (filteredItems.length === 0) {
     return (
-      <section className={`${styles.certifications} ${styles.fadeUp}`} ref={scrollRef} aria-labelledby="certifications-title">
+    <section className={`${styles.certifications} ${styles.fadeUp}`} ref={scrollRef} aria-labelledby="certifications-title">
         <div className={styles.container}>
           <div className={styles.header}>
             <div className={styles.headerContent}>
@@ -654,20 +678,6 @@ export default function Certifications({
             </div>
           ))}
         </div>
-
-        {filteredItems.length === 0 && allItems.length === 0 && (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyStateIcon}>
-              <div className={styles.emptyStateBadge}>
-                <div className={styles.emptyStateCircle} />
-                <FaCheckCircle className={styles.emptyStateCheckIcon} aria-hidden={true} />
-              </div>
-            </div>
-            <p className={styles.emptyStateText}>
-              No certifications or continuing education records found.
-            </p>
-          </div>
-        )}
 
         <div className={styles.legend} aria-label="Expiry status legend">
           <div className={styles.legendItem}>

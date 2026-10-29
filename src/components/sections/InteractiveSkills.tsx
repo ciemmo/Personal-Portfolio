@@ -13,26 +13,44 @@ const SkillIcon = React.memo(({ skillName }: { skillName: string }) => {
   return <IconComponent size={28} className={styles.skillIcon} />;
 });
 
-// Category order for tabs
+// Category order for tabs - all 12 categories from Skill model
 const CATEGORIES = [
   "Languages",
   "Frameworks",
   "DevOps and Cloud",
   "Developer Tools",
+  "AI and Machine Learning",
+  "Data Science",
+  "Databases",
+  "Mobile",
+  "Testing",
+  "UI/UX Design",
+  "Architecture",
+  "Other",
 ] as const;
 
 type Category = typeof CATEGORIES[number];
 
-// Map API categories to display categories
+// Map API categories to display categories (1:1 mapping for most)
 const categoryMap: Record<string, Category> = {
-  // Languages
+  // Direct mappings (exact matches)
+  "languages": "Languages",
+  "frameworks": "Frameworks",
+  "devops and cloud": "DevOps and Cloud",
+  "developer tools": "Developer Tools",
+  "ai and machine learning": "AI and Machine Learning",
+  "data science": "Data Science",
+  "databases": "Databases",
+  "mobile": "Mobile",
+  "testing": "Testing",
+  "ui/ux design": "UI/UX Design",
+  "architecture": "Architecture",
+  "other": "Other",
+
+  // Common variations/aliases
   "frontend": "Languages",
   "backend": "Languages",
-  "database": "Languages",
-  "languages": "Languages",
-  "databases": "Languages",
-
-  // Frameworks
+  "database": "Databases",
   "react": "Frameworks",
   "vue": "Frameworks",
   "angular": "Frameworks",
@@ -41,9 +59,6 @@ const categoryMap: Record<string, Category> = {
   "spring": "Frameworks",
   "django": "Frameworks",
   "laravel": "Frameworks",
-  "frameworks": "Frameworks",
-
-  // DevOps and Cloud
   "devops": "DevOps and Cloud",
   "cloud": "DevOps and Cloud",
   "aws": "DevOps and Cloud",
@@ -52,30 +67,9 @@ const categoryMap: Record<string, Category> = {
   "docker": "DevOps and Cloud",
   "kubernetes": "DevOps and Cloud",
   "ci/cd": "DevOps and Cloud",
-  "devops and cloud": "DevOps and Cloud",
-
-  // Developer Tools
   "tools": "Developer Tools",
-  "testing": "Developer Tools",
   "vcs": "Developer Tools",
   "ide": "Developer Tools",
-  "other": "Developer Tools",
-  "developer tools": "Developer Tools",
-
-  // AI and Machine Learning -> Developer Tools (or could be Frameworks)
-  "ai and machine learning": "Developer Tools",
-
-  // Data Science -> Languages (or Developer Tools)
-  "data science": "Languages",
-
-  // Mobile -> Frameworks
-  "mobile": "Frameworks",
-
-  // UI/UX Design -> Developer Tools
-  "ui/ux design": "Developer Tools",
-
-  // Architecture -> DevOps and Cloud
-  "architecture": "DevOps and Cloud",
 };
 
 // Language keywords for fallback categorization
@@ -99,6 +93,41 @@ const TOOL_KEYWORDS = [
   "playwright", "eslint", "prettier", "webpack", "vite", "figma", "jira", "postman"
 ];
 
+const AI_KEYWORDS = [
+  "tensorflow", "pytorch", "keras", "scikit-learn", "hugging face", "openai",
+  "anthropic", "langchain", "llm", "machine learning", "deep learning", "neural"
+];
+
+const DATA_SCIENCE_KEYWORDS = [
+  "pandas", "numpy", "matplotlib", "seaborn", "jupyter", "tableau", "power bi",
+  "data analysis", "data visualization", "statistics", "r language", "spark"
+];
+
+const DATABASE_KEYWORDS = [
+  "postgresql", "mysql", "mongodb", "redis", "sqlite", "dynamodb", "cassandra",
+  "elasticsearch", "neo4j", "firestore", "supabase", "prisma", "typeorm"
+];
+
+const MOBILE_KEYWORDS = [
+  "react native", "flutter", "swift", "kotlin", "xamarin", "ionic", "capacitor",
+  "android", "ios", "expo"
+];
+
+const TESTING_KEYWORDS = [
+  "jest", "vitest", "cypress", "playwright", "selenium", "mocha", "chai",
+  "testing library", "pytest", "junit", "testng", "k6"
+];
+
+const DESIGN_KEYWORDS = [
+  "figma", "sketch", "adobe xd", "framer", "photoshop", "illustrator", "indesign",
+  "ui design", "ux design", "user research", "prototyping", "design system"
+];
+
+const ARCHITECTURE_KEYWORDS = [
+  "microservices", "serverless", "event driven", "domain driven", "clean architecture",
+  "hexagonal", "cqrs", "event sourcing", "system design", "scalability"
+];
+
 // Helper to determine display category from skill
 const getDisplayCategory = (skill: { category: string; name: string }): Category => {
   const apiCategory = skill.category.toLowerCase();
@@ -111,9 +140,16 @@ const getDisplayCategory = (skill: { category: string; name: string }): Category
   if (LANGUAGE_KEYWORDS.some(lang => name.includes(lang))) return "Languages";
   if (FRAMEWORK_KEYWORDS.some(fw => name.includes(fw))) return "Frameworks";
   if (DEVOPS_KEYWORDS.some(d => name.includes(d))) return "DevOps and Cloud";
+  if (AI_KEYWORDS.some(k => name.includes(k))) return "AI and Machine Learning";
+  if (DATA_SCIENCE_KEYWORDS.some(k => name.includes(k))) return "Data Science";
+  if (DATABASE_KEYWORDS.some(k => name.includes(k))) return "Databases";
+  if (MOBILE_KEYWORDS.some(k => name.includes(k))) return "Mobile";
+  if (TESTING_KEYWORDS.some(k => name.includes(k))) return "Testing";
+  if (DESIGN_KEYWORDS.some(k => name.includes(k))) return "UI/UX Design";
+  if (ARCHITECTURE_KEYWORDS.some(k => name.includes(k))) return "Architecture";
   if (TOOL_KEYWORDS.some(t => name.includes(t))) return "Developer Tools";
 
-  return "Developer Tools";
+  return "Other";
 };
 
 // Proficiency ring constants
@@ -282,7 +318,20 @@ export default function InteractiveSkills({ initialData = [] }: InteractiveSkill
   // Group skills by category using display category mapping
   const groupedSkills = useMemo((): Record<string, InteractiveSkill[]> => {
     if (!allSkills?.length) {
-      return { Languages: [], Frameworks: [], "DevOps and Cloud": [], "Developer Tools": [] };
+      return {
+        Languages: [],
+        Frameworks: [],
+        "DevOps and Cloud": [],
+        "Developer Tools": [],
+        "AI and Machine Learning": [],
+        "Data Science": [],
+        Databases: [],
+        Mobile: [],
+        Testing: [],
+        "UI/UX Design": [],
+        Architecture: [],
+        Other: [],
+      };
     }
 
     const grouped: Record<string, InteractiveSkill[]> = {
@@ -290,6 +339,14 @@ export default function InteractiveSkills({ initialData = [] }: InteractiveSkill
       Frameworks: [],
       "DevOps and Cloud": [],
       "Developer Tools": [],
+      "AI and Machine Learning": [],
+      "Data Science": [],
+      Databases: [],
+      Mobile: [],
+      Testing: [],
+      "UI/UX Design": [],
+      Architecture: [],
+      Other: [],
     };
 
     allSkills.forEach(skill => {
@@ -314,6 +371,18 @@ export default function InteractiveSkills({ initialData = [] }: InteractiveSkill
     );
   }, [groupedSkills, selectedCategory, searchQuery]);
 
+  // Only show categories that have skills
+  const visibleCategories = useMemo(() => {
+    return CATEGORIES.filter(cat => (groupedSkills[cat]?.length || 0) > 0);
+  }, [groupedSkills]);
+
+  // Ensure selectedCategory is valid (falls back to first visible category)
+  useEffect(() => {
+    if (visibleCategories.length > 0 && !visibleCategories.includes(selectedCategory)) {
+      setSelectedCategory(visibleCategories[0]);
+    }
+  }, [visibleCategories, selectedCategory]);
+
   // Keyboard navigation
   const handleKeyDown = useCallback((e: KeyboardEvent<HTMLButtonElement>, index: number, skillId: string) => {
     const cards = cardRefs.current.filter((ref): ref is HTMLButtonElement => ref !== null);
@@ -331,8 +400,13 @@ export default function InteractiveSkills({ initialData = [] }: InteractiveSkill
     }
   }, []);
 
-  // Focus management for tab changes
+  // Focus management for tab changes (only on user interaction, not initial mount)
+  const isInitialMount = useRef(true);
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     setFocusedIndex(-1);
     setTimeout(() => {
       const firstCard = cardRefs.current[0];
@@ -442,24 +516,26 @@ export default function InteractiveSkills({ initialData = [] }: InteractiveSkill
         </div>
 
         {/* Category Tabs */}
-        <div className={styles.tabsContainer} role="tablist" aria-label="Skill categories">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              role="tab"
-              aria-selected={selectedCategory === cat}
-              aria-controls={`panel-${cat}`}
-              id={`tab-${cat}`}
-              className={`${styles.tab} ${selectedCategory === cat ? styles.active : ""}`}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              {cat}
-              <span className={styles.tabCount}>
-                {(filteredSkills.filter(s => s.category === cat)).length || (groupedSkills[cat] || []).length}
-              </span>
-            </button>
-          ))}
-        </div>
+        {visibleCategories.length > 0 && (
+          <div className={styles.tabsContainer} role="tablist" aria-label="Skill categories">
+            {visibleCategories.map((cat) => (
+              <button
+                key={cat}
+                role="tab"
+                aria-selected={selectedCategory === cat}
+                aria-controls={`panel-${cat}`}
+                id={`tab-${cat}`}
+                className={`${styles.tab} ${selectedCategory === cat ? styles.active : ""}`}
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat}
+                <span className={styles.tabCount}>
+                  {groupedSkills[cat]?.length || 0}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Skills Grid */}
         <div
@@ -507,7 +583,7 @@ export default function InteractiveSkills({ initialData = [] }: InteractiveSkill
                         <h3 className={styles.skillName}>{skill.name}</h3>
                         <ProficiencyRing proficiency={proficiencyLevel} />
                         <div className={styles.skillMeta}>
-                          <span className={styles.skillCategory}>{skill.category}</span>
+                          <span className={styles.skillCategory}>{getDisplayCategory(skill)}</span>
                         </div>
                       </div>
                     </div>

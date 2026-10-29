@@ -93,7 +93,19 @@
   align-items: center;
   margin-top: var(--space-lg);
   padding-top: var(--space-lg);
-  border-top: 1px solid var(--color-border);
+  position: relative;
+}
+
+.filters::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  max-width: 100%;
+  height: 1px;
+  background-color: var(--color-border);
 }
 
 .searchWrapper {
@@ -911,7 +923,19 @@ html.dark .skeletonLine {
   gap: var(--space-lg);
   margin-top: var(--space-2xl);
   padding-top: var(--space-xl);
-  border-top: 1px solid var(--color-border);
+  position: relative;
+}
+
+.legend::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  max-width: 100%;
+  height: 1px;
+  background-color: var(--color-border);
 }
 
 .legendItem {

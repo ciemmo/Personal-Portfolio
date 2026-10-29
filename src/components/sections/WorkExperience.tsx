@@ -30,7 +30,6 @@ export default function WorkExperience({ initialData = [] }: WorkExperienceProps
   const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>(initialData);
   const [loading, setLoading] = useState<boolean>(!initialData.length);
   const [error, setError] = useState<string | null>(null);
-  const [fetchStatus, setFetchStatus] = useState<string>("idle");
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -46,7 +45,6 @@ export default function WorkExperience({ initialData = [] }: WorkExperienceProps
     const fetchWorkExperience = async () => {
       setLoading(true);
       setError(null);
-      setFetchStatus("fetching");
       try {
         console.log("[WorkExperience] Starting fetch to /api/workExperience");
         const res = await fetch("/api/workExperience");
@@ -58,14 +56,12 @@ export default function WorkExperience({ initialData = [] }: WorkExperienceProps
         console.log("[WorkExperience] Data received:", data.length, "items");
         if (mounted) {
           setWorkExperiences(data);
-          setFetchStatus("success");
         }
       } catch (err) {
         console.error("[WorkExperience] Error fetching work experience:", err);
         if (mounted) {
           setError("Failed to load work experience. Please try again later.");
           setWorkExperiences([]);
-          setFetchStatus("error: " + (err instanceof Error ? err.message : String(err)));
         }
       } finally {
         if (mounted) {
@@ -92,10 +88,6 @@ export default function WorkExperience({ initialData = [] }: WorkExperienceProps
     return (
       <section className={`${styles.workExperience} ${styles.fadeUp} fade-up`}>
         <div className={styles.loading}>
-        {/* Debug: Show fetch status */}
-        <div style={{ padding: "1rem", background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "0.5rem", marginBottom: "1rem", fontSize: "0.875rem", fontFamily: "monospace" }}>
-          <strong>Debug:</strong> Fetch status: {fetchStatus}
-        </div>
         {/* Work Experience Skeletons */}
         <div className={styles.timeline}>
           {/* Show 3 skeleton items while loading */}
@@ -148,25 +140,7 @@ export default function WorkExperience({ initialData = [] }: WorkExperienceProps
 
   // Show empty state if no work experience data
   if (workExperiences.length === 0) {
-    return (
-      <section className={`${styles.workExperience} ${styles.fadeUp} fade-up`}>
-        <div className={styles.container}>
-          <h2 className={styles.title}>Work Experience</h2>
-          <p className={styles.subtitle}>
-            Professional journey and technical expertise gained through various roles
-          </p>
-          <div className={styles.emptyState}>
-            <div className={styles.emptyStateIcon}>
-              {/* Simple icon representing work experience */}
-              <div className={styles.emptyStateBriefcase} />
-            </div>
-            <p className={styles.emptyStateText}>
-              No work experience records found.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (

@@ -185,41 +185,7 @@ export default function ProjectsGrid({ projects: providedProjects, limit = 6 }: 
   }
 
   if (displayProjects.length === 0) {
-    return (
-      <section className={`${styles.projects} fade-up`} aria-labelledby="projects-title">
-        <div className={styles.container}>
-          <div className={styles.header}>
-            <span className={styles.sectionLabel}>
-              <span className={styles.sectionLabelIcon} role="img" aria-label="projects">💻</span>
-              Projects
-            </span>
-            <h2 id="projects-title" className={styles.title}>
-              Featured Work
-            </h2>
-            <p className={styles.subtitle}>
-              Some of the work I've built
-            </p>
-          </div>
-          <div className={styles.emptyState}>
-            <div className={styles.emptyStateIcon}>
-              <div className={styles.emptyStateBadge}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-                  <rect x="2" y="3" width="20" height="14" rx="2"></rect>
-                  <path d="M8 21h8"></path>
-                  <path d="M12 17v4"></path>
-                  <line x1="6" y1="9" x2="18" y2="9"></line>
-                  <line x1="6" y1="13" x2="18" y2="13"></line>
-                  <line x1="10" y1="17" x2="14" y2="17"></line>
-                </svg>
-              </div>
-            </div>
-            <p className={styles.emptyStateText}>
-              No projects to display yet.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (

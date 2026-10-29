@@ -140,7 +140,7 @@
    ======================================== */
 .links {
   display: flex;
-  gap: var(--space-40);
+  gap: var(--space-8);
   align-items: center;
   flex: 1;
   justify-content: center;

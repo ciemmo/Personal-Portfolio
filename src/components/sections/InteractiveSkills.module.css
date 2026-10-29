@@ -66,7 +66,7 @@
 .searchWrapper {
   position: relative;
   max-width: 500px;
-  margin: 0 auto var(--space-8);
+  margin: 0 auto var(--space-3);
 }
 
 .searchInput {
@@ -111,8 +111,8 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-8);
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
 }
 
 .tab {
@@ -183,7 +183,7 @@
 
 /* Skills Grid */
 .skillsContainer {
-  margin-bottom: var(--space-10);
+  margin-bottom: var(--space-4);
 }
 
 .skillsGrid {
@@ -341,7 +341,7 @@
 
 /* Legend */
 .legend {
-  margin-top: var(--space-10);
+  margin-top: var(--space-4);
   padding: var(--space-6);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -436,7 +436,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  margin: var(--space-10) auto 0;
+  margin: var(--space-4) auto 0;
   padding: var(--space-3) var(--space-7);
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
   color: var(--color-text-on-primary);

@@ -29,7 +29,6 @@ export default function Education({ initialData = [] }: EducationProps) {
   const [educations, setEducations] = useState<Education[]>(initialData);
   const [loading, setLoading] = useState<boolean>(!initialData.length);
   const [error, setError] = useState<string | null>(null);
-  const [fetchStatus, setFetchStatus] = useState<string>("idle");
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -45,7 +44,6 @@ export default function Education({ initialData = [] }: EducationProps) {
     const fetchEducations = async () => {
       setLoading(true);
       setError(null);
-      setFetchStatus("fetching");
       try {
         console.log("[Education] Starting fetch to /api/education");
         const res = await fetch("/api/education");
@@ -57,14 +55,12 @@ export default function Education({ initialData = [] }: EducationProps) {
         console.log("[Education] Data received:", data.length, "items");
         if (mounted) {
           setEducations(data);
-          setFetchStatus("success");
         }
       } catch (err) {
         console.error("[Education] Error fetching education:", err);
         if (mounted) {
           setError("Failed to load education. Please try again later.");
           setEducations([]);
-          setFetchStatus("error: " + (err instanceof Error ? err.message : String(err)));
         }
       } finally {
         if (mounted) {
@@ -91,10 +87,6 @@ export default function Education({ initialData = [] }: EducationProps) {
     return (
       <section className={`${styles.education} ${styles.fadeUp} fade-up`}>
         <div className={styles.loading}>
-        {/* Debug: Show fetch status */}
-        <div style={{ padding: "1rem", background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "0.5rem", marginBottom: "1rem", fontSize: "0.875rem", fontFamily: "monospace" }}>
-          <strong>Debug:</strong> Fetch status: {fetchStatus}
-        </div>
         {/* Education Skeletons */}
         <div className={styles.timeline}>
           {/* Show 3 skeleton items while loading */}
@@ -150,27 +142,9 @@ export default function Education({ initialData = [] }: EducationProps) {
     );
   }
 
-  // Show empty state if no education data
+  // Show nothing if no education data
   if (educations.length === 0) {
-    return (
-      <section className={`${styles.education} ${styles.fadeUp} fade-up`}>
-        <div className={styles.container}>
-          <h2 className={styles.title}>Education</h2>
-          <p className={styles.subtitle}>
-            Academic background and educational achievements
-          </p>
-          <div className={styles.emptyState}>
-            <div className={styles.emptyStateIcon}>
-              {/* Simple icon representing education */}
-              <div className={styles.emptyStateGraduationCap} />
-            </div>
-            <p className={styles.emptyStateText}>
-              No education records found.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (

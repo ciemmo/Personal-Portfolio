@@ -4,7 +4,6 @@
 
 export {
   getSkillIcon,
-  SkillIcon,
   preloadSkillIcons,
   getDeviconMappings,
   hasDeviconMapping,

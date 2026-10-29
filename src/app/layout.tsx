@@ -7,6 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import PageTransitionWrapper from "@/components/ui/PageTransition";
 import Breadcrumb from "@/components/layout/Breadcrumb";
+import DisableScrollRestoration from "@/components/ui/DisableScrollRestoration";
 
 // Optimize Inter font with variable font (single file, ~50KB vs multiple weights)
 const inter = Inter({
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
             </head>
             <body className={`${inter.className} antialiased`} suppressHydrationWarning>
+                <DisableScrollRestoration />
                 <a href="#main-content" className="skip-to-content">Skip to main content</a>
                 <Navbar />
                 <Breadcrumb />

@@ -256,34 +256,7 @@ export default function Achievements({ initialData = [] }: AchievementsProps) {
   }
 
   if (achievementsData.length === 0) {
-    return (
-      <section className={`${styles.achievements} fade-up`} aria-labelledby="achievements-title">
-        <div className={styles.container}>
-          <div className={styles.header}>
-            <span className={styles.sectionLabel}>
-              <span className={styles.sectionLabelIcon} role="img" aria-label="achievements">🏆</span>
-              Key Achievements
-            </span>
-            <h2 id="achievements-title" className={styles.title}>
-              Professional Highlights
-            </h2>
-            <p className={styles.subtitle}>
-              Highlights of my professional journey and accomplishments
-            </p>
-          </div>
-          <div className={styles.emptyState}>
-            <div className={styles.emptyStateIcon}>
-              <div className={styles.emptyStateBadge}>
-                <FaTrophy className={styles.emptyStateTrophyIcon} aria-hidden="true" />
-              </div>
-            </div>
-            <p className={styles.emptyStateText}>
-              No achievements found.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (

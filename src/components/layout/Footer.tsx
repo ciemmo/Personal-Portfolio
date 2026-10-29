@@ -121,15 +121,8 @@ export default function Footer() {
           <p className={styles.copyright}>
             © {currentYear} Emmanuel. All rights reserved.
           </p>
-          <div className={styles.legalLinks}>
-            <Link href="/privacy" className={styles.legalLink}>Privacy</Link>
-            <Link href="/terms" className={styles.legalLink}>Terms</Link>
-            <Link href="/cookies" className={styles.legalLink}>Cookies</Link>
-          </div>
           <p className={styles.madeWith}>
-            <span>Made with</span>
-            <span className={styles.heart} aria-hidden="true">♥</span>
-            <span>and Next.js</span>
+            <span>Made with Next.js</span>
           </p>
         </div>
       </div>
