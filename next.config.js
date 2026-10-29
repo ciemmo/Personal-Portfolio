@@ -16,6 +16,7 @@ const nextConfig = {
     optimizePackageImports: ['react-icons', 'lucide-react'],
   },
 
+  
   // Image optimization
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -34,6 +35,8 @@ const nextConfig = {
 
   // Security headers and performance headers
   async headers() {
+    const isDev = process.env.NODE_ENV === 'development';
+
     return [
       {
         source: '/:path*',
@@ -53,22 +56,24 @@ const nextConfig = {
           { key: 'Access-Control-Allow-Headers', value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version' },
         ],
       },
-      // Cache static assets aggressively
-      {
-        source: '/_next/static/:path*',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-        ],
-      },
-      {
-        source: '/:path*.(jpg|jpeg|png|webp|avif|svg|ico)',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-        ],
-      },
+      // Cache static assets aggressively (only in production)
+      ...(!isDev ? [
+        {
+          source: '/_next/static/:path*',
+          headers: [
+            { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          ],
+        },
+        {
+          source: '/:path*.(jpg|jpeg|png|webp|avif|svg|ico)',
+          headers: [
+            { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          ],
+        },
+      ] : []),
     ];
   },
 
-  };
+};
 
 module.exports = withMDX(nextConfig);

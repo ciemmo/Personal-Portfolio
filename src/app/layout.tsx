@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
             </head>
-            <body className={`${inter.className} antialiased`}>
+            <body className={`${inter.className} antialiased`} suppressHydrationWarning>
                 <a href="#main-content" className="skip-to-content">Skip to main content</a>
                 <Navbar />
                 <Breadcrumb />

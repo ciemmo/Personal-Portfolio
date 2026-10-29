@@ -87,19 +87,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate category - TEMPORARILY including old categories for migration
+    // Validate category
     const validCategories = [
       'Languages',
       'Frameworks',
       'DevOps and Cloud',
       'Developer Tools',
-      'frontend',
-      'backend',
-      'devops',
-      'database',
-      'mobile',
-      'uiux',
-      'fullstack'
+      'AI and Machine Learning',
+      'Data Science',
+      'Databases',
+      'Mobile',
+      'Testing',
+      'UI/UX Design',
+      'Architecture',
+      'Other'
     ];
     if (!validCategories.includes(body.category)) {
       return NextResponse.json(

@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useMemo, useRef, memo, forwardRef } f
 import styles from "./Certifications.module.css";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
 import OptimizedImage from "@/components/ui/OptimizedImage";
-import { FaAngleDown, FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaSearch, FaFilter } from "@/components/sections/skillIcons";
+import { FaAngleDown, FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaSearch, FaFilter } from "@/components/sections/icons";
 
 interface Certification {
   id: string;

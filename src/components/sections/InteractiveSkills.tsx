@@ -3,34 +3,14 @@
 import * as React from "react";
 import { useState, useEffect, useMemo, useCallback, useRef, KeyboardEvent } from "react";
 import { useSkills, Skill } from "@/lib/skillData";
-import { skillIcons } from "./skillIcons";
+import { getSkillIcon } from "./skillIcons";
 import styles from "./InteractiveSkills.module.css";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
 
-// Memoized icon component
+// Memoized icon component using Devicon
 const SkillIcon = React.memo(({ skillName }: { skillName: string }) => {
-  const IconComponent = skillIcons[skillName as keyof typeof skillIcons];
-  if (IconComponent) {
-    return <IconComponent size={28} className={styles.skillIcon} />;
-  }
-  // Fallback icon
-  return (
-    <svg
-      width={28}
-      height={28}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={styles.skillIcon}
-      aria-hidden="true"
-    >
-      <polyline points="16 18 22 12 16 6" />
-      <polyline points="8 6 2 12 8 18" />
-    </svg>
-  );
+  const IconComponent = getSkillIcon(skillName);
+  return <IconComponent size={28} className={styles.skillIcon} />;
 });
 
 // Category order for tabs
@@ -49,6 +29,8 @@ const categoryMap: Record<string, Category> = {
   "frontend": "Languages",
   "backend": "Languages",
   "database": "Languages",
+  "languages": "Languages",
+  "databases": "Languages",
 
   // Frameworks
   "react": "Frameworks",
@@ -59,6 +41,7 @@ const categoryMap: Record<string, Category> = {
   "spring": "Frameworks",
   "django": "Frameworks",
   "laravel": "Frameworks",
+  "frameworks": "Frameworks",
 
   // DevOps and Cloud
   "devops": "DevOps and Cloud",
@@ -69,6 +52,7 @@ const categoryMap: Record<string, Category> = {
   "docker": "DevOps and Cloud",
   "kubernetes": "DevOps and Cloud",
   "ci/cd": "DevOps and Cloud",
+  "devops and cloud": "DevOps and Cloud",
 
   // Developer Tools
   "tools": "Developer Tools",
@@ -76,6 +60,22 @@ const categoryMap: Record<string, Category> = {
   "vcs": "Developer Tools",
   "ide": "Developer Tools",
   "other": "Developer Tools",
+  "developer tools": "Developer Tools",
+
+  // AI and Machine Learning -> Developer Tools (or could be Frameworks)
+  "ai and machine learning": "Developer Tools",
+
+  // Data Science -> Languages (or Developer Tools)
+  "data science": "Languages",
+
+  // Mobile -> Frameworks
+  "mobile": "Frameworks",
+
+  // UI/UX Design -> Developer Tools
+  "ui/ux design": "Developer Tools",
+
+  // Architecture -> DevOps and Cloud
+  "architecture": "DevOps and Cloud",
 };
 
 // Language keywords for fallback categorization

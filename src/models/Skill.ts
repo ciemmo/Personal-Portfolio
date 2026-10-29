@@ -12,17 +12,20 @@ const SkillSchema = new Schema(
       type: String,
       required: true,
       enum: [
+        // Core categories
         'Languages',
         'Frameworks',
         'DevOps and Cloud',
         'Developer Tools',
-        'frontend',
-        'backend',
-        'devops',
-        'database',
-        'mobile',
-        'uiux',
-        'fullstack'
+        // New categories
+        'AI and Machine Learning',
+        'Data Science',
+        'Databases',
+        'Mobile',
+        'Testing',
+        'UI/UX Design',
+        'Architecture',
+        'Other'
       ]
     },
     proficiency: {
