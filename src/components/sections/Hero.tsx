@@ -54,8 +54,7 @@ export default function Hero({ stats = [] }: HeroProps) {
           </h1>
 
           <p className={styles.subtitle}>
-            Computer Science graduate passionate about building clean, scalable software
-            and creating meaningful digital experiences.
+            Computer Science graduate passionate about building clean, reliable, and scalable software.
           </p>
 
           <div className={styles.buttons}>

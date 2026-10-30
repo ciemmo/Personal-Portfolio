@@ -22,23 +22,23 @@ export default function About({ }: AboutProps) {
           </span>
 
           <h2 id="about-title" className={styles.title}>
-            Aspiring Software Engineer crafting digital experiences
+            Aspiring Software Engineer
           </h2>
 
           <p className={styles.subtitle}>
-            Computer Science Graduate passionate about building clean, scalable software
+            Computer Science Graduate passionate about building clean, reliable, and scalable software
           </p>
 
           <p className={styles.paragraph}>
             I&apos;m Emmanuel, an aspiring software engineer who loves building clean,
-            scalable, and user‑focused applications. I enjoy solving complex problems
-            and turning ideas into real, functional software.
+            reliable, and user‑focused applications. I love solving real and complex problems
+            and turning vague ideas into real pieces of software.
           </p>
 
           <p className={styles.paragraph}>
             My interests include full‑stack development, backend development, and creating
-            useful applications. I&apos;m always learning, always improving, and
-            always excited to take on new challenges.
+            useful applications. I&apos;m always learning, improving, and
+            excited to take on new challenges.
           </p>
 
           {/* CTA Buttons */}
