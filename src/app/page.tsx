@@ -24,9 +24,7 @@ export default async function Home() {
             <WorkExperience initialData={homepageData.workExperience} />
             <Education initialData={homepageData.education} />
             <Certifications initialCertifications={homepageData.certifications} initialContinuingEducation={homepageData.continuingEducation} />
-            <ErrorBoundary
-              onError={(error) => console.error("ClientComponentsWrapper error:", error)}
-            >
+            <ErrorBoundary>
               <ClientComponentsWrapper skillsData={homepageData.skills} projectsData={homepageData.projects} />
             </ErrorBoundary>
         </>

@@ -22,7 +22,7 @@ export default function About({ }: AboutProps) {
           </span>
 
           <h2 id="about-title" className={styles.title}>
-            Software Engineer crafting digital experiences
+            Aspiring Software Engineer crafting digital experiences
           </h2>
 
           <p className={styles.subtitle}>
@@ -30,7 +30,7 @@ export default function About({ }: AboutProps) {
           </p>
 
           <p className={styles.paragraph}>
-            I&apos;m Emmanuel, a passionate software engineer who loves building clean,
+            I&apos;m Emmanuel, an aspiring software engineer who loves building clean,
             scalable, and user‑focused applications. I enjoy solving complex problems
             and turning ideas into real, functional software.
           </p>
