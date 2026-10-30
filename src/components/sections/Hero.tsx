@@ -29,10 +29,9 @@ export default function Hero({ stats = [] }: HeroProps) {
 
   // Fallback stats if none configured
   const fallbackStats: Stat[] = [
-    { _id: "fallback-1", key: "yearsExperience", label: "Years of Experience", value: "0", section: "hero", displayOrder: 0, isVisible: true },
-    { _id: "fallback-2", key: "projectsBuilt", label: "Projects Built", value: "5", section: "hero", displayOrder: 1, isVisible: true },
-    { _id: "fallback-3", key: "technologies", label: "Technologies", value: "15+", section: "hero", displayOrder: 2, isVisible: true },
-    { _id: "fallback-4", key: "certifications", label: "Certifications", value: "4+", section: "hero", displayOrder: 3, isVisible: true },
+    { _id: "fallback-1", key: "projectsBuilt", label: "Projects Built", value: "5", section: "hero", displayOrder: 0, isVisible: true },
+    { _id: "fallback-2", key: "technologies", label: "Technologies", value: "15", section: "hero", displayOrder: 1, isVisible: true },
+    { _id: "fallback-3", key: "certifications", label: "Certifications", value: "4", section: "hero", displayOrder: 2, isVisible: true },
   ];
 
   const displayStats = heroStats.length > 0 ? heroStats : fallbackStats;
