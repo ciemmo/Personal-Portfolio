@@ -862,5 +862,37 @@
 }
 
 /* ========================================
+   HONEYPOT (spam protection)
+   ======================================== */
+
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.honeypot label {
+  display: none;
+}
+
+.honeypot input {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  border: none;
+  background: transparent;
+}
+
+/* ========================================
    DARK MODE (handled by CSS variables)
    ======================================== */

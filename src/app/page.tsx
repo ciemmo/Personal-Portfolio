@@ -5,6 +5,7 @@ import Education from "@/components/sections/Education";
 import Hero from "@/components/sections/Hero";
 import WorkExperience from "@/components/sections/WorkExperience";
 import ClientComponentsWrapper from "@/components/sections/ClientComponentsWrapper";
+import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import styles from "./page.module.css";
 import { fetchHomepageData } from "@/lib/fetchHomepageData";
 
@@ -23,7 +24,11 @@ export default async function Home() {
             <WorkExperience initialData={homepageData.workExperience} />
             <Education initialData={homepageData.education} />
             <Certifications initialCertifications={homepageData.certifications} initialContinuingEducation={homepageData.continuingEducation} />
-            <ClientComponentsWrapper skillsData={homepageData.skills} projectsData={homepageData.projects} />
+            <ErrorBoundary
+              onError={(error) => console.error("ClientComponentsWrapper error:", error)}
+            >
+              <ClientComponentsWrapper skillsData={homepageData.skills} projectsData={homepageData.projects} />
+            </ErrorBoundary>
         </>
     );
 }

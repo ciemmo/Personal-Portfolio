@@ -203,7 +203,7 @@ export default function ContactPage() {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ ...formData, website: "" })
       });
 
       const result = await response.json();
@@ -480,6 +480,20 @@ export default function ContactPage() {
                       </span>
                     )}
                   </div>
+                </div>
+
+                {/* Honeypot field (spam protection) - hidden from humans */}
+                <div className={styles.honeypot} aria-hidden="true">
+                  <label htmlFor="website">Website</label>
+                  <input
+                    type="text"
+                    id="website"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value=""
+                    readOnly
+                  />
                 </div>
 
                 {/* Submit Button */}

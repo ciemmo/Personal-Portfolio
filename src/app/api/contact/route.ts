@@ -3,7 +3,14 @@ import nodemailer from "nodemailer";
 
 export async function POST(request: Request) {
   try {
-    const { name, email, message } = await request.json();
+    const { name, email, message, website } = await request.json();
+
+    // Honeypot check - if filled, it's likely a bot
+    // Silently accept but don't send email (fake success)
+    if (website?.trim()) {
+      console.log("Honeypot triggered - likely bot submission");
+      return NextResponse.json({ success: true, messageId: "honeypot-rejected" });
+    }
 
     // Server-side validation (duplicate client validation for security)
     if (!name?.trim() || !email?.trim() || !message?.trim()) {
